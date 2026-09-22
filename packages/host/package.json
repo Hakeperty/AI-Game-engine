@@ -18,7 +18,8 @@
     "ws": "^8.21.3",
     "zod": "^4.6.5",
     "immer": "^11.1.18",
-    "@aige/runtime": "0.1.0"
+    "@aige/runtime": "0.1.0",
+    "@aige/player": "0.1.0"
   },
   "devDependencies": {
     "@types/ws": "^8.18.1"

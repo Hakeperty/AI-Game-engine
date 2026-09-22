@@ -1,0 +1,17 @@
+{
+  "name": "@aige/player",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser player for exported AIGE games (runtime + renderer + DOM input/audio/HUD).",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/main.ts"
+  },
+  "dependencies": {
+    "@aige/core": "0.1.0",
+    "@aige/render": "0.1.0",
+    "@aige/runtime": "0.1.0",
+    "three": "^0.186.0"
+  }
+}

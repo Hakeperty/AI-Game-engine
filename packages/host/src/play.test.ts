@@ -80,6 +80,20 @@ describe('game_run_headless', () => {
     expect(res.errors.join('\n')).toMatch(/broken\.ts:4/);
   }, 60_000);
 
+  it('exports a standalone web build', async () => {
+    const { host, call } = await coinLevel();
+    await call('model_from_template', { template: 'coin', preview: false });
+    await call('component_update', { entity: 'Coin', type: 'MeshRenderer', props: { model: 'models/coin.model.ts' } });
+    const res = await call('export_web', { smokeTest: false, title: 'Test Game' });
+    expect(res.files.map((f: { name: string }) => f.name).sort()).toEqual(['game-data.js', 'index.html', 'player.js']);
+    const data = (await host.fs.read('dist/game-data.js'))!;
+    const game = JSON.parse(data.replace(/^window\.__AIGE_GAME__ = /, '').replace(/;\s*$/, ''));
+    expect(game.title).toBe('Test Game');
+    expect(Object.keys(game.models)).toHaveLength(1);
+    expect(game.meshKeys['scenes/main.scene.json']).toBeDefined();
+    expect((await host.fs.read('dist/index.html'))!).toContain('player.js');
+  }, 120_000);
+
   it('kills runaway scripts with a timeout', async () => {
     const { host, call } = await coinLevel();
     await call('script_write', {

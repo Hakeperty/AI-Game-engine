@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { CONVENTIONS, componentsDoc, DOC_TOPICS, MODELING, OVERVIEW, SCRIPTING, toolsDoc } from './docs.ts';
 import type { ProjectHost } from './host.ts';
 import { compileUserModule, runModule } from './sandbox.ts';
+import { exportWebCommand } from './export.ts';
 import { gameRunHeadless } from './play.ts';
 import { scriptingCommands } from './scripting.ts';
 
@@ -617,4 +618,5 @@ export const hostCommands = [
   apiDocs,
   ...scriptingCommands,
   gameRunHeadless,
+  exportWebCommand,
 ];
