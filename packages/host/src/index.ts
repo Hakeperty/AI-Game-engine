@@ -14,3 +14,5 @@ export * from './project-io.ts';
 export { PlaywrightBackend, type RenderBackend, renderPageBundle } from './render/playwright.ts';
 export { RenderService, type ScreenshotOptions } from './render/service.ts';
 export { compileUserModule, type CompiledModule, runInModuleContext, runModule, toScriptError } from './sandbox.ts';
+export { EDITOR_LOCK, type LocalApi, type LockInfo, readLiveLock, RemoteHostClient, startLocalApi } from './local-api.ts';
+export { type ClientMessage, HostEndpoint, type ModelAsset, type ServerMessage, type StateSnapshot } from './protocol.ts';

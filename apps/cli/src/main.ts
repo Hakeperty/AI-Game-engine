@@ -43,6 +43,7 @@ const { positionals, values } = parseArgs({
     views: { type: 'string' },
     json: { type: 'boolean' },
     into: { type: 'string' },
+    standalone: { type: 'boolean' },
     help: { type: 'boolean', short: 'h' },
   },
 });
@@ -94,8 +95,26 @@ async function main(): Promise<void> {
         workspaceDir: values.workspace ?? DEFAULT_WORKSPACE_DIR,
         ...(values['no-render'] ? { render: null } : {}),
       });
-      if (values.project) await ws.open(resolve(values.project));
-      const api = { tools: () => ws.tools(), call: (n: string, i: unknown) => ws.call(n, i, 'mcp') };
+      // If the editor is running, drive it (the user watches the game being built live).
+      const { readLiveLock, RemoteHostClient } = await import('@aige/host');
+      const lock = values.standalone ? null : readLiveLock();
+      let api: import('@aige/mcp').HostApi;
+      if (lock) {
+        const remote = await RemoteHostClient.connect(lock);
+        api = {
+          tools: () => remote.request({ type: 'tools' }),
+          call: async (name, input) => {
+            const res = await remote.request<{ __error?: import('@aige/core').ErrorInfo }>({ type: 'call', name, input, source: 'mcp' });
+            return res && typeof res === 'object' && '__error' in res && res.__error
+              ? { ok: false as const, error: res.__error }
+              : { ok: true as const, result: res };
+          },
+        };
+        process.stderr.write(`aige: attached to running editor (pid ${lock.pid})\n`);
+      } else {
+        if (values.project) await ws.open(resolve(values.project));
+        api = { tools: () => ws.tools(), call: (n: string, i: unknown) => ws.call(n, i, 'mcp') };
+      }
       const handle = serveStdio(() => createMcpServer(api), { onerror: (e) => process.stderr.write(`mcp error: ${e.message}\n`) });
       const shutdown = async () => {
         await handle.close().catch(() => undefined);

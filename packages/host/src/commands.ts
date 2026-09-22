@@ -3,12 +3,10 @@ import { join, resolve } from 'node:path';
 import {
   AigeError,
   type CommandBus,
-  canonicalJson,
   defineCommand,
   didYouMean,
   getScene,
   type ImageRef,
-  resolveEntity,
   toolDefinitions,
 } from '@aige/core';
 import * as modeling from '@aige/modeling';
@@ -18,6 +16,7 @@ import { z } from 'zod';
 import { CONVENTIONS, componentsDoc, DOC_TOPICS, MODELING, OVERVIEW, SCRIPTING, toolsDoc } from './docs.ts';
 import type { ProjectHost } from './host.ts';
 import { compileUserModule, runModule } from './sandbox.ts';
+import { scriptingCommands } from './scripting.ts';
 
 export interface HostServices {
   bus: CommandBus<HostServices>;
@@ -599,6 +598,5 @@ export const hostCommands = [
   renderScreenshot,
   sceneValidate,
   apiDocs,
+  ...scriptingCommands,
 ];
-
-export { canonicalJson, resolveEntity };
