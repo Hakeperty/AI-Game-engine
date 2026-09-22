@@ -55,11 +55,44 @@ export interface RecipeDef<P extends Record<string, ParamDef> = Record<string, P
   name?: string;
   description?: string;
   params?: P;
+  /** Seed used when none is given (default 1). */
+  defaultSeed?: number;
   build(params: ParamValues<P>, ctx: BuildContext): BuildResult;
 }
 
 export interface Recipe<P extends Record<string, ParamDef> = Record<string, ParamDef>> extends RecipeDef<P> {
   readonly __aige: 'model';
+}
+
+/**
+ * A copy of `recipe` with different parameter defaults (and optionally a new name/description).
+ * Used to make variants of templates: export default withDefaults(coin, { radius: 0.6, color: '#c0c0c0' }).
+ */
+export function withDefaults<P extends Record<string, ParamDef>>(
+  recipe: Recipe<P>,
+  defaults: Partial<Record<keyof P | 'seed', unknown>>,
+  meta: { name?: string; description?: string } = {},
+): Recipe<P> {
+  const params = { ...(recipe.params ?? {}) } as Record<string, ParamDef>;
+  let defaultSeed = recipe.defaultSeed;
+  for (const [key, value] of Object.entries(defaults)) {
+    if (key === 'seed') {
+      defaultSeed = Number(value);
+      continue;
+    }
+    const def = params[key];
+    if (!def) {
+      throw new Error(`Unknown parameter '${key}'. Parameters: ${Object.keys(params).join(', ') || '(none)'}, seed.`);
+    }
+    params[key] = { ...def, default: value } as ParamDef;
+  }
+  return {
+    ...recipe,
+    ...meta,
+    params: params as P,
+    ...(defaultSeed !== undefined ? { defaultSeed } : {}),
+    __aige: 'model',
+  };
 }
 
 /**
@@ -128,7 +161,7 @@ export function resolveParams(
       }
     }
   }
-  out.seed = Math.round(Number(overrides.seed ?? 1)) || 1;
+  out.seed = Math.round(Number(overrides.seed ?? recipe.defaultSeed ?? 1)) || 1;
   return out;
 }
 

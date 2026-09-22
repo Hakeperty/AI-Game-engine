@@ -31,17 +31,44 @@ AIGE is a TypeScript/Three.js game engine and procedural 3D modeler. Every actio
 | `apps/editor` | Electron editor |
 
 ## Quick start
+Requires Node 24 or newer.
+
 ```bash
 npm install
-npm run check          # lint + typecheck + tests
+npx playwright-core install chromium-headless-shell   # headless renderer for screenshots
+npm run check                                          # lint + typecheck + tests
+node apps/cli/bin/aige.mjs doctor                      # check GPU rendering + Ollama
+```
+
+## Use it from Claude Code (MCP)
+Inside this repo, the bundled `.mcp.json` registers the server automatically. Anywhere else, register it once:
+
+```bash
+claude mcp add aige -- node <path-to-repo>/apps/cli/bin/aige.mjs mcp
+```
+
+Then ask Claude something like *"Create an AIGE project called coin-quest and build a small 3D platformer where a blob collects coins."* Projects go in `~/AigeProjects` (change it with `--workspace <dir>`).
+
+**Claude Desktop:** add the same command to `claude_desktop_config.json` under `mcpServers`:
+
+```json
+{ "mcpServers": { "aige": { "command": "node", "args": ["<path-to-repo>/apps/cli/bin/aige.mjs", "mcp"] } } }
+```
+
+## CLI
+```bash
+aige new my-game                                  # scaffold a project
+aige call model_from_template '{"template":"tree"}' -p my-game --out tree.png
+aige screenshot -p my-game --views camera,iso --out shot.png
+aige tools                                        # list all tools
 ```
 
 ## Roadmap (v0.1)
 - [x] M0 Scaffold (monorepo, tooling, CI)
 - [x] M1 Core (schemas, command bus, undo/redo, replay)
-- [ ] M2 Modeling kernel + recipes
-- [ ] M3 Rendering + headless screenshots
-- [ ] M4 MCP server
+- [x] M2 Modeling kernel + recipes + 12 templates
+- [x] M3 Rendering + headless screenshots (GPU via ANGLE, SwiftShader fallback)
+- [x] M4 MCP server + CLI
 - [ ] M5 Runtime (physics, scripting, headless play-tests)
 - [ ] M6 Editor
 - [ ] M7 In-editor agent (Claude and Ollama)

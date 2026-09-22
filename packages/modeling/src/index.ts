@@ -54,6 +54,7 @@ export {
   p,
   type Recipe,
   resolveParams,
+  withDefaults,
 } from './recipe.ts';
 export { Sdf, sdf } from './sdf.ts';
 export { type MeshReport, type ModelReport, validateMesh, validateModel } from './validate.ts';

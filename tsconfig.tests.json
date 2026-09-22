@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["node"],
     "lib": ["ES2023", "DOM"],
-    "paths": { "aige/model": ["./packages/modeling/src/index.ts"] }
+    "paths": { "aige/model": ["./packages/modeling/src/index.ts"], "aige": ["./packages/runtime/src/api.ts"] }
   },
   "include": ["packages/*/src/**/*.test.ts", "apps/*/src/**/*.test.ts", "vitest.config.ts"]
 }

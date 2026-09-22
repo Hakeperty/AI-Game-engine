@@ -91,7 +91,7 @@ export const ProjectDoc = z.object({
   render: z.object({
     shadows: z.boolean().default(true),
     antialias: z.boolean().default(true),
-    toneMapping: z.enum(['none', 'aces', 'agx', 'neutral']).default('agx'),
+    toneMapping: z.enum(['none', 'aces', 'agx', 'neutral']).default('neutral'),
     exposure: z.number().positive().default(1),
   }),
   window: z.object({
