@@ -111,7 +111,11 @@ export const MaterialDoc = z.object({
   emissive: Color.default('#000000'),
   emissiveIntensity: z.number().min(0).default(1),
   opacity: z.number().min(0).max(1).default(1),
-  map: AssetPath.optional().describe('Color texture'),
+  map: AssetPath.optional().describe("Color texture, e.g. 'textures/bricks.png' (see texture_generate)"),
+  mapRepeat: z
+    .tuple([z.number(), z.number()])
+    .default([1, 1])
+    .describe('Texture tiling [u, v]; raise it on big surfaces (a 40 m ground wants ~[20, 20])'),
   normalMap: AssetPath.optional(),
   vertexColors: z.boolean().default(false),
   flatShading: z.boolean().default(false),

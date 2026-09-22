@@ -26,7 +26,7 @@ import {
   type WebGLRenderer,
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { type ModelCache, primitiveGeometry } from './assets.ts';
+import { type ModelCache, primitiveGeometry, TextureCache } from './assets.ts';
 
 export interface SceneBuildOptions {
   /** Entity id -> model cache key for MeshRenderers that use `model`. */
@@ -62,6 +62,7 @@ export class SceneRenderer {
   /** Rebuilds the whole three.js scene from the document. */
   async build(doc: SceneDoc, opts: SceneBuildOptions): Promise<void> {
     this.clear();
+    this.materialCache.clear();
     const s = doc.settings;
     const render = opts.project?.render;
     this.renderer.toneMapping =
@@ -195,9 +196,16 @@ export class SceneRenderer {
       vertexColors: doc?.vertexColors ?? false,
     });
     if (tint) m.color.multiply(new Color(tint));
+    if (doc?.map) {
+      const tex = this.textures.get(doc.map, doc.mapRepeat ?? [1, 1]);
+      if (tex) m.map = tex;
+    }
     this.materialCache.set(key, m);
     return m;
   }
+
+  /** Texture registry for material maps (fed by the editor or the headless renderer). */
+  readonly textures = new TextureCache();
 
   private environment(kind: 'studio' | 'outdoor'): import('three').Texture {
     let env = this.envCache.get(kind);

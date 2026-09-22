@@ -15,6 +15,8 @@ export interface SnapshotRequest {
   models?: Record<string, string>;
   /** entity id -> model key */
   meshKeys?: Record<string, string>;
+  /** texture path -> base64 PNG (for materials with a map) */
+  textures?: Record<string, string>;
   overlays?: { grid?: boolean; axes?: boolean; labels?: boolean; bounds?: boolean; dimensions?: boolean };
   /** Entity ids to frame (default: everything visible). */
   focus?: string[];
@@ -34,6 +36,8 @@ export interface SnapshotResult {
 /** Renders one or more labeled views of a scene into a single PNG (a "contact sheet"). */
 export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, models: ModelCache, req: SnapshotRequest): Promise<SnapshotResult> {
   for (const [key, glb] of Object.entries(req.models ?? {})) if (!models.has(key)) await models.add(key, glb);
+  for (const [path, png] of Object.entries(req.textures ?? {})) sr.textures.add(path, png);
+  await sr.textures.ready();
   await sr.build(req.scene, {
     meshKeys: req.meshKeys ?? {},
     materials: req.materials ?? {},

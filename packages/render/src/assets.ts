@@ -10,6 +10,9 @@ import {
   type Object3D,
   PlaneGeometry,
   SphereGeometry,
+  RepeatWrapping,
+  SRGBColorSpace,
+  Texture,
   TorusGeometry,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -137,5 +140,52 @@ export class ModelCache {
     if (!t) return null;
     const template = await t;
     return template.clone(true);
+  }
+}
+
+/** Material textures by project path. Sources are base64 PNGs (headless) or URLs (editor/player). */
+export class TextureCache {
+  private readonly images = new Map<string, HTMLImageElement>();
+  private readonly textures = new Map<string, Texture>();
+
+  /** Registers image data; the texture updates when the image finishes decoding. */
+  add(path: string, source: string): void {
+    const img = new Image();
+    img.src = source.startsWith('data:') || /^[a-z]+:/.test(source) ? source : `data:image/png;base64,${source}`;
+    this.images.set(path, img);
+    for (const [key, tex] of this.textures) {
+      if (key.startsWith(`${path}|`)) {
+        tex.image = img;
+        img.decode().then(() => (tex.needsUpdate = true), () => undefined);
+      }
+    }
+  }
+
+  has(path: string): boolean {
+    return this.images.has(path);
+  }
+
+  /** Waits until every registered image has decoded (headless renders call this before drawing). */
+  async ready(): Promise<void> {
+    await Promise.all([...this.images.values()].map((img) => img.decode().catch(() => undefined)));
+  }
+
+  get(path: string, repeat: [number, number]): Texture | null {
+    const img = this.images.get(path);
+    if (!img) return null;
+    const key = `${path}|${repeat[0]},${repeat[1]}`;
+    let tex = this.textures.get(key);
+    if (!tex) {
+      tex = new Texture(img);
+      tex.colorSpace = SRGBColorSpace;
+      tex.wrapS = RepeatWrapping;
+      tex.wrapT = RepeatWrapping;
+      tex.repeat.set(repeat[0], repeat[1]);
+      tex.anisotropy = 8;
+      if (img.complete && img.naturalWidth) tex.needsUpdate = true;
+      else img.decode().then(() => (tex!.needsUpdate = true), () => undefined);
+      this.textures.set(key, tex);
+    }
+    return tex;
   }
 }

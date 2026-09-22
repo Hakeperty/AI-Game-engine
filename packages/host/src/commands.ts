@@ -404,6 +404,32 @@ export const modelExportGlb = defineCommand({
   },
 });
 
+export const textureGenerate = defineCommand({
+  name: 'texture_generate',
+  group: 'material',
+  kind: 'action',
+  tier: 'extended',
+  description:
+    'Generate a tileable procedural texture PNG (textures/<name>.png) for material maps. Kinds: checker, noise, grid, bricks, stripes, dots, wood, marble. Then set it on a material: material_create {"name":"bricks","map":"textures/bricks.png","mapRepeat":[4,4]}. Example: {"name":"bricks","kind":"bricks","colorA":"#b5563c","colorB":"#d8cfc4","scale":6}',
+  input: z
+    .object({
+      name: z.string().regex(NAME_RE, 'Use letters, digits, - and _'),
+      kind: z.enum(['checker', 'noise', 'grid', 'bricks', 'stripes', 'dots', 'wood', 'marble']),
+      colorA: z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#ffffff'),
+      colorB: z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#808080'),
+      scale: z.number().positive().max(64).default(4).describe('Pattern repetitions across the texture'),
+      size: z.number().int().min(16).max(1024).default(256),
+      seed: z.number().int().default(7),
+    })
+    .strict(),
+  async run(ctx, input) {
+    const img = modeling.proceduralTexture(input);
+    const path = `textures/${input.name}.png`;
+    await host(ctx).fs.write(path, modeling.encodePng(img));
+    return { path, size: [img.width, img.height], usage: `{"map":"${path}","mapRepeat":[4,4]} in material_create` };
+  },
+});
+
 // ---------------------------------------------------------------------------------------------
 // Rendering & validation
 // ---------------------------------------------------------------------------------------------
@@ -595,6 +621,7 @@ export const hostCommands = [
   modelInfo,
   modelPreview,
   modelExportGlb,
+  textureGenerate,
   renderScreenshot,
   sceneValidate,
   apiDocs,

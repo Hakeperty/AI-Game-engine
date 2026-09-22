@@ -73,6 +73,17 @@ export class RenderService {
     return { models, meshKeys, warnings, infos };
   }
 
+  /** Texture files referenced by materials (base64 PNG by path). */
+  async collectTextures(state: ProjectState): Promise<Record<string, string>> {
+    const out: Record<string, string> = {};
+    for (const m of Object.values(state.materials)) {
+      if (!m.map || out[m.map]) continue;
+      const bytes = await this.ctx.fs.readBinary(m.map);
+      if (bytes) out[m.map] = toBase64(bytes);
+    }
+    return out;
+  }
+
   async screenshot(opts: ScreenshotOptions = {}): Promise<{ image: ImageRef; result: SnapshotResult; warnings: string[] }> {
     const state = this.ctx.state();
     const scene = opts.sceneDoc ?? getScene(state, opts.scene);
@@ -91,6 +102,7 @@ export class RenderService {
       if (interesting.length) focus = interesting.map((e) => e.id);
     }
     const { models, meshKeys, warnings } = await this.collectModels(scene);
+    const textures = await this.collectTextures(state);
     const width = opts.width ?? (views.length > 1 ? 1280 : 1024);
     const height = opts.height ?? (views.length === 2 ? 640 : views.length > 2 ? 1024 : 768);
     const req: SnapshotRequest = {
@@ -102,6 +114,7 @@ export class RenderService {
       materials: state.materials,
       models,
       meshKeys,
+      textures,
       overlays: { labels: opts.labels ?? true, grid: opts.grid ?? false },
       ...(focus?.length ? { focus } : {}),
       title: scene.name,
