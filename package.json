@@ -21,7 +21,8 @@
     "test:watch": "vitest",
     "aige": "node apps/cli/src/main.ts",
     "editor": "npm run dev -w @aige/editor",
-    "e2e:mcp": "node scripts/e2e-mcp.ts"
+    "e2e:mcp": "node scripts/e2e-mcp.ts",
+    "test:render": "node scripts/run-render-tests.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",

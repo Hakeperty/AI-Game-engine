@@ -13,7 +13,7 @@ export default defineConfig({
   },
   test: {
     include: ['packages/*/src/**/*.test.ts', 'packages/*/test/**/*.test.ts', 'apps/*/src/**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/*.render.test.ts'],
+    exclude: ['**/node_modules/**', ...(process.env.AIGE_RENDER_TESTS ? [] : ['**/*.render.test.ts'])],
     testTimeout: 30_000,
     hookTimeout: 60_000,
   },
