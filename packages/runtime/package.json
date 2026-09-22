@@ -1,0 +1,11 @@
+{
+  "name": "@aige/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Game runtime: world, behaviours, physics, input, audio, UI, scripting API.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

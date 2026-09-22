@@ -1,0 +1,15 @@
+node_modules/
+dist/
+out/
+coverage/
+*.log
+*.tsbuildinfo
+.aige/
+!examples/**/.aige/logs/
+.env
+.env.*
+temp/
+.DS_Store
+Thumbs.db
+test-results/
+playwright-report/

@@ -1,0 +1,11 @@
+{
+  "name": "@aige/render",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Three.js rendering: scene sync, default look, camera presets, contact sheets.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

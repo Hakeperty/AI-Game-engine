@@ -1,0 +1,19 @@
+{
+  "name": "@aige/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Isomorphic engine core: schemas, component registry, command bus with undo/redo and replayable logs.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0"
+  },
+  "dependencies": {
+    "immer": "^11.1.18",
+    "three": "^0.186.0",
+    "zod": "^4.6.5"
+  }
+}

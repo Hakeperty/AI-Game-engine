@@ -1,0 +1,32 @@
+{
+  "name": "aige-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AIGE - an AI-native game engine and 3D modeler, built so Claude or a local LLM can create games and models on its own.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "node scripts/typecheck.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "aige": "node apps/cli/src/main.ts",
+    "editor": "npm run dev -w @aige/editor",
+    "e2e:mcp": "node scripts/e2e-mcp.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@types/node": "^24.13.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}

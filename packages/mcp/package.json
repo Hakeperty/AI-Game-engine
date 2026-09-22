@@ -1,0 +1,11 @@
+{
+  "name": "@aige/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server exposing the AIGE tool registry to Claude Code, Claude Desktop and other MCP clients.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

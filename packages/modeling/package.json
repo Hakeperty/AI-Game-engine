@@ -1,0 +1,11 @@
+{
+  "name": "@aige/modeling",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Procedural modeling kernel: PolyMesh ops, booleans, SDF, UVs, materials, recipes, glTF IO.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

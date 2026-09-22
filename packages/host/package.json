@@ -1,0 +1,11 @@
+{
+  "name": "@aige/host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Node project host: file IO, asset pipeline, sandbox, headless runner, render backends, tool registry.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

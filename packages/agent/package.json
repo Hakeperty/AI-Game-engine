@@ -1,0 +1,11 @@
+{
+  "name": "@aige/agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI agent: Claude and OpenAI-compatible (Ollama) providers, agent loop, tool tiers.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
