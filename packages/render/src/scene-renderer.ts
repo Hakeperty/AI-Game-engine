@@ -110,6 +110,25 @@ export class SceneRenderer {
     this.objects.clear();
   }
 
+  /** Adds one entity (e.g. spawned at runtime). Its parent must already exist, or it goes to the root. */
+  async addEntity(e: Entity, opts: SceneBuildOptions): Promise<Object3D> {
+    const obj = await this.createEntityObject(e, opts);
+    const parent = e.parent ? this.objects.get(e.parent) : undefined;
+    (parent ?? this.scene).add(obj);
+    return obj;
+  }
+
+  /** Removes an entity and its descendants. */
+  removeEntity(id: string): void {
+    const obj = this.objects.get(id);
+    if (!obj) return;
+    obj.traverse((o) => {
+      const eid = o.userData.entityId as string | undefined;
+      if (eid) this.objects.delete(eid);
+    });
+    obj.removeFromParent();
+  }
+
   private async createEntityObject(e: Entity, opts: SceneBuildOptions): Promise<Object3D> {
     const obj = new Group();
     obj.name = e.name;

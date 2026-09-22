@@ -15,6 +15,7 @@
     "@aige/core": "0.1.0",
     "@aige/host": "0.1.0",
     "@aige/mcp": "0.1.0",
-    "@modelcontextprotocol/server": "^2.0.0"
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@aige/agent": "0.1.0"
   }
 }

@@ -44,6 +44,8 @@ const { positionals, values } = parseArgs({
     json: { type: 'boolean' },
     into: { type: 'string' },
     standalone: { type: 'boolean' },
+    provider: { type: 'string' },
+    'base-url': { type: 'string' },
     help: { type: 'boolean', short: 'h' },
   },
 });
@@ -180,6 +182,57 @@ async function main(): Promise<void> {
       const n = await host.bus.replay(log);
       await host.close();
       process.stdout.write(`Replayed ${n} commands into ${resolve(into)}\n`);
+      return;
+    }
+    case 'agent': {
+      // Run the in-editor agent headlessly: aige agent "make a spinning red cube" -p my-game --provider ollama
+      const prompt = rest.join(' ') || fail('aige agent "<what to build>" [-p project] [--provider anthropic|ollama] [--model id]');
+      const { Agent, createProvider, DEFAULT_ANTHROPIC_MODEL, DEFAULT_OLLAMA_BASE_URL } = await import('@aige/agent');
+      const { workspaceToolHost } = await import('@aige/host');
+      const ws = new Workspace({ workspaceDir: values.workspace ?? DEFAULT_WORKSPACE_DIR });
+      if (values.project) {
+        const dir = resolve(values.project);
+        if (existsSync(resolve(dir, 'project.json'))) await ws.open(dir);
+        else await ws.create(dir.split(/[\\/]/).pop()!, dir);
+      }
+      const providerKind = values.provider ?? (process.env.ANTHROPIC_API_KEY ? 'anthropic' : 'ollama');
+      const provider =
+        providerKind === 'anthropic'
+          ? createProvider({ kind: 'anthropic', model: values.model ?? DEFAULT_ANTHROPIC_MODEL })
+          : createProvider({ kind: 'openai-compat', baseURL: values['base-url'] ?? DEFAULT_OLLAMA_BASE_URL, model: values.model ?? 'qwen3.8:27b' });
+      let imageN = 0;
+      const agent = new Agent({
+        provider,
+        tools: workspaceToolHost(ws),
+        onEvent: (e) => {
+          switch (e.type) {
+            case 'text':
+              process.stdout.write(e.delta);
+              break;
+            case 'tool_start':
+              process.stdout.write(`\n\x1b[36m→ ${e.name}\x1b[0m ${JSON.stringify(e.input).slice(0, 160)}\n`);
+              break;
+            case 'tool_end':
+              process.stdout.write(`${e.ok ? '\x1b[32m✓' : '\x1b[31m✗'} ${e.name}\x1b[0m ${e.durationMs}ms ${(e.error?.message ?? e.summary).slice(0, 200)}\n`);
+              break;
+            case 'image': {
+              const file = resolve(`aige-agent-${++imageN}.png`);
+              writeFileSync(file, Buffer.from(e.image.data, 'base64'));
+              process.stdout.write(`  [image saved: ${file}]\n`);
+              break;
+            }
+            case 'plan':
+              process.stdout.write(`\n\x1b[33mplan:\x1b[0m ${e.items.map((i) => `${i.status === 'done' ? '✓' : i.status === 'in_progress' ? '▸' : '·'} ${i.text}`).join(' | ')}\n`);
+              break;
+            case 'usage':
+              process.stderr.write(`\x1b[2m[${e.model}: $${e.runCostUsd.toFixed(4)} this run]\x1b[0m\n`);
+              break;
+          }
+        },
+      });
+      const result = await agent.run(prompt);
+      process.stdout.write(`\n\n[done: ${JSON.stringify(result).slice(0, 300)}]\n`);
+      await ws.close();
       return;
     }
     case 'doctor': {
