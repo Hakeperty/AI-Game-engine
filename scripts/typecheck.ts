@@ -11,13 +11,20 @@ for (const group of ['packages', 'apps']) {
   const dir = join(root, group);
   if (!existsSync(dir)) continue;
   for (const name of readdirSync(dir)) {
-    for (const cfg of ['tsconfig.json', 'tsconfig.node.json', 'tsconfig.web.json']) {
+    for (const cfg of [
+      'tsconfig.json',
+      'tsconfig.node.json',
+      'tsconfig.web.json',
+      'templates/tsconfig.json',
+    ]) {
       const p = join(dir, name, cfg);
       if (existsSync(p)) projects.push(p);
     }
   }
 }
-if (existsSync(join(root, 'scripts', 'tsconfig.json'))) projects.push(join(root, 'scripts', 'tsconfig.json'));
+for (const extra of ['scripts/tsconfig.json', 'tsconfig.tests.json']) {
+  if (existsSync(join(root, extra))) projects.push(join(root, extra));
+}
 
 const tsc = join(root, 'node_modules', 'typescript', 'bin', 'tsc');
 

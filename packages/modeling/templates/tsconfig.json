@@ -1,0 +1,8 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [],
+    "paths": { "aige/model": ["../src/index.ts"] }
+  },
+  "include": ["./*.ts", "../../core/src/env.d.ts"]
+}

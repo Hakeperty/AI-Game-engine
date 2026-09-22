@@ -14,7 +14,7 @@
   },
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test",
-    "lint": "biome check .",
+    "lint": "biome lint .",
     "format": "biome check --write .",
     "typecheck": "node scripts/typecheck.ts",
     "test": "vitest run",
