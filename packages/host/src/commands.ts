@@ -12,10 +12,12 @@ import {
 import * as modeling from '@aige/modeling';
 import type { ParamDef } from '@aige/modeling';
 import type { ViewKind, ViewSpec } from '@aige/render';
+import { builtinBehaviours } from '@aige/runtime';
 import { z } from 'zod';
 import { CONVENTIONS, componentsDoc, DOC_TOPICS, MODELING, OVERVIEW, SCRIPTING, toolsDoc } from './docs.ts';
 import type { ProjectHost } from './host.ts';
 import { compileUserModule, runModule } from './sandbox.ts';
+import { gameRunHeadless } from './play.ts';
 import { scriptingCommands } from './scripting.ts';
 
 export interface HostServices {
@@ -473,19 +475,7 @@ export const renderScreenshot = defineCommand({
   },
 });
 
-const BUILTIN_SCRIPTS = [
-  'Rotator',
-  'Spinner',
-  'Bobber',
-  'PlayerController',
-  'FollowCamera',
-  'Collectible',
-  'HudText',
-  'Goal',
-  'Hazard',
-  'MovingPlatform',
-  'Lifetime',
-];
+const BUILTIN_SCRIPTS = Object.keys(builtinBehaviours);
 
 export const sceneValidate = defineCommand({
   name: 'scene_validate',
@@ -626,4 +616,5 @@ export const hostCommands = [
   sceneValidate,
   apiDocs,
   ...scriptingCommands,
+  gameRunHeadless,
 ];

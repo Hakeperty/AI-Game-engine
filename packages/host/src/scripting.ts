@@ -1,11 +1,11 @@
 import { spawn } from 'node:child_process';
 import { join, relative } from 'node:path';
-import { defineCommand } from '@aige/core';
+import { AigeError, defineCommand } from '@aige/core';
 import { z } from 'zod';
 import type { HostServices } from './commands.ts';
 import type { ProjectFs } from './fs.ts';
 import { ENGINE_ROOT, writeProjectSupportFiles } from './project-io.ts';
-import { compileUserModule } from './sandbox.ts';
+import { compileUserModule, runModule } from './sandbox.ts';
 
 export interface Diagnostic {
   file: string;
@@ -85,7 +85,16 @@ Example: {"name":"spinner","source":"import { Behaviour } from 'aige';\\nexport 
     await ctx.writeFile(path, input.source);
     const h = host(ctx);
     // Syntax/import errors fail the call (and roll the write back).
-    await compileUserModule({ entry: h.fs.abs(path), root: h.fs.root, virtuals: { aige: '__aigeRuntime' } });
+    const mod = await compileUserModule({ entry: h.fs.abs(path), root: h.fs.root, virtuals: { aige: '__aigeRuntime' } });
+    // The default export must be a Behaviour subclass.
+    const { api } = await import('@aige/runtime');
+    const { exports } = runModule(mod, { filename: path, globals: { __aigeRuntime: api }, timeoutMs: 2000 });
+    const cls = exports.default;
+    if (typeof cls !== 'function' || !(cls.prototype instanceof api.Behaviour)) {
+      throw new AigeError('INVALID_INPUT', `${path} must \`export default class <Name> extends Behaviour\` (import { Behaviour } from 'aige').`, {
+        hint: "import { Behaviour } from 'aige';\nexport default class Mover extends Behaviour { update(dt: number) { /* ... */ } }",
+      });
+    }
     const diagnostics = input.typecheck ? await typecheckProject(h.fs, { files: [path] }) : [];
     return {
       script: path,
