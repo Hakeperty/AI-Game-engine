@@ -1,0 +1,27 @@
+{
+  "seconds": 17,
+  "timeScale": 1,
+  "skipCutscenes": false,
+  "teleport": [
+    { "at": 0, "entity": "Milch", "position": [3, 0, -0.9], "yaw": 180 },
+    { "at": 0.8, "entity": "Milch", "position": [0, 0, 0], "yaw": 180 },
+    { "at": 4.0, "entity": "Milch", "position": [3, 0, -0.9], "yaw": 180 },
+    { "at": 5.0, "entity": "Milch", "position": [0, 0, 1], "yaw": 0 }
+  ],
+  "inputs": [
+    { "at": 0.3, "action": "interact", "type": "tap" },
+    { "at": 1.2, "action": "move_forward", "type": "down" },
+    { "at": 2.1, "action": "move_forward", "type": "up" },
+    { "at": 2.6, "action": "interact", "type": "tap" },
+    { "at": 3.2, "look": [300, 0] },
+    { "at": 4.4, "action": "interact", "type": "tap" },
+    { "at": 5.3, "action": "move_forward", "type": "down" },
+    { "at": 7.0, "action": "move_forward", "type": "up" },
+    { "at": 14.0, "action": "sprint", "type": "down" },
+    { "at": 14.0, "action": "move_forward", "type": "down" },
+    { "at": 15.2, "action": "move_forward", "type": "up" },
+    { "at": 15.2, "action": "sprint", "type": "up" }
+  ],
+  "probes": ["Milch", "CameraRig"],
+  "captureAt": [3]
+}

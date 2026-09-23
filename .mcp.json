@@ -2,7 +2,7 @@
   "mcpServers": {
     "aige": {
       "command": "node",
-      "args": ["apps/cli/bin/aige.mjs", "mcp"]
+      "args": ["apps/cli/bin/aige.mjs", "mcp", "--project", "games/sidle-of-milch"]
     }
   }
 }

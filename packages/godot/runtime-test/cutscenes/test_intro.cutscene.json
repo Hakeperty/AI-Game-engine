@@ -1,0 +1,77 @@
+{
+  "format": "aige.cutscene",
+  "version": 1,
+  "name": "test_intro",
+  "skippable": true,
+  "letterbox": true,
+  "returnControl": true,
+  "tracks": [
+    {
+      "type": "camera",
+      "keys": [
+        { "t": 0, "position": [2.4, 1.7, 5.8], "lookAt": "Milch", "fov": 45, "ease": "inOut" },
+        {
+          "t": 3,
+          "position": [1.2, 1.6, 5.0],
+          "lookAt": "Milch",
+          "fov": 38,
+          "ease": "inOut",
+          "focus": 2.2,
+          "aperture": 0.6
+        },
+        {
+          "t": 3.5,
+          "position": [-1.5, 1.5, 1.5],
+          "lookAt": [0, 1.2, 4],
+          "fov": 50,
+          "cut": true,
+          "shake": 0.3
+        }
+      ]
+    },
+    { "type": "animation", "actor": "Milch", "clips": [{ "t": 0, "clip": "look_around", "fade": 0.3 }] },
+    {
+      "type": "move",
+      "actor": "Milch",
+      "keys": [
+        { "t": 0.5, "position": [0, 0, 2.8], "ease": "linear" },
+        { "t": 2.5, "position": [0, 0, 3.6], "rotation": [0, 20, 0], "ease": "inOut" }
+      ]
+    },
+    { "type": "voice", "clips": [{ "t": 0.3, "line": "milch_wake_1", "actor": "Milch" }] },
+    { "type": "subtitle", "items": [{ "t": 3.2, "duration": 2, "text": "(thunder in the distance)" }] },
+    { "type": "sound", "clips": [{ "t": 3.4, "sfx": "thunder", "volume": 0.9 }] },
+    {
+      "type": "fx",
+      "items": [
+        { "t": 0, "effect": "vignette", "to": 0.5, "duration": 1.5 },
+        { "t": 3.4, "effect": "flash", "to": 0.9, "duration": 0.8 },
+        { "t": 3.4, "effect": "shake", "to": 0.4, "duration": 1 },
+        { "t": 4.0, "effect": "heartbeat", "to": 0.6, "duration": 0.5 },
+        { "t": 4.0, "effect": "heartRate", "to": 95, "duration": 0.1 },
+        { "t": 5.2, "effect": "fade", "to": 1, "duration": 0.6 },
+        { "t": 5.8, "effect": "fade", "to": 0, "duration": 0.6 },
+        { "t": 5.8, "effect": "heartbeat", "to": 0, "duration": 0.5 },
+        { "t": 5.8, "effect": "vignette", "to": 0, "duration": 0.8 }
+      ]
+    },
+    {
+      "type": "light",
+      "items": [
+        { "t": 3.4, "entity": "Lamp", "intensity": 0.2, "duration": 0.2 },
+        { "t": 4.5, "entity": "Lamp", "intensity": 1.4, "duration": 1.0, "color": "#ffd9a0" }
+      ]
+    },
+    {
+      "type": "event",
+      "items": [
+        { "t": 2.0, "setFlag": "heard_thunder" },
+        { "t": 3.4, "emit": "lightning" },
+        { "t": 4.5, "give": "knife" },
+        { "t": 5.0, "objective": "Search the kitchen" },
+        { "t": 5.5, "emit": "env:res://environments/morning.tres" },
+        { "t": 5.6, "emit": "test_intro_done" }
+      ]
+    }
+  ]
+}

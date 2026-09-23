@@ -16,6 +16,8 @@ import {
   TorusGeometry,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { hasSkin } from './pose.ts';
 
 /** Unit-size built-in primitives, matching the MeshRenderer 'primitive' docs. */
 const primitiveCache = new Map<string, BufferGeometry>();
@@ -139,7 +141,9 @@ export class ModelCache {
     const t = this.templates.get(key);
     if (!t) return null;
     const template = await t;
-    return template.clone(true);
+    // skinned meshes need their skeleton rebound to the cloned bones
+    if (template.userData.skinned === undefined) template.userData.skinned = hasSkin(template);
+    return template.userData.skinned ? cloneSkinned(template) : template.clone(true);
   }
 }
 

@@ -42,9 +42,11 @@ export const HUMANOID_BONES = [
   'thigh_l',
   'shin_l',
   'foot_l',
+  'toe_l',
   'thigh_r',
   'shin_r',
   'foot_r',
+  'toe_r',
 ] as const;
 export type HumanoidBone = (typeof HUMANOID_BONES)[number];
 
@@ -72,16 +74,18 @@ export const HUMANOID_PARENTS: Record<HumanoidBone, HumanoidBone | null> = {
   thigh_l: 'hips',
   shin_l: 'thigh_l',
   foot_l: 'shin_l',
+  toe_l: 'foot_l',
   thigh_r: 'hips',
   shin_r: 'thigh_r',
   foot_r: 'shin_r',
+  toe_r: 'foot_r',
 };
 
 /** Bone masks for layered clips (e.g. hold_item on the right arm while walking). */
 export const BONE_MASKS = {
   full: [...HUMANOID_BONES] as string[],
-  upper: HUMANOID_BONES.filter((b) => !/^(hips|thigh|shin|foot)/.test(b)) as string[],
-  lower: ['hips', 'thigh_l', 'shin_l', 'foot_l', 'thigh_r', 'shin_r', 'foot_r'],
+  upper: HUMANOID_BONES.filter((b) => !/^(hips|thigh|shin|foot|toe)/.test(b)) as string[],
+  lower: ['hips', 'thigh_l', 'shin_l', 'foot_l', 'toe_l', 'thigh_r', 'shin_r', 'foot_r', 'toe_r'],
   head: ['neck', 'head', 'jaw'],
   arms: HUMANOID_BONES.filter((b) => /^(shoulder|upperarm|forearm|hand|fingers|thumb)/.test(b)) as string[],
   arm_l: ['shoulder_l', 'upperarm_l', 'forearm_l', 'hand_l', 'fingers_l', 'fingertips_l', 'thumb_l'],
@@ -150,6 +154,8 @@ export function referenceSkeleton(): SkeletonInfo {
       { name: `thigh_${s}`, parent: 'hips', position: [0.09 * side, 0.925, 0.0] },
       { name: `shin_${s}`, parent: `thigh_${s}`, position: [0.09 * side, 0.5, 0.0] },
       { name: `foot_${s}`, parent: `shin_${s}`, position: [0.09 * side, 0.08, 0.0] },
+      // ball of the foot (toe bend line)
+      { name: `toe_${s}`, parent: `foot_${s}`, position: [0.1 * side, 0.02, 0.135] },
     );
   }
   return { joints };

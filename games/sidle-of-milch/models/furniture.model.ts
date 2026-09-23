@@ -95,12 +95,12 @@ export default defineModel({
         const mattress = roundedBox({ size: [w - 0.06, 0.18, l - 0.1], radius: 0.06, center: [0, 0.47, 0] })
           .subdivide(1)
           .displace({ amount: 0.015, scale: 3, seed: rng.int(1, 999) });
+        // Blanket thrown back toward the foot of the bed, bunched into a roll where he pushed it off.
         const blanket = sdf
-          .box([w * 0.5, 0.05, l * 0.28], 0.04)
-          .translate([0.02, 0.58, l * 0.16])
-          .union(sdf.capsule([-w * 0.45, 0.6, -0.05], [w * 0.45, 0.62, -0.1], 0.07), 0.08)
-          .displace((q) => Math.sin(q[0] * 13) * 0.012 + Math.sin(q[2] * 9 + q[0] * 4) * 0.015)
-          .mesh({ detail: 'low' });
+          .box([w * 1.0, 0.07, l * 0.56], [0.02, 0.58, l * 0.16], 0.03)
+          .smoothUnion(sdf.capsule([-w * 0.45, 0.61, -0.1], [w * 0.47, 0.63, -0.14], 0.075), 0.08)
+          .displaceBy((q) => Math.sin(q[0] * 13) * 0.012 + Math.sin(q[2] * 9 + q[0] * 4) * 0.015, 0.03)
+          .mesh({ detail: 'medium' });
         const pillow = roundedBox({
           size: [w * 0.62, 0.12, 0.38],
           radius: 0.06,
@@ -375,9 +375,9 @@ export default defineModel({
         const coats = [-0.3, 0, 0.3].map((x, i) =>
           sdf
             .capsule([x, 1.55, 0.09], [x + rng.range(-0.02, 0.02), 0.75 + i * 0.05, 0.1], 0.13 + i * 0.015)
-            .union(sdf.sphere([x, 1.52, 0.1], 0.16), 0.08)
-            .scale([1, 1, 0.55])
-            .displace((q) => Math.sin(q[1] * 18 + x * 7) * 0.012)
+            .smoothUnion(sdf.sphere(0.16, [x, 1.52, 0.1]), 0.08)
+            .stretch([1, 1, 0.55])
+            .displaceBy((q) => Math.sin(q[1] * 18 + x * 7) * 0.012, 0.012)
             .mesh({ detail: 'low' })
             .material({ color: ['#4a4038', '#3c4148', '#5a3e3a'][i]!, roughness: 1 }),
         );
@@ -433,5 +433,6 @@ export default defineModel({
         }).setCollider({ shape: 'box', size: [w, h, d], offset: [0, h / 2, 0] });
       }
     }
+    throw new Error(`Unknown furniture kind '${kind}'.`);
   },
 });

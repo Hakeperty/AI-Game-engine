@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/poly_wool_herringbone/poly_wool_herringbone_diff_1k.jpg",
+  "mapRepeat": [3.704, 3.571],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/poly_wool_herringbone/poly_wool_herringbone_nor_gl_1k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/poly_wool_herringbone/poly_wool_herringbone_arm_1k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

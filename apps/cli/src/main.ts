@@ -20,13 +20,15 @@ const USAGE = `aige: AI-native game engine
 Usage:
   aige editor [--project <dir>]
   aige mcp [--project <dir>] [--workspace <dir>] [--no-render] [--standalone]
-  aige agent "<what to build>" [-p <dir>] [--provider anthropic|ollama] [--model <id>]
+  aige agent "<what to build>" [-p <dir>] [--provider anthropic|ollama|arcflare] [--model <id>] [--base-url <url>]
   aige new <name> [--dir <dir>] [--template basic|empty]
   aige call <tool> [json-input] [--project <dir>] [--out <file.png>]
   aige screenshot [--project <dir>] [--model <path>] [--views camera,iso] [--out shot.png]
   aige tools [--json]
   aige replay --project <dir> --into <newDir>
   aige doctor
+  aige godot setup|status|export|open [-p <dir>]
+  aige tts setup|status|stop
 
 Register with Claude Code:
   claude mcp add aige -- node ${resolve(import.meta.dirname, '..', 'bin', 'aige.mjs').replaceAll('\\', '/')} mcp
@@ -211,6 +213,54 @@ async function main(): Promise<void> {
       process.stdout.write(`Replayed ${n} commands into ${resolve(into)}\n`);
       return;
     }
+    case 'godot': {
+      // Godot 4 .NET game runtime: aige godot setup | status | export | open
+      const sub = rest[0] ?? 'status';
+      const { GODOT_DIR, GODOT_DOWNLOAD, godotExe, godotInstalled } = await import('@aige/host');
+      if (sub === 'setup') {
+        if (godotInstalled()) {
+          process.stdout.write(`Godot is already installed: ${godotExe()}\n`);
+          return;
+        }
+        const { mkdirSync } = await import('node:fs');
+        const { spawnSync } = await import('node:child_process');
+        mkdirSync(GODOT_DIR, { recursive: true });
+        const zip = resolve(GODOT_DIR, 'godot.zip');
+        process.stdout.write(`Downloading ${GODOT_DOWNLOAD} ...\n`);
+        const res = await fetch(GODOT_DOWNLOAD);
+        if (!res.ok) fail(`Download failed (${res.status}).`);
+        writeFileSync(zip, new Uint8Array(await res.arrayBuffer()));
+        if (spawnSync('tar', ['-xf', zip, '-C', GODOT_DIR], { stdio: 'inherit' }).status !== 0)
+          fail('Unzip failed.');
+        (await import('node:fs')).rmSync(zip);
+        if (spawnSync('dotnet', ['--version'], { encoding: 'utf8' }).status !== 0)
+          process.stdout.write(
+            'Note: the .NET SDK (8 or newer) is needed to build C# games: https://dotnet.microsoft.com/download\n',
+          );
+        process.stdout.write(`Godot ready: ${godotExe()}\n`);
+        return;
+      }
+      if (sub === 'status') {
+        process.stdout.write(
+          `${JSON.stringify({ installed: godotInstalled(), exe: godotExe() }, null, 2)}\n`,
+        );
+        return;
+      }
+      if (sub === 'export' || sub === 'open') {
+        const host = await ProjectHost.open(projectDir(), { render: null });
+        try {
+          printResult(
+            await host.call(sub === 'export' ? 'godot_export' : 'godot_open', {}, 'cli'),
+            values.out,
+          );
+        } finally {
+          await host.close();
+        }
+        return;
+      }
+      fail(`Unknown: aige godot ${sub} (use setup, status, export or open)`);
+      return;
+    }
     case 'tts': {
       // Local Qwen3-TTS voice engine: aige tts setup | status | stop
       const sub = rest[0] ?? 'status';
@@ -269,7 +319,7 @@ async function main(): Promise<void> {
           ttsPython(),
           [
             '-c',
-            'from huggingface_hub import snapshot_download as d\nfor m in ["Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign","Qwen/Qwen3-TTS-12Hz-1.7B-Base","openai/whisper-small.en"]: print(d(m))',
+            'from huggingface_hub import snapshot_download as d\nfor m in ["Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign","Qwen/Qwen3-TTS-12Hz-1.7B-Base","openai/whisper-small.en","microsoft/wavlm-base-plus-sv"]: print(d(m))',
           ],
           { stdio: 'inherit' },
         );
@@ -306,7 +356,7 @@ async function main(): Promise<void> {
       // Run the in-editor agent headlessly: aige agent "make a spinning red cube" -p my-game --provider ollama
       const prompt =
         rest.join(' ') ||
-        fail('aige agent "<what to build>" [-p project] [--provider anthropic|ollama] [--model id]');
+        fail('aige agent "<what to build>" [-p project] [--provider anthropic|ollama|arcflare] [--model id]');
       const { Agent, createProvider, DEFAULT_ANTHROPIC_MODEL, DEFAULT_OLLAMA_BASE_URL } = await import(
         '@aige/agent'
       );
@@ -318,14 +368,25 @@ async function main(): Promise<void> {
         else await ws.create(dir.split(/[\\/]/).pop()!, dir);
       }
       const providerKind = values.provider ?? (process.env.ANTHROPIC_API_KEY ? 'anthropic' : 'ollama');
-      const provider =
-        providerKind === 'anthropic'
-          ? createProvider({ kind: 'anthropic', model: values.model ?? DEFAULT_ANTHROPIC_MODEL })
-          : createProvider({
-              kind: 'openai-compat',
-              baseURL: values['base-url'] ?? DEFAULT_OLLAMA_BASE_URL,
-              model: values.model ?? 'qwen3.8:27b',
-            });
+      let provider: ReturnType<typeof createProvider>;
+      if (providerKind === 'anthropic') {
+        provider = createProvider({ kind: 'anthropic', model: values.model ?? DEFAULT_ANTHROPIC_MODEL });
+      } else if (providerKind === 'arcflare') {
+        // ArcFlare (github.com/Hakeperty/ArcFlare-Code) serves local GGUF models through llama-server's
+        // OpenAI-compatible API; its port is in ~/.arcflare/server.json.
+        const baseURL = values['base-url'] ?? process.env.ARCFLARE_URL ?? arcflareBaseUrl();
+        const model = values.model ?? (await firstServedModel(baseURL));
+        if (!model)
+          fail(`No model is loaded in ArcFlare at ${baseURL}. Start one with \`arcflare\`, or pass --model.`);
+        process.stderr.write(`aige: using ArcFlare model '${model}' at ${baseURL}\n`);
+        provider = createProvider({ kind: 'openai-compat', baseURL, model });
+      } else {
+        provider = createProvider({
+          kind: 'openai-compat',
+          baseURL: values['base-url'] ?? DEFAULT_OLLAMA_BASE_URL,
+          model: values.model ?? 'qwen3.8:27b',
+        });
+      }
       let imageN = 0;
       const agent = new Agent({
         provider,
@@ -398,3 +459,25 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => fail(err instanceof Error ? err.message : String(err)));
+
+/** ArcFlare's OpenAI-compatible endpoint from ~/.arcflare/server.json (default port 11434). */
+function arcflareBaseUrl(): string {
+  const home =
+    process.env.ARCFLARE_HOME ?? resolve(process.env.USERPROFILE ?? process.env.HOME ?? '', '.arcflare');
+  try {
+    const info = JSON.parse(readFileSync(resolve(home, 'server.json'), 'utf8')) as { port?: number };
+    return `http://127.0.0.1:${info.port ?? 11434}/v1`;
+  } catch {
+    return 'http://127.0.0.1:11434/v1';
+  }
+}
+
+async function firstServedModel(baseURL: string): Promise<string | undefined> {
+  try {
+    const res = await fetch(`${baseURL.replace(/\/$/, '')}/models`, { signal: AbortSignal.timeout(4000) });
+    const j = (await res.json()) as { data?: { id: string }[] };
+    return j.data?.[0]?.id;
+  } catch {
+    return undefined;
+  }
+}

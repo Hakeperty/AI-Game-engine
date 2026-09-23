@@ -1,0 +1,6 @@
+.godot/
+bin/
+obj/
+addons/
+*.report.json
+shots/

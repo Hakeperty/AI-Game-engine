@@ -1,0 +1,16 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#aa9878",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "mapRepeat": [1, 1],
+  "metalness": 0,
+  "normalScale": 1,
+  "opacity": 1,
+  "roughness": 0.6,
+  "vertexColors": false
+}

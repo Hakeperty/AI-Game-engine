@@ -2,7 +2,10 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { AigeError, canonicalJson, createMaterialDoc, defineCommand } from '@aige/core';
-import { NodeIO } from '@gltf-transform/core';
+import { type Document, NodeIO, type Primitive } from '@gltf-transform/core';
+import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
+import { compactPrimitive, dedup, prune, simplifyPrimitive, weld } from '@gltf-transform/functions';
+import { MeshoptSimplifier } from 'meshoptimizer';
 import { z } from 'zod';
 import type { ProjectHost } from '../host.ts';
 
@@ -131,7 +134,7 @@ export const assetFetch = defineCommand({
   kind: 'mutation',
   tier: 'core',
   description: `Download a Poly Haven CC0 asset into the project (and credit it in CREDITS.md).
-- texture: color, normal and packed AO/roughness/metal maps into textures/polyhaven/<id>/, plus materials/<name>.material.json ready for MeshRenderer.material or MeshRenderer.materials (per part). Set mapRepeat for big surfaces.
+- texture: color, normal and packed AO/roughness/metal maps into textures/polyhaven/<id>/, plus materials/<name>.material.json ready for MeshRenderer.material or MeshRenderer.materials (per part), tiled at real-world scale for meter UVs.
 - hdri: an equirectangular .hdr sky into textures/hdri/ for Environment lighting and reflections.
 - model: a glTF model converted to models/polyhaven/<id>.glb for MeshRenderer.model.
 Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"floor_old_wood","repeat":[2,2]}`,
@@ -150,9 +153,20 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
         .describe('Material name for textures (default: the id)'),
       repeat: z
         .tuple([z.number().positive(), z.number().positive()])
-        .default([1, 1])
-        .describe('Texture tiling for the material'),
+        .optional()
+        .describe(
+          'Texture tiling. Default: real-world scale for meter UVs (1 / texture size in m), which matches uvBox(1) in recipes and the box UVs the Godot export generates',
+        ),
       displacement: z.boolean().default(false).describe('Also download the height map (textures only)'),
+      maxTriangles: z
+        .number()
+        .int()
+        .min(1000)
+        .max(2_000_000)
+        .default(80_000)
+        .describe(
+          'Models: game-ready triangle budget (scans are often millions of triangles); foliage cards are thinned, solid parts simplified',
+        ),
     })
     .strict(),
   async run(ctx, input) {
@@ -191,9 +205,15 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
       if (!saved.color) throw new AigeError('NOT_FOUND', `Texture '${input.id}' has no color map at ${res}.`);
       const name = input.name ?? input.id;
       const matPath = `materials/${name}.material.json`;
+      const meters = info.dimensions?.map((d) => Math.round(d / 10) / 100) as [number, number] | undefined;
+      const repeat =
+        input.repeat ??
+        (meters
+          ? (meters.map((m) => Math.round((1 / Math.max(m, 0.05)) * 1000) / 1000) as [number, number])
+          : [1, 1]);
       const doc = createMaterialDoc({
         map: saved.color,
-        mapRepeat: input.repeat,
+        mapRepeat: repeat,
         ...(saved.normal ? { normalMap: saved.normal } : {}),
         ...(saved.orm ? { ormMap: saved.orm, roughness: 1, metalness: 1 } : { roughness: 0.85 }),
       });
@@ -202,9 +222,8 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
       return {
         material: matPath,
         maps: saved,
-        size: info.dimensions
-          ? `${info.dimensions[0] / 1000} x ${info.dimensions[1] / 1000} m real-world`
-          : undefined,
+        size: meters ? `${meters[0]} x ${meters[1]} m real-world` : undefined,
+        mapRepeat: repeat,
         next: `component_update {"entity":"...","type":"MeshRenderer","props":{"material":"${matPath}"}}`,
       };
     }
@@ -230,8 +249,9 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
         await mkdir(dirname(out), { recursive: true });
         await writeFile(out, await download(inc.url));
       }
-      const io = new NodeIO();
+      const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
       const doc = await io.read(gltfPath);
+      const opt = await optimizeForGame(doc, input.maxTriangles);
       const glb = await io.writeBinary(doc);
       const path = `models/polyhaven/${input.id}.glb`;
       await host.fs.write(path, glb);
@@ -239,6 +259,7 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
       return {
         model: path,
         bytes: glb.byteLength,
+        triangles: opt,
         next: `entity_create {"name":"${info.name}","components":[{"type":"MeshRenderer","model":"${path}"}]}`,
       };
     } finally {
@@ -248,3 +269,55 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
 });
 
 export const assetCommands = [assetSearch, assetFetch];
+
+const triCount = (p: Primitive) => {
+  const idx = p.getIndices();
+  return Math.floor((idx ? idx.getCount() : (p.getAttribute('POSITION')?.getCount() ?? 0)) / 3);
+};
+
+/**
+ * Makes a scanned model game-ready: foliage (alpha-textured cards) is thinned by dropping whole cards and
+ * switched to alpha-clip; solid parts are simplified with meshoptimizer. Returns before/after triangle counts.
+ */
+async function optimizeForGame(
+  doc: Document,
+  maxTriangles: number,
+): Promise<{ before: number; after: number }> {
+  const prims = doc
+    .getRoot()
+    .listMeshes()
+    .flatMap((m) => m.listPrimitives());
+  const before = prims.reduce((n, p) => n + triCount(p), 0);
+  for (const p of prims) {
+    const mat = p.getMaterial();
+    if (mat && mat.getAlphaMode() === 'BLEND' && /leaf|leaves|foliage|grass|alpha/i.test(mat.getName())) {
+      mat.setAlphaMode('MASK').setAlphaCutoff(0.5);
+    }
+  }
+  if (before <= maxTriangles) return { before, after: before };
+  const ratio = maxTriangles / before;
+  await MeshoptSimplifier.ready;
+  await doc.transform(weld());
+  for (const p of prims) {
+    const foliage = p.getMaterial()?.getAlphaMode() === 'MASK';
+    if (foliage) {
+      // keep whole cards: triangles come in pairs (quads); keep a pair when its hash falls under the ratio
+      const idx = p.getIndices();
+      if (!idx) continue;
+      const src = idx.getArray()!;
+      const keep: number[] = [];
+      const keepRatio = Math.min(1, ratio * 1.6);
+      for (let t = 0; t + 5 < src.length; t += 6) {
+        const h = Math.sin((t / 6) * 12.9898) * 43758.5453;
+        if (h - Math.floor(h) < keepRatio) for (let k = 0; k < 6; k++) keep.push(src[t + k]!);
+      }
+      idx.setArray(new Uint32Array(keep));
+      compactPrimitive(p);
+    } else {
+      simplifyPrimitive(p, { simplifier: MeshoptSimplifier, ratio: Math.min(1, ratio * 0.8), error: 0.01 });
+    }
+  }
+  await doc.transform(dedup(), prune());
+  const after = prims.reduce((n, p) => n + triCount(p), 0);
+  return { before, after };
+}

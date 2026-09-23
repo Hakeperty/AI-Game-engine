@@ -1,0 +1,19 @@
+{
+  "name": "@aige/godot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Exports AIGE games to Godot 4 .NET projects (C# game code) and ships the AIGE C# runtime for Godot.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@aige/core": "0.1.0",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/three": "^0.186.0"
+  }
+}

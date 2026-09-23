@@ -4,7 +4,7 @@
 import './fluent.ts';
 
 export { hull, initModeling, intersect, modelingReady, subtract, union } from './boolean.ts';
-export { exportGlb, importGlb } from './export/gltf.ts';
+export { exportGlb, importGlb, readGlbSkeleton } from './export/gltf.ts';
 export { type MeshData, type MeshPartData, type MeshPrimitive, toMeshData } from './export/meshdata.ts';
 export {
   type Branch,
@@ -38,7 +38,18 @@ export {
   materials,
 } from './material.ts';
 export * from './math.ts';
-export { type ColliderHint, Model, type ModelPart, model, type Socket, toModel } from './model.ts';
+export {
+  type ColliderHint,
+  type Joint,
+  Model,
+  type ModelAnimation,
+  type ModelPart,
+  model,
+  type PartSkin,
+  type Skeleton,
+  type Socket,
+  toModel,
+} from './model.ts';
 export { Noise } from './noise.ts';
 export * from './ops/deform.ts';
 export {
@@ -88,4 +99,25 @@ export { DETAIL_RESOLUTION, type SdfDetail, type SdfMeshOptions } from './sdf-me
 export { type MeshReport, type ModelReport, validateMesh, validateModel } from './validate.ts';
 
 /** Bump when kernel output changes so cached model builds are invalidated. */
-export const KERNEL_VERSION = 2;
+export const KERNEL_VERSION = 4;
+export {
+  type Age,
+  type Anatomy,
+  type BodyParams,
+  computeAnatomy,
+  type HeadShape,
+  type Sex,
+} from './character/anatomy.ts';
+export { builtinAnimations, builtinClipAliases, clipToModelAnimation } from './character/animation.ts';
+export type { BottomKind, ShoesKind, TopKind } from './character/clothing.ts';
+export type { HairStyle } from './character/hair.ts';
+export {
+  HUMANOID_PRESETS,
+  type HumanoidOptions,
+  type HumanoidPreset,
+  humanoid,
+  humanoidRecipe,
+  humanoidWeightBones,
+  resolveHumanoidOptions,
+} from './character/humanoid.ts';
+export { computeSkin, type SkinOptions, type WeightBone } from './character/skinning.ts';

@@ -1,4 +1,5 @@
 export { ModelCache, primitiveGeometry, TextureCache } from './assets.ts';
+export { animatorPoseState, applyPoseState, hasSkin } from './pose.ts';
 export { applyTransform, type SceneBuildOptions, SceneRenderer } from './scene-renderer.ts';
 export { type SnapshotRequest, type SnapshotResult, snapshot } from './snapshot.ts';
 export {

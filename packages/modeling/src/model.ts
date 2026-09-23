@@ -32,6 +32,14 @@ export interface PartSkin {
 /** Keyframed animation for glTF export: channels target joints by name, values are final local transforms. */
 export interface ModelAnimation {
   name: string;
+  /** Whether the clip is meant to loop (glTF has no loop flag; exported in the root node's extras). */
+  loop?: boolean;
+  /** Seconds (defaults to the last key time). */
+  duration?: number;
+  /** One-shot clips: clip to continue with when this one ends. */
+  next?: string;
+  /** Named markers (seconds). */
+  events?: { t: number; name: string }[];
   channels: {
     joint: string;
     path: 'rotation' | 'translation';
@@ -70,6 +78,8 @@ export class Model {
   skeleton: Skeleton | null = null;
   /** Optional keyframed animations exported as glTF animations (skinned models). */
   animations: ModelAnimation[] = [];
+  /** Alternative clip names -> animation name (exported in extras so runtimes can resolve story vocabulary). */
+  clipAliases: Record<string, string> = {};
 
   /** Adds a part. Names must be unique; duplicates get a numeric suffix. */
   add(mesh: PolyMesh, name?: string, skin?: PartSkin): this {

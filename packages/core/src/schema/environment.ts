@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Color } from './common.ts';
+import { AssetPath, Color } from './common.ts';
 import { defineComponent } from './components.ts';
 
 /**
@@ -46,6 +46,31 @@ export const Environment = defineComponent({
     tint: z.number().min(-1).max(1).default(0).describe('-1 = green, +1 = magenta'),
     vignette: z.number().min(0).max(1).default(0.25),
     grain: z.number().min(0).max(1).default(0.12).describe('Film grain amount'),
+    hdri: AssetPath.optional().describe(
+      "Equirectangular .hdr sky for lighting and reflections (asset_fetch kind 'hdri'); overrides `sky`",
+    ),
+    hdriRotation: z.number().default(0).describe('Sky rotation around Y in degrees'),
+    skyEnergy: z.number().min(0).max(16).default(1).describe('Brightness of the sky/HDRI'),
+    ambient: z.number().min(0).max(8).default(1).describe('Ambient (sky) light strength'),
+    gi: z
+      .enum(['none', 'sdfgi'])
+      .default('sdfgi')
+      .describe('Real-time global illumination (Godot SDFGI): light bouncing off walls and floors'),
+    ssil: z.boolean().default(true).describe('Screen-space indirect light (subtle color bleeding)'),
+    autoExposure: z
+      .number()
+      .min(0)
+      .max(1)
+      .default(0.5)
+      .describe('Eye adaptation: dark rooms slowly brighten, bright ones darken (0 = off)'),
+    volumetricFog: z
+      .number()
+      .min(0)
+      .max(1)
+      .default(0)
+      .describe(
+        'Volumetric fog density: visible light beams and haze around lights (0 = off, 0.02 = dusty room)',
+      ),
     lightShafts: z
       .number()
       .min(0)

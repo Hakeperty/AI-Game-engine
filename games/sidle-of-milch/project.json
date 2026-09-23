@@ -32,10 +32,10 @@
     "shadows": true,
     "toneMapping": "neutral"
   },
-  "startScene": "scenes/main.scene.json",
+  "startScene": "scenes/house.scene.json",
   "window": {
     "height": 720,
-    "title": "sidle-of-milch",
+    "title": "The Sidle of Milch",
     "width": 1280
   }
 }

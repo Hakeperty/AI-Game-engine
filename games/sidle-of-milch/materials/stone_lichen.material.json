@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/lichen_rock/lichen_rock_diff_1k.jpg",
+  "mapRepeat": [0.5, 0.5],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/lichen_rock/lichen_rock_nor_gl_1k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/lichen_rock/lichen_rock_arm_1k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

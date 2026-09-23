@@ -15,8 +15,10 @@ import type { ViewKind, ViewSpec } from '@aige/render';
 import { builtinBehaviours } from '@aige/runtime';
 import { z } from 'zod';
 import { assetCommands } from './assets/polyhaven.ts';
+import { characterCommands } from './characters.ts';
 import { CONVENTIONS, componentsDoc, DOC_TOPICS, MODELING, OVERVIEW, SCRIPTING, toolsDoc } from './docs.ts';
 import { exportWebCommand } from './export.ts';
+import { godotCommands } from './godot/tools.ts';
 import type { ProjectHost } from './host.ts';
 import { gameRunHeadless } from './play.ts';
 import { compileUserModule, runModule } from './sandbox.ts';
@@ -701,4 +703,6 @@ export const hostCommands = [
   exportWebCommand,
   ...voiceCommands,
   ...assetCommands,
+  ...godotCommands,
+  ...characterCommands,
 ];

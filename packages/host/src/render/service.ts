@@ -5,6 +5,7 @@ import {
   getScene,
   type ImageRef,
   type ProjectState,
+  poseState,
   resolveEntity,
   type SceneDoc,
 } from '@aige/core';
@@ -189,6 +190,88 @@ export class RenderService {
       `model-${entity.name}`,
       opts.save ?? true,
       `preview of ${path}`,
+    );
+    return { image, info: built.info, result };
+  }
+
+  /**
+   * Contact sheet of a skinned model in several poses: one posed copy per frame (Animator pose state), laid out
+   * along +X at `x`, rendered in the studio look from one camera. `props` adds simple boxes (e.g. a bed).
+   */
+  async modelPoses(
+    path: string,
+    params: Record<string, unknown>,
+    frames: { clip: string; time: number; label: string; x: number }[],
+    opts: {
+      view: ViewSpec;
+      width: number;
+      height: number;
+      title?: string;
+      props?: { position: [number, number, number]; size: [number, number, number]; color: string }[];
+      save?: boolean;
+    },
+  ): Promise<{ image: ImageRef; info: ModelInfo; result: SnapshotResult }> {
+    const built = await this.ctx.assets.build(path, params);
+    const scene = createSceneDoc('poses');
+    const meshKeys: Record<string, string> = {};
+    const transform = (x: number) => ({
+      position: [x, 0, 0] as [number, number, number],
+      rotation: [0, 0, 0] as [number, number, number],
+      scale: [1, 1, 1] as [number, number, number],
+    });
+    frames.forEach((f, i) => {
+      const id = `f${i}`;
+      meshKeys[id] = built.info.key;
+      scene.entities.push({
+        id,
+        name: f.label,
+        parent: null,
+        active: true,
+        tags: [],
+        transform: transform(f.x),
+        components: [
+          { type: 'MeshRenderer', model: path, castShadow: true, receiveShadow: true, visible: true },
+          { type: 'Animator', initial: f.clip, _pose: poseState(f.clip, f.time) },
+        ],
+      } as Entity);
+    });
+    (opts.props ?? []).forEach((p, i) => {
+      scene.entities.push({
+        id: `p${i}`,
+        name: '',
+        parent: null,
+        active: true,
+        tags: ['Background'],
+        transform: { position: p.position, rotation: [0, 0, 0], scale: p.size },
+        components: [
+          {
+            type: 'MeshRenderer',
+            primitive: 'box',
+            color: p.color,
+            castShadow: true,
+            receiveShadow: true,
+            visible: true,
+          },
+        ],
+      } as Entity);
+    });
+    const result = await this.need().snapshot({
+      width: opts.width,
+      height: opts.height,
+      views: [opts.view],
+      scene,
+      models: { [built.info.key]: toBase64(built.glb) },
+      meshKeys,
+      overlays: { grid: true, labels: true },
+      studio: true,
+      focus: frames.map((_, i) => `f${i}`),
+      title: opts.title ?? path,
+    });
+    const image = await this.saveImage(
+      result,
+      `poses-${path.split('/').pop()!.replace(/\..*$/, '')}`,
+      opts.save ?? true,
+      `poses of ${path}`,
     );
     return { image, info: built.info, result };
   }

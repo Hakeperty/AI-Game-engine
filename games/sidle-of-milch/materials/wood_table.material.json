@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/wood_table_worn/wood_table_worn_diff_1k.jpg",
+  "mapRepeat": [1.818, 1.818],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/wood_table_worn/wood_table_worn_nor_gl_1k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/wood_table_worn/wood_table_worn_arm_1k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

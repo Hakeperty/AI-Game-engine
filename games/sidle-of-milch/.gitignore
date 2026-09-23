@@ -1,5 +1,9 @@
+*.import
 .aige/
-dist/
-node_modules/
 .godot/
+addons/aige/
 build/
+dist/
+godot/
+godot/models/
+node_modules/

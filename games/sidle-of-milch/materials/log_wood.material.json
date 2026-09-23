@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/rough_wood/rough_wood_diff_2k.jpg",
+  "mapRepeat": [2, 2],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/rough_wood/rough_wood_nor_gl_2k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/rough_wood/rough_wood_arm_2k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

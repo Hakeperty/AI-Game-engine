@@ -41,6 +41,7 @@ export interface MeshData {
   /** Skinned models: joint hierarchy (bind pose, identity rotations). */
   skeleton?: Skeleton | null;
   animations?: ModelAnimation[];
+  clipAliases?: Record<string, string>;
 }
 
 export interface MeshDataOptions {
@@ -69,7 +70,9 @@ export function toMeshData(input: Model | PolyMesh, opts: MeshDataOptions = {}):
     bounds: model.bounds(),
     triangleCount,
     vertexCount,
-    ...(model.skeleton ? { skeleton: model.skeleton, animations: model.animations } : {}),
+    ...(model.skeleton
+      ? { skeleton: model.skeleton, animations: model.animations, clipAliases: model.clipAliases }
+      : {}),
   };
 }
 

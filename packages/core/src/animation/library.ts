@@ -7,8 +7,8 @@
  * - bed clips: the bed is behind the character (toward -Z) with its mattress top at knee height (0.46 m for the
  *   reference adult); lying in bed the body runs along X (head toward -X, his right) about 0.75 m behind the
  *   origin; sitting on the edge the feet are at the origin and the hips ~0.42 m behind;
- * - floor clips: `faint` collapses backward; lying on the floor the head points toward -Z and the hips are
- *   ~0.4 m behind the origin; `wake_up_floor` ends standing at the origin.
+ * - floor clips: `faint_collapse` collapses backward; lying on the floor the head points toward -Z and the hips are
+ *   ~0.4 m behind the origin; `wake_on_floor` ends standing at the origin.
  */
 
 import { addTo, bake, bump, cyclic, type Key, keyed, loopNoise, mergePose, ramp } from './author.ts';
@@ -441,7 +441,7 @@ function sitUpInBed(): AnimClip {
   const f = keyed(LIE_BED, keys, { head: 0.12, neck: 0.08, armL: 0.06, armR: 0.1, legR: 0.08 });
   return bake(
     {
-      name: 'sit_up_in_bed',
+      name: 'sit_up_bed',
       description:
         'Wakes up in bed, props up on the elbows, sits up and swings the legs over the edge to sit on the bed edge facing +Z (feet at the origin). Starts from lie_asleep, continues into sit_idle.',
       duration: 5.4,
@@ -709,7 +709,7 @@ function search(): AnimClip {
   });
   return bake(
     {
-      name: 'search',
+      name: 'search_drawer',
       description:
         'Rummages through an open drawer or counter at waist height in front (~0.45 m ahead, 0.78 m high): leaning in, hands moving and grabbing, glancing up now and then. Loops.',
       duration: T,
@@ -953,12 +953,12 @@ function faint(): AnimClip {
   const f = keyed(STAND, keys, { head: 0.1, neck: 0.06, armL: 0.08, armR: 0.12 });
   return bake(
     {
-      name: 'faint',
+      name: 'faint_collapse',
       description:
         'Gets dizzy (hand to the head, sways, staggers), knees buckle, drops to the knees and collapses backward onto the floor, ending lying on his back ~0.4 m behind the origin. One-shot; continues into lie_floor.',
       duration: 4.0,
       loop: false,
-      next: 'lie_floor',
+      next: 'lie_unconscious',
       setting: 'floor',
     },
     (t) => {
@@ -986,7 +986,7 @@ function lieFloor(): AnimClip {
   const T = 8;
   return bake(
     {
-      name: 'lie_floor',
+      name: 'lie_unconscious',
       description:
         'Lying unconscious on the floor on his back, slightly turned to his right, shallow breathing. Head toward -Z, hips ~0.4 m behind the origin (the end of faint). Loops.',
       duration: T,
@@ -1099,9 +1099,9 @@ function wakeUpFloor(): AnimClip {
   const f = keyed(LIE_FLOOR, keys, { head: 0.1, neck: 0.06, armR: 0.08, armL: 0.06 });
   return bake(
     {
-      name: 'wake_up_floor',
+      name: 'wake_on_floor',
       description:
-        'Comes to on the floor (from lie_floor): stirs, rolls and pushes up to sitting, rubs the back of his head, gets onto one knee and stands up, ending standing at the origin. One-shot.',
+        'Comes to on the floor (from lie_unconscious): stirs, rolls and pushes up to sitting, rubs the back of his head, gets onto one knee and stands up, ending standing at the origin. One-shot.',
       duration: 8.2,
       loop: false,
       setting: 'floor',
@@ -1199,7 +1199,7 @@ function hideItem(): AnimClip {
   const f = keyed(mergePose(STAND, { armR: HOLD_ARM_R }), keys, { head: 0.08, armL: 0.05 });
   return bake(
     {
-      name: 'hide_item',
+      name: 'hide_in_belt',
       description:
         "Hides the held item: looks down, tucks it into the back of the belt on the right hip, tugs the hoodie over it and glances around. Fires event 'tuck' at 1.3 s (switch the item's Attachment socket from 'hand_r' to 'belt_r' then). One-shot.",
       duration: 3.2,
@@ -1311,6 +1311,366 @@ function scaredBreathing(): AnimClip {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Story actions (reach, examine, startle, rub back, doors, head turns, sneaking)
+// ---------------------------------------------------------------------------------------------
+
+const CROUCH_GAIT: GaitCurves = {
+  hip: (ph) => WALK.hip(ph) * 0.75 + 30,
+  knee: (ph) => WALK.knee(ph) * 0.5 + 50,
+  ankle: (ph) => WALK.ankle(ph) * 0.7 + 16,
+};
+
+function crouchWalk(): AnimClip {
+  const T = 1.6;
+  const clip = bake(
+    {
+      name: 'crouch_walk',
+      description:
+        'Sneaking walk in a low crouch: bent knees and hips, torso forward, head up and watchful, arms loose and slightly forward. Loops in place; locomotion scales it to speed.',
+      duration: T,
+      loop: true,
+    },
+    (t) => {
+      const ph = t / T;
+      const c = Math.cos(2 * Math.PI * ph);
+      const s = Math.sin(2 * Math.PI * ph);
+      const g = CROUCH_GAIT;
+      const p: BodyPose = {
+        hips: [18, -3 * c, 2 * s],
+        pos: [0.012 * s, 0, 0],
+        spine: [14, 2 * c, -1 * s],
+        chest: [6, 3 * c, -1 * s],
+        neck: [-10, -1 * c, 0],
+        head: [-14, -1.5 * c, 0],
+        legL: { flex: g.hip(ph), knee: g.knee(ph), ankle: g.ankle(ph), twist: 8, abd: 2 },
+        legR: { flex: g.hip(ph + 0.5), knee: g.knee(ph + 0.5), ankle: g.ankle(ph + 0.5), twist: 8, abd: 2 },
+        ground: 0,
+        contacts: ['feet'],
+      };
+      const swing = (d: number) => -Math.cos(2 * Math.PI * (ph - 0.05 + d));
+      p.armL = { ...ARM_REST, down: 36, fwd: 22 + 8 * swing(0), elbow: 38, fingers: 32, shrug: 3 };
+      p.armR = { ...ARM_REST, down: 36, fwd: 22 + 8 * swing(0.5), elbow: 38, fingers: 32, shrug: 3 };
+      return breathe(p, t, T, 1.2);
+    },
+  );
+  clip.speed = Math.round(gaitSpeed(CROUCH_GAIT, T, 0.04, 0.46) * 100) / 100;
+  return clip;
+}
+
+function reach(): AnimClip {
+  const reachR: ArmPose = {
+    ...ARM_REST,
+    ik: [-0.2, 1.42, 0.5],
+    ikw: 1,
+    wrist: -10,
+    fingers: 12,
+    thumb: 20,
+    ftwist: 60,
+  };
+  const keys: Key[] = [
+    { t: 0, p: clone(STAND) },
+    { t: 0.3, p: { head: [-8, -6, 0], neck: [0, -4, 0] }, e: 'soft' },
+    {
+      t: 0.95,
+      p: {
+        pos: [0, 0.01, 0.03],
+        spine: [2, -8, 0],
+        chest: [-2, -10, -2],
+        armR: reachR,
+        legL: legIK(0.1, -0.03, { twist: 6 }),
+        legR: legIK(-0.1, 0.04, { twist: 6, ankle: 12 }),
+      },
+      e: 'inOut',
+    },
+    { t: 1.25, p: { armR: { ...reachR, fingers: 70, thumb: 45 } }, e: 'inOut' },
+    { t: 1.6, p: { armR: { ...reachR, ik: [-0.19, 1.38, 0.46], fingers: 70, thumb: 45 } }, e: 'inOut' },
+    {
+      t: 2.4,
+      p: { ...clone(STAND), armR: { ...ARM_REST, ikw: 0, fingers: 40 } },
+      e: 'soft',
+    },
+  ];
+  const f = keyed(STAND, keys, { head: 0.06, armR: 0.04 });
+  return bake(
+    {
+      name: 'reach',
+      description:
+        'Reaches up and forward with the right hand (a shelf or cabinet ~1.4 m high, ~0.5 m ahead), grasps, then brings the arm back down. Fires "touch" at 1.2 s. One-shot.',
+      duration: 2.6,
+      loop: false,
+      events: [{ t: 1.2, name: 'touch' }],
+    },
+    (t) => breathe(f(t), t, 3.2, 1),
+  );
+}
+
+function examineObject(): AnimClip {
+  const T = 6;
+  const base = mergePose(STAND, {
+    pos: [0, -0.015, 0],
+    spine: [4, 0, 0],
+    chest: [2, 0, 0],
+    neck: [16, 0, 0],
+    head: [18, 0, 0],
+    armL: { ...ARM_REST, ik: [0.07, 1.12, 0.3], ikw: 1, wrist: -18, fingers: 55, thumb: 50, ftwist: 70 },
+    armR: { ...ARM_REST, ik: [-0.07, 1.12, 0.3], ikw: 1, wrist: -18, fingers: 55, thumb: 50, ftwist: 70 },
+  });
+  return bake(
+    {
+      name: 'examine_object',
+      description:
+        'Holds something in both hands in front of the chest (a photo, a note, a knife) and studies it: head bowed, small turns of the hands, slow thoughtful breathing, an occasional tilt of the head. Loops.',
+      duration: T,
+      loop: true,
+    },
+    (t) => {
+      const p = breathe(clone(base), t, T / 2, 0.8);
+      const turn = loopNoise(t, T, 31, 2);
+      const tilt = loopNoise(t, T, 37, 2);
+      addTo(p, 'armL.ik.1', 0.012 * turn);
+      addTo(p, 'armR.ik.1', -0.012 * turn);
+      addTo(p, 'armL.wrist', 8 * tilt);
+      addTo(p, 'armR.wrist', 8 * tilt);
+      addTo(p, 'head.2', 5 * loopNoise(t, T, 41, 1));
+      addTo(p, 'head.1', 4 * turn);
+      addTo(p, 'pos.0', 0.006 * loopNoise(t, T, 43, 1));
+      return p;
+    },
+  );
+}
+
+function gaspStartle(): AnimClip {
+  const flinch: BodyPose = {
+    pos: [0, -0.05, -0.06],
+    hips: [-4, 6, 0],
+    spine: [-6, 8, 0],
+    chest: [-8, 10, 0],
+    neck: [-6, 14, 0],
+    head: [-10, 22, 0],
+    jaw: 14,
+    armL: {
+      ...ARM_REST,
+      shrug: 14,
+      down: 38,
+      fwd: 38,
+      across: 16,
+      elbow: 112,
+      twist: 24,
+      wrist: -20,
+      fingers: 35,
+      thumb: 30,
+    },
+    armR: {
+      ...ARM_REST,
+      shrug: 14,
+      down: 40,
+      fwd: 32,
+      across: 12,
+      elbow: 118,
+      twist: 24,
+      wrist: -20,
+      fingers: 35,
+      thumb: 30,
+    },
+    legL: legIK(0.12, -0.02, { twist: 10 }),
+    legR: legIK(-0.13, -0.16, { twist: 14 }),
+  };
+  const keys: Key[] = [
+    { t: 0, p: clone(STAND) },
+    { t: 0.14, p: flinch, e: 'out' },
+    { t: 0.55, p: { ...flinch, jaw: 9, head: [-6, 18, 0] }, e: 'linear' },
+    {
+      t: 1.3,
+      p: {
+        pos: [0, -0.03, -0.04],
+        hips: [2, 3, 0],
+        spine: [6, 4, 0],
+        chest: [2, 6, 0],
+        neck: [6, 10, 0],
+        head: [0, 14, 0],
+        jaw: 5,
+        armL: { ...ARM_REST, shrug: 8, down: 34, fwd: 26, elbow: 70, fingers: 50, thumb: 30 },
+        armR: { ...ARM_REST, shrug: 8, down: 38, fwd: 18, elbow: 56, fingers: 50, thumb: 30 },
+      },
+      e: 'inOut',
+    },
+    {
+      t: 2.2,
+      p: {
+        ...clone(STAND),
+        pos: [0, -0.03, 0],
+        spine: [5, 0, 0],
+        neck: [4, 4, 0],
+        head: [-2, 6, 0],
+        jaw: 3,
+        armL: { ...ARM_REST, shrug: 5, elbow: 24, fingers: 40 },
+        armR: { ...ARM_REST, shrug: 5, elbow: 22, fingers: 40 },
+        legR: legIK(-0.12, -0.08, { twist: 10 }),
+      },
+      e: 'soft',
+    },
+  ];
+  const f = keyed(STAND, keys, { head: 0.03, armL: 0.04, armR: 0.02 });
+  return bake(
+    {
+      name: 'gasp_startle',
+      description:
+        'Startled by something sudden (thunder, a noise): sharp gasp, flinches back half a step with the shoulders up and the forearms raised, head snapping toward the sound (his left), then slowly lowers the arms, still tense. One-shot; continues into scared_breathing.',
+      duration: 2.4,
+      loop: false,
+      next: 'scared_breathing',
+    },
+    (t) => {
+      const p = f(t);
+      // shaky, fast breathing after the gasp
+      return breathe(p, t, 0.9, 1.6 * ramp(t, 0.4, 0.9));
+    },
+  );
+}
+
+function rubBack(): AnimClip {
+  const T = 3.6;
+  const hand: ArmPose = {
+    ...ARM_REST,
+    ik: [-0.1, 1.0, -0.2],
+    ikw: 1,
+    pole: [-1, -0.3, -0.4],
+    wrist: 30,
+    fingers: 20,
+    thumb: 10,
+    ftwist: -40,
+  };
+  const keys: Key[] = [
+    { t: 0, p: clone(STAND) },
+    {
+      t: 0.7,
+      p: {
+        pos: [0, -0.02, 0],
+        hips: [-4, 0, 3],
+        spine: [-8, -6, 3],
+        chest: [-4, -8, 2],
+        neck: [4, -6, -3],
+        head: [2, -10, -6],
+        armR: hand,
+        armL: { ...ARM_REST, down: 40, elbow: 30, fingers: 40 },
+      },
+      e: 'inOut',
+    },
+    { t: 3.0, p: {}, e: 'linear' },
+    { t: 3.6, p: { ...clone(STAND), armR: { ...ARM_REST, ikw: 0 } }, e: 'soft' },
+  ];
+  const f = keyed(STAND, keys, { head: 0.08, armR: 0.05 });
+  return bake(
+    {
+      name: 'rub_back',
+      description:
+        'Aching back: arches back slightly, presses and rubs the lower back with the right hand in slow circles, head tilted with a wince, then lets go. One-shot.',
+      duration: T,
+      loop: false,
+    },
+    (t) => {
+      const p = f(t);
+      const rub = ramp(t, 0.7, 0.9) * (1 - ramp(t, 2.8, 3.1));
+      addTo(p, 'armR.ik.1', 0.035 * rub * Math.sin(t * 5.2));
+      addTo(p, 'armR.ik.0', 0.02 * rub * Math.cos(t * 5.2));
+      addTo(p, 'spine.0', -2 * rub * Math.sin(t * 5.2 + 1));
+      return breathe(p, t, 2.4, 1.2);
+    },
+  );
+}
+
+function openDoor(): AnimClip {
+  const handle: V3 = [-0.14, 1.0, 0.46];
+  const keys: Key[] = [
+    { t: 0, p: clone(STAND) },
+    {
+      t: 0.7,
+      p: {
+        pos: [0, -0.01, 0.02],
+        spine: [4, 4, 0],
+        chest: [2, 4, 0],
+        neck: [6, 0, 0],
+        head: [6, 0, 0],
+        armR: { ...ARM_REST, ik: handle, ikw: 1, wrist: 0, fingers: 20, thumb: 20, ftwist: 20 },
+      },
+      e: 'inOut',
+    },
+    {
+      t: 0.95,
+      p: { armR: { ...ARM_REST, ik: handle, ikw: 1, fingers: 80, thumb: 50, ftwist: 20 } },
+      e: 'inOut',
+    },
+    {
+      t: 1.25,
+      p: { armR: { ...ARM_REST, ik: handle, ikw: 1, fingers: 80, thumb: 50, ftwist: 55 } },
+      e: 'inOut',
+    },
+    {
+      t: 1.95,
+      p: {
+        pos: [0, -0.02, 0.1],
+        hips: [4, 4, 0],
+        spine: [8, 6, 0],
+        armR: { ...ARM_REST, ik: [-0.16, 1.0, 0.7], ikw: 1, fingers: 70, thumb: 45, ftwist: 55 },
+        legL: legIK(0.1, 0.1, { twist: 6 }),
+        legR: legIK(-0.1, -0.12, { twist: 8, ankle: 20, flat: 0.4 }),
+      },
+      e: 'inOut',
+    },
+    {
+      t: 2.8,
+      p: { ...clone(STAND), armR: { ...ARM_REST, ikw: 0 } },
+      e: 'soft',
+    },
+  ];
+  const f = keyed(STAND, keys, { head: 0.06, armR: 0.03 });
+  return bake(
+    {
+      name: 'open_door',
+      description:
+        'Opens a door in front of him: reaches for the handle (~1 m high, ~0.45 m ahead, right hand), grips and turns it, pushes the door open leaning into it, lets go. Fires "grab" at 0.95 s and "open" at 1.4 s. One-shot, in place.',
+      duration: 3,
+      loop: false,
+      events: [
+        { t: 0.95, name: 'grab' },
+        { t: 1.4, name: 'open' },
+      ],
+    },
+    (t) => breathe(f(t), t, 3, 1),
+  );
+}
+
+function turnHead(side: 1 | -1): AnimClip {
+  const yaw = 58 * side;
+  const keys: Key[] = [
+    { t: 0, p: clone(STAND) },
+    {
+      t: 0.55,
+      p: {
+        head: [-6, yaw * 0.62, 0],
+        neck: [4, yaw * 0.26, 0],
+        chest: [-1, yaw * 0.12, 0],
+        spine: [1.5, yaw * 0.05, 0],
+      },
+      e: 'inOut',
+    },
+    { t: 1.5, p: { head: [-4, yaw * 0.6, 0] }, e: 'linear' },
+    { t: 2.2, p: clone(STAND), e: 'soft' },
+  ];
+  const f = keyed(STAND, keys, { chest: 0.08, spine: 0.12 });
+  const name = side > 0 ? 'turn_head_left' : 'turn_head_right';
+  return bake(
+    {
+      name,
+      description: `Turns the head (with a little neck and chest) to the ${side > 0 ? 'left' : 'right'} to look at something, holds for a second, turns back. One-shot.`,
+      duration: 2.4,
+      loop: false,
+    },
+    (t) => breathe(f(t), t, 3.2, 1),
+  );
+}
+
+// ---------------------------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------------------------
 
@@ -1319,41 +1679,56 @@ const BUILDERS: Record<string, () => AnimClip> = {
   idle_nervous: idleNervous,
   walk,
   run,
+  crouch_walk: crouchWalk,
+  crouch,
   lie_asleep: lieAsleep,
-  sit_up_in_bed: sitUpInBed,
+  sit_up_bed: sitUpInBed,
   sit_idle: sitIdle,
   stand_up: standUp,
   look_around: lookAround,
+  turn_head_left: () => turnHead(1),
+  turn_head_right: () => turnHead(-1),
+  scared_breathing: scaredBreathing,
+  breathe_heavy: breatheHeavy,
+  gasp_startle: gaspStartle,
   scream,
-  search,
+  search_drawer: search,
+  reach,
   pick_up: pickUp,
   hold_item: holdItem,
-  crouch,
-  faint,
-  lie_floor: lieFloor,
-  wake_up_floor: wakeUpFloor,
+  examine_object: examineObject,
+  open_door: openDoor,
+  faint_collapse: faint,
+  lie_unconscious: lieFloor,
+  wake_on_floor: wakeUpFloor,
+  rub_back: rubBack,
   cough,
-  hide_item: hideItem,
-  breathe_heavy: breatheHeavy,
-  scared_breathing: scaredBreathing,
+  hide_in_belt: hideItem,
 };
 
 /** Alternative names accepted everywhere a built-in clip name is (story-script vocabulary). */
 export const CLIP_ALIASES: Record<string, string> = {
   lie_sleep: 'lie_asleep',
   sleep: 'lie_asleep',
-  sit_up_bed: 'sit_up_in_bed',
-  sit_up: 'sit_up_in_bed',
+  sit_up_in_bed: 'sit_up_bed',
+  sit_up: 'sit_up_bed',
   sit: 'sit_idle',
-  search_drawer: 'search',
-  faint_collapse: 'faint',
-  collapse: 'faint',
-  lie_unconscious: 'lie_floor',
-  wake_on_floor_rub_back: 'wake_up_floor',
-  wake_up: 'wake_up_floor',
-  hide_in_belt: 'hide_item',
+  search: 'search_drawer',
+  faint: 'faint_collapse',
+  collapse: 'faint_collapse',
+  lie_floor: 'lie_unconscious',
+  unconscious: 'lie_unconscious',
+  wake_up_floor: 'wake_on_floor',
+  wake_on_floor_rub_back: 'wake_on_floor',
+  wake_up: 'wake_on_floor',
+  hide_item: 'hide_in_belt',
   hold: 'hold_item',
   hold_knife: 'hold_item',
+  examine: 'examine_object',
+  look_at_photo: 'examine_object',
+  startle: 'gasp_startle',
+  gasp: 'gasp_startle',
+  sneak: 'crouch_walk',
   panting: 'breathe_heavy',
   nervous: 'idle_nervous',
 };

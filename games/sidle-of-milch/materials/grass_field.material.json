@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/sparse_grass/sparse_grass_diff_2k.jpg",
+  "mapRepeat": [0.5, 0.5],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/sparse_grass/sparse_grass_nor_gl_2k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/sparse_grass/sparse_grass_arm_2k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

@@ -1,8 +1,9 @@
 import { Document, type Node as GNode, WebIO } from '@gltf-transform/core';
+import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { encodePng } from '../image.ts';
 import { type MaterialSpec, material as makeMaterial } from '../material.ts';
 import { hexToRgb, rgbToHex, srgbToLinear, type V3 } from '../math.ts';
-import { Model } from '../model.ts';
+import { Model, type Skeleton } from '../model.ts';
 import type { PolyMesh } from '../polymesh.ts';
 import { PolyMesh as PM } from '../polymesh.ts';
 import { type MeshData, type MeshDataOptions, toMeshData } from './meshdata.ts';
@@ -13,7 +14,12 @@ const linear = (hex: string): [number, number, number] => {
 };
 const toSrgb = (c: number) => (c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055);
 
-/** Writes a model (or MeshData) as a binary glTF (.glb). Sockets become empty nodes named 'socket:<name>'. */
+/**
+ * Writes a model (or MeshData) as a binary glTF (.glb). Sockets become empty nodes named 'socket:<name>'
+ * (children of their bone on skinned models). Skinned models also get one node per joint, a skin on every
+ * skinned part (JOINTS_0 / WEIGHTS_0, at most 4 normalized influences), and one glTF animation per clip.
+ * Clip metadata (loop, duration, next, events, aliases) goes into the root node's `extras.aige.clips`.
+ */
 export async function exportGlb(
   input: Model | PolyMesh | MeshData,
   opts: MeshDataOptions & { name?: string } = {},
@@ -51,8 +57,45 @@ export async function exportGlb(
     matCache.set(key, mat);
     return mat;
   };
+  // Skeleton: one node per joint (bind rotations are identity, so each node is only offset from its parent).
+  const skel = data.skeleton?.joints.length ? data.skeleton : null;
+  const jointNodes = new Map<string, GNode>();
+  let skin: ReturnType<Document['createSkin']> | null = null;
+  if (skel) {
+    const byName = new Map(skel.joints.map((j) => [j.name, j]));
+    const ibm = new Float32Array(skel.joints.length * 16);
+    skel.joints.forEach((j, i) => {
+      const parent = j.parent ? byName.get(j.parent) : undefined;
+      const t: V3 = parent
+        ? [
+            j.position[0] - parent.position[0],
+            j.position[1] - parent.position[1],
+            j.position[2] - parent.position[2],
+          ]
+        : [j.position[0], j.position[1], j.position[2]];
+      const node = doc.createNode(j.name).setTranslation(t);
+      jointNodes.set(j.name, node);
+      const parentNode = j.parent ? jointNodes.get(j.parent) : undefined;
+      (parentNode ?? root).addChild(node);
+      // inverse bind matrix = translation by -bindPosition (column-major)
+      ibm.set(
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -j.position[0], -j.position[1], -j.position[2], 1],
+        i * 16,
+      );
+    });
+    skin = doc
+      .createSkin('skeleton')
+      .setInverseBindMatrices(
+        doc.createAccessor('inverseBindMatrices').setType('MAT4').setArray(ibm).setBuffer(buffer),
+      );
+    for (const j of skel.joints) skin.addJoint(jointNodes.get(j.name)!);
+    const rootJoint = jointNodes.get(skel.joints[0]!.name);
+    if (rootJoint) skin.setSkeleton(rootJoint);
+  }
+  const smallJoints = !!skel && skel.joints.length <= 255;
   for (const part of data.parts) {
     const mesh = doc.createMesh(part.name);
+    let skinned = false;
     for (const p of part.primitives) {
       const prim = doc
         .createPrimitive()
@@ -73,16 +116,91 @@ export async function exportGlb(
           'COLOR_0',
           doc.createAccessor().setType('VEC3').setArray(p.colors).setBuffer(buffer),
         );
+      if (skin && skel && p.joints && p.weights) {
+        const { joints, weights } = cleanSkin(p.joints, p.weights, skel.joints.length);
+        prim
+          .setAttribute(
+            'JOINTS_0',
+            doc
+              .createAccessor()
+              .setType('VEC4')
+              .setArray(smallJoints ? new Uint8Array(joints) : joints)
+              .setBuffer(buffer),
+          )
+          .setAttribute(
+            'WEIGHTS_0',
+            doc.createAccessor().setType('VEC4').setArray(weights).setBuffer(buffer),
+          );
+        skinned = true;
+      }
       mesh.addPrimitive(prim);
     }
-    root.addChild(doc.createNode(part.name).setMesh(mesh));
+    const node = doc.createNode(part.name).setMesh(mesh);
+    if (skinned && skin) node.setSkin(skin);
+    root.addChild(node);
   }
   for (const [name, s] of Object.entries(data.sockets)) {
     const q = eulerToQuat(s.rotation);
-    root.addChild(doc.createNode(`socket:${name}`).setTranslation(s.position).setRotation(q));
+    const bone = s.bone ? jointNodes.get(s.bone) : undefined;
+    const bj = s.bone ? skel?.joints.find((j) => j.name === s.bone) : undefined;
+    const t: V3 =
+      bone && bj
+        ? [s.position[0] - bj.position[0], s.position[1] - bj.position[1], s.position[2] - bj.position[2]]
+        : s.position;
+    (bone ?? root).addChild(doc.createNode(`socket:${name}`).setTranslation(t).setRotation(q));
+  }
+  // Animations: one glTF animation per clip, channels on the joint nodes.
+  const clips: { name: string; duration: number; loop: boolean; next?: string; events?: unknown[] }[] = [];
+  if (skel && data.animations?.length) {
+    for (const a of data.animations) {
+      const anim = doc.createAnimation(a.name);
+      const inputs = new Map<Float32Array, ReturnType<Document['createAccessor']>>();
+      let end = 0;
+      for (const ch of a.channels) {
+        const node = jointNodes.get(ch.joint);
+        if (!node || ch.times.length === 0) continue;
+        let input = inputs.get(ch.times);
+        if (!input) {
+          input = doc
+            .createAccessor()
+            .setType('SCALAR')
+            .setArray(new Float32Array(ch.times))
+            .setBuffer(buffer);
+          inputs.set(ch.times, input);
+        }
+        end = Math.max(end, ch.times[ch.times.length - 1]!);
+        const output = doc
+          .createAccessor()
+          .setType(ch.path === 'rotation' ? 'VEC4' : 'VEC3')
+          .setArray(new Float32Array(ch.values))
+          .setBuffer(buffer);
+        const sampler = doc
+          .createAnimationSampler()
+          .setInput(input)
+          .setOutput(output)
+          .setInterpolation('LINEAR');
+        anim.addSampler(sampler);
+        anim.addChannel(
+          doc.createAnimationChannel().setTargetNode(node).setTargetPath(ch.path).setSampler(sampler),
+        );
+      }
+      clips.push({
+        name: a.name,
+        duration: a.duration ?? end,
+        loop: !!a.loop,
+        ...(a.next ? { next: a.next } : {}),
+        ...(a.events?.length ? { events: a.events } : {}),
+      });
+    }
   }
   root.setExtras({
-    aige: { collider: data.collider, bounds: data.bounds, triangleCount: data.triangleCount },
+    aige: {
+      collider: data.collider,
+      bounds: data.bounds,
+      triangleCount: data.triangleCount,
+      ...(skel ? { skinned: true, joints: skel.joints.map((j) => j.name) } : {}),
+      ...(clips.length ? { clips, clipAliases: data.clipAliases ?? {} } : {}),
+    },
   });
   return new WebIO().writeBinary(doc);
 }
@@ -109,7 +227,7 @@ function eulerToQuat(deg: V3): [number, number, number, number] {
  * Materials keep base color, metalness, roughness and emissive; vertex colors are preserved.
  */
 export async function importGlb(glb: Uint8Array): Promise<Model> {
-  const doc = await new WebIO().readBinary(glb);
+  const doc = await reader().readBinary(glb);
   const model = new Model();
   const root = doc.getRoot();
   const scene = root.getDefaultScene() ?? root.listScenes()[0];
@@ -211,4 +329,60 @@ function mat4Mul(a: number[], b: number[]): number[] {
       out[c * 4 + r] = s;
     }
   return out;
+}
+
+/** Validates skin attributes: joint indices in range, weights >= 0 and summing to 1 (unused slots get joint 0). */
+function cleanSkin(
+  joints: Uint16Array,
+  weights: Float32Array,
+  jointCount: number,
+): { joints: Uint16Array<ArrayBuffer>; weights: Float32Array<ArrayBuffer> } {
+  const n = Math.floor(Math.min(joints.length, weights.length) / 4);
+  const j = new Uint16Array(n * 4);
+  const w = new Float32Array(n * 4);
+  for (let v = 0; v < n; v++) {
+    let sum = 0;
+    for (let k = 0; k < 4; k++) {
+      const ji = joints[v * 4 + k]!;
+      const wi = weights[v * 4 + k]!;
+      const ok = ji < jointCount && Number.isFinite(wi) && wi > 0;
+      j[v * 4 + k] = ok ? ji : 0;
+      w[v * 4 + k] = ok ? wi : 0;
+      if (ok) sum += wi;
+    }
+    if (sum <= 1e-8) {
+      w[v * 4] = 1;
+      continue;
+    }
+    for (let k = 0; k < 4; k++) w[v * 4 + k] = w[v * 4 + k]! / sum;
+  }
+  return { joints: j, weights: w };
+}
+
+/**
+ * Reads the skeleton of a skinned .glb (first skin): joint names, parents and bind positions (world
+ * translations of the joint nodes). Null when the file has no skin.
+ */
+export async function readGlbSkeleton(glb: Uint8Array): Promise<Skeleton | null> {
+  const doc = await reader().readBinary(glb);
+  const skin = doc.getRoot().listSkins()[0];
+  if (!skin) return null;
+  const joints = skin.listJoints();
+  const names = new Set(joints.map((j) => j.getName()));
+  return {
+    joints: joints.map((j) => {
+      const parent = j.getParentNode();
+      const t = j.getWorldTranslation();
+      return {
+        name: j.getName(),
+        parent: parent && names.has(parent.getName()) ? parent.getName() : null,
+        position: [t[0], t[1], t[2]] as V3,
+      };
+    }),
+  };
+}
+
+/** A glTF reader that understands the standard extensions (e.g. KHR_texture_transform in Poly Haven models). */
+function reader(): WebIO {
+  return new WebIO().registerExtensions(ALL_EXTENSIONS);
 }

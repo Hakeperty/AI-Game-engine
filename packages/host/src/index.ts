@@ -3,6 +3,16 @@ export { AssetPipeline, type BuiltModel, type ModelInfo } from './assets.ts';
 export * from './commands.ts';
 export * from './docs.ts';
 export { ProjectFs } from './fs.ts';
+export { exportGodot, type GodotExportOptions, type GodotExportResult } from './godot/export.ts';
+export {
+  dotnetBuild,
+  GODOT_DIR,
+  GODOT_DOWNLOAD,
+  godotExe,
+  godotInstalled,
+  openGodotEditor,
+  runGodotTest,
+} from './godot/runner.ts';
 export {
   DEFAULT_WORKSPACE_DIR,
   type HostOptions,

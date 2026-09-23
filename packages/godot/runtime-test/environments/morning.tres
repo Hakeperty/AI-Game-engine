@@ -1,0 +1,22 @@
+[gd_resource type="Environment" format=3]
+
+[resource]
+background_mode = 1
+background_color = Color(0.55, 0.6, 0.68, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.9, 0.78, 0.62, 1)
+ambient_light_energy = 1.1
+tonemap_mode = 3
+tonemap_exposure = 1.15
+ssao_enabled = true
+ssao_radius = 0.9
+ssao_intensity = 2.0
+glow_enabled = true
+glow_intensity = 0.8
+fog_enabled = true
+fog_light_color = Color(0.85, 0.75, 0.6, 1)
+fog_density = 0.004
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.05
+metadata/aige_fx = {"grain": 0.08, "lightShafts": 0.0, "temperature": 0.3, "tint": 0.0, "vignette": 0.2}

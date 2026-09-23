@@ -21,12 +21,14 @@ import {
   PMREMGenerator,
   PointLight,
   Scene,
+  type SkinnedMesh,
   SpotLight,
   Vector3,
   type WebGLRenderer,
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { type ModelCache, primitiveGeometry, TextureCache } from './assets.ts';
+import { animatorPoseState, applyPoseState } from './pose.ts';
 
 export interface SceneBuildOptions {
   /** Entity id -> model cache key for MeshRenderers that use `model`. */
@@ -183,6 +185,10 @@ export class SceneRenderer {
         }
         visual.userData.meshRenderer = true;
         visual.visible = c.visible !== false;
+        // skinned characters: show the Animator's current (or initial) pose
+        const animator = e.components.find((x) => x.type === 'Animator');
+        if (animator && c.model)
+          applyPoseState(visual, animatorPoseState(animator as Record<string, unknown>));
         visual.traverse((o) => {
           const mesh = o as Mesh;
           if (mesh.isMesh) {
@@ -302,8 +308,12 @@ export class SceneRenderer {
       r.traverse((o) => {
         const mesh = o as Mesh;
         if (!mesh.isMesh || !isVisible(mesh)) return;
-        mesh.geometry.computeBoundingBox();
-        const b = mesh.geometry.boundingBox!.clone().applyMatrix4(mesh.matrixWorld);
+        const skinned = (mesh as SkinnedMesh).isSkinnedMesh ? (mesh as SkinnedMesh) : null;
+        if (skinned) skinned.computeBoundingBox();
+        else mesh.geometry.computeBoundingBox();
+        const b = (skinned ? skinned.boundingBox! : mesh.geometry.boundingBox!)
+          .clone()
+          .applyMatrix4(mesh.matrixWorld);
         box.union(b);
       });
     }

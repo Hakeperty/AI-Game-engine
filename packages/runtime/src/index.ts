@@ -1,5 +1,13 @@
 import * as api from './api.ts';
 
+export {
+  AMBIENCE_KINDS,
+  type AmbienceKind,
+  renderAmbienceLoop,
+  STORY_SFX,
+  type StorySfx,
+  synthStorySfx,
+} from './ambience.ts';
 export * from './audio.ts';
 export * from './behaviour.ts';
 export * from './builtins.ts';

@@ -70,6 +70,8 @@ export interface LegPose {
   knee?: number;
   /** Dorsiflexion (toes up). */
   ankle?: number;
+  /** Toe extension at the ball of the foot (toes bent up, e.g. push-off or kneeling). */
+  toe?: number;
   /** IK ankle target in reference model space. */
   ik?: V3;
   /** IK weight 0..1. */
@@ -150,6 +152,7 @@ function legQuatsLeft(p: LegPose): Record<string, Quat> {
     ),
     shin: quatAxisAngle([1, 0, 0], n0(p.knee)),
     foot: quatAxisAngle([1, 0, 0], -n0(p.ankle)),
+    toe: quatAxisAngle([1, 0, 0], -n0(p.toe)),
   };
 }
 

@@ -241,13 +241,14 @@ export const CutsceneTrack = z.discriminatedUnion('type', [
           'temperature',
           'tint',
           'grain',
+          'volume',
         ]),
         to: z
           .number()
           .min(-1)
           .max(240)
           .describe(
-            'Target value. 0..1 strengths (fade 1 = black); exposure/fog/contrast/saturation are multipliers (1 = unchanged); temperature/tint -1..1; heartRate in bpm',
+            'Target value. 0..1 strengths (fade 1 = black); exposure/fog/contrast/saturation are multipliers (1 = unchanged); temperature/tint -1..1; heartRate in bpm; volume = master volume 0..1 (sounds fading away)',
           ),
         duration: z.number().min(0).default(0.5),
         color: Color.optional(),

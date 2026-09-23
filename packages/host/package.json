@@ -20,6 +20,10 @@
     "immer": "^11.1.18",
     "@aige/runtime": "0.1.0",
     "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "meshoptimizer": "^1.2.0",
+    "@aige/godot": "0.1.0",
     "@aige/player": "0.1.0"
   },
   "devDependencies": {

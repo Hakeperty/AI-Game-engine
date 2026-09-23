@@ -1,0 +1,368 @@
+[gd_scene load_steps=40 format=3]
+
+[ext_resource type="Script" path="res://addons/aige/Builtins/PlayerController.cs" id="1"]
+[ext_resource type="Script" path="res://addons/aige/Builtins/ThirdPersonCamera.cs" id="2"]
+[ext_resource type="Script" path="res://addons/aige/Components/Interactable.cs" id="3"]
+[ext_resource type="Script" path="res://addons/aige/Components/Door.cs" id="4"]
+[ext_resource type="Script" path="res://addons/aige/Components/Trigger.cs" id="5"]
+[ext_resource type="Script" path="res://addons/aige/Components/ParticleSystem.cs" id="6"]
+[ext_resource type="Script" path="res://addons/aige/Components/Animator.cs" id="7"]
+[ext_resource type="Script" path="res://addons/aige/Components/LightFlicker.cs" id="8"]
+[ext_resource type="Script" path="res://addons/aige/Components/EnvironmentFx.cs" id="9"]
+[ext_resource type="Script" path="res://addons/aige/Components/AudioSource.cs" id="10"]
+[ext_resource type="Script" path="res://scripts/TestDirector.cs" id="11"]
+[ext_resource type="AudioStream" path="res://audio/voice/milch_wake_1.ogg" id="12"]
+
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.043, 0.051, 0.07, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.25, 0.28, 0.36, 1)
+ambient_light_energy = 0.7
+tonemap_mode = 3
+tonemap_exposure = 1.0
+ssao_enabled = true
+ssao_radius = 0.9
+ssao_intensity = 2.0
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.05
+glow_hdr_threshold = 0.9
+fog_enabled = true
+fog_light_color = Color(0.1, 0.12, 0.16, 1)
+fog_density = 0.01
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 0.9
+metadata/aige_fx = {"grain": 0.15, "lightShafts": 0.0, "temperature": -0.2, "tint": 0.0, "vignette": 0.3}
+
+[sub_resource type="BoxShape3D" id="floor_shape"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxMesh" id="box"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_floor"]
+albedo_color = Color(0.23, 0.18, 0.14, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="mat_wall"]
+albedo_color = Color(0.36, 0.31, 0.26, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="mat_wood"]
+albedo_color = Color(0.29, 0.22, 0.17, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="mat_photo"]
+albedo_color = Color(0.72, 0.68, 0.6, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="mat_hoodie"]
+albedo_color = Color(0.42, 0.44, 0.47, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="mat_lamp"]
+albedo_color = Color(1, 0.85, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.8, 0.5, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="BoxShape3D" id="wall_shape"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxShape3D" id="wall2_shape"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxShape3D" id="dresser_shape"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="CapsuleShape3D" id="player_shape"]
+radius = 0.3
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="player_mesh"]
+radius = 0.25
+height = 1.0
+
+[sub_resource type="BoxShape3D" id="door_shape"]
+size = Vector3(1, 2, 0.06)
+
+[sub_resource type="BoxShape3D" id="zone_shape"]
+size = Vector3(3, 2, 2.5)
+
+[sub_resource type="SphereMesh" id="sphere"]
+radius = 0.5
+height = 1.0
+
+[node name="Test" type="Node3D"]
+metadata/aige_scene = "test"
+
+[node name="Floor" type="Node3D" parent="."]
+transform = Transform3D(20, 0, 0, 0, 0.2, 0, 0, 0, 20, 0, -0.1, 0)
+metadata/aige_id = "e1"
+
+[node name="Body" type="StaticBody3D" parent="Floor"]
+
+[node name="Shape" type="CollisionShape3D" parent="Floor/Body"]
+shape = SubResource("floor_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("box")
+material_override = SubResource("mat_floor")
+
+[node name="WallBack" type="Node3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 2.5, 0, 0, 0, 0.2, 0, 1.25, -3.2)
+metadata/aige_id = "e9"
+
+[node name="Body" type="StaticBody3D" parent="WallBack"]
+
+[node name="Shape" type="CollisionShape3D" parent="WallBack/Body"]
+shape = SubResource("wall_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="WallBack"]
+mesh = SubResource("box")
+material_override = SubResource("mat_wall")
+
+[node name="WallLeft" type="Node3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 2.5, 0, 0, 0, 12, -4, 1.25, 1)
+metadata/aige_id = "e10"
+
+[node name="Body" type="StaticBody3D" parent="WallLeft"]
+
+[node name="Shape" type="CollisionShape3D" parent="WallLeft/Body"]
+shape = SubResource("wall2_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="WallLeft"]
+mesh = SubResource("box")
+material_override = SubResource("mat_wall")
+
+[node name="Dresser" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 0.45, 0, 0.4, -2.6)
+metadata/aige_id = "e5"
+
+[node name="Body" type="StaticBody3D" parent="Dresser"]
+
+[node name="Shape" type="CollisionShape3D" parent="Dresser/Body"]
+shape = SubResource("dresser_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Dresser"]
+mesh = SubResource("box")
+material_override = SubResource("mat_wood")
+
+[node name="Photo1" type="Node3D" parent="."]
+transform = Transform3D(0.22, 0, 0, 0, 0.28, 0, 0, 0, 0.03, 0, 0.94, -2.5)
+metadata/aige_id = "e4"
+
+[node name="Mesh" type="MeshInstance3D" parent="Photo1"]
+mesh = SubResource("box")
+material_override = SubResource("mat_photo")
+
+[node name="Interactable" type="Node3D" parent="Photo1"]
+script = ExtResource("3")
+Prompt = "Examine"
+Range = 1.8
+Once = false
+SetFlag = "saw_photo_1"
+Voice = "milch_photo_1"
+Enabled = true
+
+[node name="StairsDoor" type="AnimatableBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -2)
+metadata/aige_id = "e6"
+
+[node name="Shape" type="CollisionShape3D" parent="StairsDoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
+shape = SubResource("door_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="StairsDoor"]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 0.06, 0.5, 1, 0)
+mesh = SubResource("box")
+material_override = SubResource("mat_wood")
+
+[node name="Door" type="Node3D" parent="StairsDoor"]
+script = ExtResource("4")
+OpenAngle = 100.0
+Speed = 1.6
+Locked = true
+UnlockFlag = "saw_photo_1"
+LockedText = "Not yet..."
+StartOpen = false
+Prompt = "Open"
+
+[node name="KitchenZone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)
+metadata/aige_id = "e7"
+
+[node name="Area" type="Area3D" parent="KitchenZone"]
+collision_layer = 0
+collision_mask = 1
+
+[node name="Shape" type="CollisionShape3D" parent="KitchenZone/Area"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("zone_shape")
+
+[node name="Trigger" type="Node3D" parent="KitchenZone"]
+script = ExtResource("5")
+Once = true
+Tag = "Player"
+SetFlag = "entered_kitchen"
+Cutscene = "res://cutscenes/test_intro.cutscene.json"
+Delay = 0.3
+
+[node name="Milch" type="CharacterBody3D" parent="." groups=["Player"]]
+script = ExtResource("1")
+floor_max_angle = 0.872665
+floor_snap_length = 0.3
+metadata/aige_id = "e2"
+metadata/aige_tags = PackedStringArray("Player")
+
+[node name="Shape" type="CollisionShape3D" parent="Milch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("player_shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Milch"]
+transform = Transform3D(1.2, 0, 0, 0, 1.8, 0, 0, 0, 1.2, 0, 0.9, 0)
+mesh = SubResource("player_mesh")
+material_override = SubResource("mat_hoodie")
+
+[node name="Face" type="MeshInstance3D" parent="Milch"]
+transform = Transform3D(0.18, 0, 0, 0, 0.06, 0, 0, 0, 0.1, 0, 1.55, 0.27)
+mesh = SubResource("box")
+material_override = SubResource("mat_photo")
+
+[node name="Animator" type="Node3D" parent="Milch"]
+script = ExtResource("7")
+Clips = PackedStringArray()
+Initial = "idle"
+Locomotion = true
+Speed = 1.0
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 3)
+script = ExtResource("2")
+Target = "Milch"
+Distance = 3.2
+Height = 1.55
+Shoulder = 0.45
+Fov = 60.0
+MouseSensitivity = 0.12
+MinPitch = -60.0
+MaxPitch = 35.0
+metadata/aige_id = "e3"
+
+[node name="Moon" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.642788, 0.766044, 0, -0.766044, 0.642788, 0, 6, 4)
+metadata/aige_id = "e11"
+
+[node name="Light" type="DirectionalLight3D" parent="Moon"]
+light_color = Color(0.62, 0.7, 0.92, 1)
+light_energy = 0.5
+shadow_enabled = true
+light_angular_distance = 0.6
+directional_shadow_max_distance = 60.0
+shadow_blur = 1.5
+
+[node name="Lamp" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 2.1, -1.5)
+metadata/aige_id = "e12"
+
+[node name="Mesh" type="MeshInstance3D" parent="Lamp"]
+transform = Transform3D(0.14, 0, 0, 0, 0.14, 0, 0, 0, 0.14, 0, 0, 0)
+mesh = SubResource("sphere")
+material_override = SubResource("mat_lamp")
+cast_shadow = 0
+
+[node name="Light" type="OmniLight3D" parent="Lamp"]
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 1.4
+shadow_enabled = true
+omni_range = 7.0
+light_size = 0.04
+shadow_blur = 1.2
+
+[node name="Flicker" type="Node" parent="Lamp/Light"]
+script = ExtResource("8")
+Amount = 0.4
+
+[node name="Lightning" type="Node3D" parent="." groups=["Lightning"]]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 8, 6)
+metadata/aige_id = "e13"
+metadata/aige_tags = PackedStringArray("Lightning")
+
+[node name="Light" type="DirectionalLight3D" parent="Lightning"]
+light_color = Color(0.8, 0.86, 1, 1)
+light_energy = 0.0
+
+[node name="Dust" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -1)
+metadata/aige_id = "e8"
+
+[node name="ParticleSystem" type="Node3D" parent="Dust"]
+script = ExtResource("6")
+Preset = "dust"
+Count = 250
+Area = Vector3(6, 2.5, 6)
+Color = Color(1, 0.953, 0.839, 1)
+Size = 0.02
+Speed = 1.0
+Opacity = 0.6
+
+[node name="FxPresets" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.5, 12)
+metadata/aige_id = "e14"
+
+[node name="ParticleSystem" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "rain"
+
+[node name="ParticleSystem_2" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "snow"
+
+[node name="ParticleSystem_3" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "embers"
+
+[node name="ParticleSystem_4" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "fireflies"
+
+[node name="ParticleSystem_5" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "smoke"
+
+[node name="ParticleSystem_6" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "sparks"
+
+[node name="ParticleSystem_7" type="Node3D" parent="FxPresets"]
+script = ExtResource("6")
+Preset = "leaves"
+
+[node name="Radio" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, 2)
+metadata/aige_id = "e15"
+
+[node name="Audio" type="AudioStreamPlayer3D" parent="Radio"]
+stream = ExtResource("12")
+max_distance = 18.0
+unit_size = 3.0
+script = ExtResource("10")
+Volume = 0.05
+Loop = false
+PlayOnStart = true
+Range = 12.0
+
+[node name="Director" type="Node3D" parent="."]
+script = ExtResource("11")
+metadata/aige_id = "e16"
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+script = ExtResource("9")
+Vignette = 0.3
+Grain = 0.15
+Temperature = -0.2
+Tint = 0.0
+LightShafts = 0.0

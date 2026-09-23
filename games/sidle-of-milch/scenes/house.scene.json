@@ -1,0 +1,4804 @@
+{
+  "format": "aige.scene",
+  "version": 1,
+  "name": "house",
+  "entities": [
+    {
+      "id": "e1",
+      "name": "Cabin",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e2",
+      "name": "GroundFloor",
+      "parent": "e1",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e3",
+      "name": "UpperFloor",
+      "parent": "e1",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e4",
+      "name": "Furniture",
+      "parent": "e1",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e5",
+      "name": "Props",
+      "parent": "e1",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e6",
+      "name": "Doors",
+      "parent": "e1",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e7",
+      "name": "Night",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e8",
+      "name": "Morning",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e9",
+      "name": "Audio",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e10",
+      "name": "Story",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e11",
+      "name": "Exterior",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e12",
+      "name": "Wall_N",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0, 0, -4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 10.4,
+            "logRadius": 0.14,
+            "opening": "window",
+            "openingHeight": 0.85,
+            "openingWidth": 1,
+            "openingX": 3.15,
+            "overhang": 0.3,
+            "sill": 1.1
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e13",
+      "name": "Wall_S",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0, 0, 4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 10.4,
+            "logRadius": 0.14,
+            "opening": "door",
+            "openingHeight": 2.1,
+            "openingWidth": 1,
+            "openingX": 0,
+            "overhang": 0.3
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e14",
+      "name": "Wall_W",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [-5.2, 0, 0],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 8,
+            "logRadius": 0.14,
+            "opening": "window",
+            "openingHeight": 1,
+            "openingWidth": 0.9,
+            "openingX": 2,
+            "overhang": 0.3,
+            "sill": 1
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e15",
+      "name": "Wall_E",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [5.2, 0, 0],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 8,
+            "logRadius": 0.14,
+            "opening": "window",
+            "openingHeight": 1,
+            "openingWidth": 0.9,
+            "openingX": 1.6,
+            "overhang": 0.3,
+            "sill": 1
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e16",
+      "name": "Wall_Bedroom_Hall",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [-1.2, 0, -1.93],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 3.86,
+            "logRadius": 0.11,
+            "opening": "door",
+            "openingHeight": 2.05,
+            "openingWidth": 0.95,
+            "openingX": -1.08,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e17",
+      "name": "Wall_Bath_Hall",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [-1.2, 0, 1.93],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 3.86,
+            "logRadius": 0.11,
+            "opening": "door",
+            "openingHeight": 2.05,
+            "openingWidth": 0.95,
+            "openingX": -0.27,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e18",
+      "name": "Wall_Bedroom_Bath",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [-3.185, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 3.75,
+            "logRadius": 0.11,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e19",
+      "name": "Wall_Stairwell_Kitchen",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [1.2, 0, -1.93],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 3.86,
+            "logRadius": 0.11,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e20",
+      "name": "Wall_Hall_KitchenDoor",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [1.2, 0, 0.8],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 1.6,
+            "logRadius": 0.11,
+            "opening": "door",
+            "openingHeight": 2.05,
+            "openingWidth": 1,
+            "openingX": 0.18,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e21",
+      "name": "Wall_Hall_Storage",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [1.2, 0, 2.73],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 2.26,
+            "logRadius": 0.11,
+            "opening": "door",
+            "openingHeight": 2.05,
+            "openingWidth": 0.95,
+            "openingX": 0.03,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e22",
+      "name": "Wall_Kitchen_Storage",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [3.185, 0, 1.6],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 3.75,
+            "logRadius": 0.11,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e23",
+      "name": "Wall_Stairwell",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0.2, 0, -1.93],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 3.86,
+            "logRadius": 0.09,
+            "opening": "door",
+            "openingHeight": 2,
+            "openingWidth": 0.9,
+            "openingX": 1.42,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e24",
+      "name": "Wall_Stairwell_S",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0.645, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.7,
+            "length": 0.89,
+            "logRadius": 0.09,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e25",
+      "name": "Wall_N_Up",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0, 3, -4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 10.4,
+            "logRadius": 0.14,
+            "overhang": 0.3
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e26",
+      "name": "Wall_S_Up",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0, 3, 4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 10.4,
+            "logRadius": 0.14,
+            "opening": "window",
+            "openingHeight": 1,
+            "openingWidth": 0.8,
+            "openingX": -0.1,
+            "overhang": 0.3,
+            "sill": 0.9
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e27",
+      "name": "Wall_W_Up",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [-5.2, 3, 0],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 8,
+            "logRadius": 0.14,
+            "opening": "window",
+            "openingHeight": 0.9,
+            "openingWidth": 0.8,
+            "openingX": 1,
+            "overhang": 0.3,
+            "sill": 0.9
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e28",
+      "name": "Wall_E_Up",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [5.2, 3, 0],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 8,
+            "logRadius": 0.14,
+            "opening": "window",
+            "openingHeight": 1.1,
+            "openingWidth": 1,
+            "openingX": -2.3,
+            "overhang": 0.3,
+            "sill": 0.8
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e29",
+      "name": "Wall_Closed_Hall",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [-1.2, 3, 0],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 7.72,
+            "logRadius": 0.11,
+            "opening": "door",
+            "openingHeight": 2.05,
+            "openingWidth": 0.95,
+            "openingX": 1.5,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e30",
+      "name": "Wall_Murphy_Hall",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [1.2, 3, 2.23],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 3.26,
+            "logRadius": 0.11,
+            "opening": "door",
+            "openingHeight": 2.05,
+            "openingWidth": 0.95,
+            "openingX": -0.57,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "mesh",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e31",
+      "name": "Wall_Murphy_N",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [3.185, 3, 0.6],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 3.75,
+            "logRadius": 0.11,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e32",
+      "name": "Wall_Attic_Hall",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [1.2, 3, -1.63],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 2.5,
+            "length": 4.46,
+            "logRadius": 0.11,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e33",
+      "name": "Railing_Stairwell",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Wall"],
+      "transform": {
+        "position": [0.2, 3, -2.03],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "frame": "materials/wood_table.material.json",
+            "logs": "materials/log_wood.material.json"
+          },
+          "model": "models/log-wall.model.ts",
+          "params": {
+            "height": 1,
+            "length": 3.66,
+            "logRadius": 0.07,
+            "overhang": 0
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e34",
+      "name": "Floor_Ground",
+      "parent": "e2",
+      "active": true,
+      "tags": ["Floor"],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "beams": "materials/log_wood.material.json",
+            "slab": "materials/floor_old_wood.material.json"
+          },
+          "model": "models/slab.model.ts",
+          "params": {
+            "beams": false,
+            "depth": 8,
+            "thickness": 0.2,
+            "width": 10.4
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e35",
+      "name": "Floor_Upper_W",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Floor"],
+      "transform": {
+        "position": [-2.5, 3, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "beams": "materials/log_wood.material.json",
+            "slab": "materials/floor_dirty_planks.material.json"
+          },
+          "model": "models/slab.model.ts",
+          "params": {
+            "beams": true,
+            "depth": 8,
+            "thickness": 0.3,
+            "width": 5.4
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e36",
+      "name": "Floor_Upper_SE",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Floor"],
+      "transform": {
+        "position": [2.7, 3, 2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "beams": "materials/log_wood.material.json",
+            "slab": "materials/floor_dirty_planks.material.json"
+          },
+          "model": "models/slab.model.ts",
+          "params": {
+            "beams": true,
+            "depth": 4,
+            "thickness": 0.3,
+            "width": 5
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e37",
+      "name": "Floor_Upper_NE",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Floor"],
+      "transform": {
+        "position": [3.2, 3, -2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "beams": "materials/log_wood.material.json",
+            "slab": "materials/floor_dirty_planks.material.json"
+          },
+          "model": "models/slab.model.ts",
+          "params": {
+            "beams": true,
+            "depth": 4,
+            "thickness": 0.3,
+            "width": 4
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e38",
+      "name": "Ceiling_Upper",
+      "parent": "e3",
+      "active": true,
+      "tags": ["Floor"],
+      "transform": {
+        "position": [0, 5.62, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "beams": "materials/log_wood.material.json",
+            "slab": "materials/floor_old_wood.material.json"
+          },
+          "model": "models/slab.model.ts",
+          "params": {
+            "beams": true,
+            "depth": 8,
+            "thickness": 0.12,
+            "width": 10.4
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e39",
+      "name": "Stairs",
+      "parent": "e2",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0.7, 0, -3.85],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "stringers": "materials/log_wood.material.json",
+            "treads": "materials/floor_old_wood.material.json"
+          },
+          "model": "models/stairs.model.ts",
+          "params": {
+            "rail": false,
+            "rise": 3,
+            "run": 3.75,
+            "steps": 15,
+            "width": 0.92
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e40",
+      "name": "Stairs_Ramp",
+      "parent": "e2",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0.7, 1.45, -1.975],
+        "rotation": [-38.65981, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [0.92, 0.1, 4.90234]
+        }
+      ]
+    },
+    {
+      "id": "e41",
+      "name": "Door_Bedroom",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [-1.2, 0, -1.325],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {},
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": false,
+          "lockedText": "It won't open.",
+          "openAngle": -95,
+          "prompt": "Open",
+          "speed": 1.6,
+          "startOpen": false
+        }
+      ]
+    },
+    {
+      "id": "e42",
+      "name": "Door_Bathroom",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [-1.2, 0, 1.725],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {},
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": false,
+          "lockedText": "It won't open.",
+          "openAngle": -95,
+          "prompt": "Open",
+          "speed": 1.6,
+          "startOpen": false
+        }
+      ]
+    },
+    {
+      "id": "e43",
+      "name": "Door_Storage",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [1.2, 0, 2.225],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {},
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": false,
+          "lockedText": "It won't open.",
+          "openAngle": 95,
+          "prompt": "Open",
+          "speed": 1.6,
+          "startOpen": false
+        }
+      ]
+    },
+    {
+      "id": "e44",
+      "name": "Door_Stairs",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [0.2, 0, -3.8],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {
+            "height": 1.98,
+            "width": 0.88
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": true,
+          "lockedText": "It's locked. Maybe I should look around down here first.",
+          "openAngle": -95,
+          "prompt": "Open",
+          "speed": 1.6,
+          "startOpen": false,
+          "unlockFlag": "stairs_unlocked"
+        }
+      ]
+    },
+    {
+      "id": "e45",
+      "name": "Door_Front",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [-0.5, 0, 4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {
+            "height": 2.08,
+            "planks": 6,
+            "width": 0.98
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": true,
+          "lockedText": "Not yet. I have to find Murphy.",
+          "openAngle": 95,
+          "prompt": "Open",
+          "speed": 1.6,
+          "startOpen": false,
+          "unlockFlag": "leave_cabin"
+        }
+      ]
+    },
+    {
+      "id": "e46",
+      "name": "Door_ClosedRoom",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [-1.2, 3, -1.975],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {},
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": true,
+          "lockedText": "It won't open.",
+          "openAngle": 100,
+          "prompt": "Open",
+          "speed": 1.6,
+          "startOpen": false
+        }
+      ]
+    },
+    {
+      "id": "e47",
+      "name": "Door_Murphy",
+      "parent": "e6",
+      "active": true,
+      "tags": ["Door"],
+      "transform": {
+        "position": [1.2, 3, 2.325],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "braces": "materials/wood_table.material.json",
+            "door": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/door.model.ts",
+          "params": {},
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Door",
+          "locked": false,
+          "lockedText": "It won't open.",
+          "openAngle": 100,
+          "prompt": "Close",
+          "speed": 1.6,
+          "startOpen": true
+        }
+      ]
+    },
+    {
+      "id": "e48",
+      "name": "Bed",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-4.33, 0, -2.8],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "bed"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e49",
+      "name": "Nightstand",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-3.47, 0, -3.6],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "nightstand"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e50",
+      "name": "Dresser",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-1.58, 0, -2.6],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "dresser"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e51",
+      "name": "Wardrobe",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-4.35, 0, -0.42],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "wardrobe"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e52",
+      "name": "Counter_Drawers",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [1.95, 0, -3.56],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "counter"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e53",
+      "name": "Counter_Drawers_Open",
+      "parent": "e4",
+      "active": false,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [1.95, 0, -3.56],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "counter",
+            "open": 1
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e54",
+      "name": "Counter_Sink",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [3.15, 0, -3.56],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "sink_counter"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e55",
+      "name": "Fridge",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [4.73, 0, -3.3],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "fridge"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e56",
+      "name": "Kitchen_Cabinet",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [1.95, 1.5, -3.79],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "wall_cabinet"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e57",
+      "name": "Table",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [3.2, 0, -0.9],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_table.material.json",
+            "cabinet": "materials/wood_table.material.json",
+            "chair": "materials/wood_table.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_table.material.json",
+            "drawers": "materials/wood_table.material.json",
+            "frame": "materials/wood_table.material.json",
+            "shelf": "materials/wood_table.material.json",
+            "top": "materials/wood_table.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "round_table"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e58",
+      "name": "Chair_1",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [3.2, 0, -0.12],
+        "rotation": [0, 360, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_table.material.json",
+            "cabinet": "materials/wood_table.material.json",
+            "chair": "materials/wood_table.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_table.material.json",
+            "drawers": "materials/wood_table.material.json",
+            "frame": "materials/wood_table.material.json",
+            "shelf": "materials/wood_table.material.json",
+            "top": "materials/wood_table.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "chair"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e59",
+      "name": "Chair_2",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [2.5245, 0, -1.29],
+        "rotation": [0, 240, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_table.material.json",
+            "cabinet": "materials/wood_table.material.json",
+            "chair": "materials/wood_table.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_table.material.json",
+            "drawers": "materials/wood_table.material.json",
+            "frame": "materials/wood_table.material.json",
+            "shelf": "materials/wood_table.material.json",
+            "top": "materials/wood_table.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "chair"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e60",
+      "name": "Chair_3",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [3.8755, 0, -1.29],
+        "rotation": [0, 132, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_table.material.json",
+            "cabinet": "materials/wood_table.material.json",
+            "chair": "materials/wood_table.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_table.material.json",
+            "drawers": "materials/wood_table.material.json",
+            "frame": "materials/wood_table.material.json",
+            "shelf": "materials/wood_table.material.json",
+            "top": "materials/wood_table.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "chair"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e61",
+      "name": "Bathtub",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-4.55, 0, 2.75],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "bathtub"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e62",
+      "name": "Basin",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-3, 0, 0.47],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "basin"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e63",
+      "name": "Mirror_Cabinet",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-3, 1.22, 0.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "wall_cabinet"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Interactable",
+          "cutscene": "cutscenes/cabinet.cutscene.json",
+          "enabled": true,
+          "once": true,
+          "prompt": "Open the cabinet",
+          "range": 1.4,
+          "setFlag": "saw_toothbrushes"
+        }
+      ]
+    },
+    {
+      "id": "e64",
+      "name": "Mirror_Cabinet_Open",
+      "parent": "e4",
+      "active": false,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-3, 1.22, 0.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "wall_cabinet",
+            "open": 1
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e65",
+      "name": "Toilet",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-1.95, 0, 3.5],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "toilet"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e66",
+      "name": "Coat_Rack",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [3.6, 0, 1.73],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "coat_rack"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e67",
+      "name": "Storage_Shelf",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [4.9, 0, 3.1],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "shelf"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e68",
+      "name": "Crate_1",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [2, 0, 3.5],
+        "rotation": [0, 17, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "crate"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e69",
+      "name": "Crate_2",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [2.55, 0, 3.55],
+        "rotation": [0, -8, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "crate"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e70",
+      "name": "Crate_3",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [2.25, 0.5, 3.5],
+        "rotation": [0, 33, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "crate"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e71",
+      "name": "Murphy_Bed",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [4.45, 3, 1.55],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "fabric": "#5b6f8a",
+            "kind": "small_bed"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e72",
+      "name": "Toy_Chest",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [2.2, 3, 3.55],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "toy_chest"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e73",
+      "name": "Murphy_Shelf",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [1.55, 3, 1.5],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "shelf"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e74",
+      "name": "Junk_Crate_1",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-0.8, 3, -3.5],
+        "rotation": [0, 25, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "crate"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e75",
+      "name": "Junk_Crate_2",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-0.75, 3.5, -3.45],
+        "rotation": [0, -15, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "crate"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e76",
+      "name": "Closed_Room_Wardrobe",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-4.6, 3, 1],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "wardrobe"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e77",
+      "name": "Closed_Room_Bed",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-3.4, 3, -3],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_cabinet.material.json",
+            "cabinet": "materials/wood_cabinet.material.json",
+            "chair": "materials/wood_cabinet.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_cabinet.material.json",
+            "drawers": "materials/wood_cabinet.material.json",
+            "frame": "materials/wood_cabinet.material.json",
+            "shelf": "materials/wood_cabinet.material.json",
+            "top": "materials/wood_cabinet.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "fabric": "#7a6a5a",
+            "kind": "bed",
+            "wear": 0.9
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e78",
+      "name": "Hall_Chair",
+      "parent": "e4",
+      "active": true,
+      "tags": ["Furniture"],
+      "transform": {
+        "position": [-0.7, 0, 3.2],
+        "rotation": [0, 160, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "blanket": "materials/wool_blanket.material.json",
+            "body": "materials/wood_table.material.json",
+            "cabinet": "materials/wood_table.material.json",
+            "chair": "materials/wood_table.material.json",
+            "crate": "materials/wood_table.material.json",
+            "doors": "materials/wood_table.material.json",
+            "drawers": "materials/wood_table.material.json",
+            "frame": "materials/wood_table.material.json",
+            "shelf": "materials/wood_table.material.json",
+            "top": "materials/wood_table.material.json"
+          },
+          "model": "models/furniture.model.ts",
+          "params": {
+            "kind": "chair",
+            "wear": 0.9
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e79",
+      "name": "Photo_1",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.62, 0.98, -2.42],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "photo": "materials/photo1.material.json"
+          },
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "frame_stand"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "cutscene": "cutscenes/photo_1.cutscene.json",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look at the photo",
+          "range": 1.5,
+          "setFlag": "saw_photo_1"
+        }
+      ]
+    },
+    {
+      "id": "e80",
+      "name": "Photo_2",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [4.385, 1.3, -3.18],
+        "rotation": [0, -90, 3],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "photo": "materials/photo2.material.json"
+          },
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "frame_magnet"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look at the photo",
+          "range": 1.5,
+          "setFlag": "saw_photo_2",
+          "voice": "milch_photo_2"
+        }
+      ]
+    },
+    {
+      "id": "e81",
+      "name": "Knife_In_Drawer",
+      "parent": "e10",
+      "active": false,
+      "tags": [],
+      "transform": {
+        "position": [1.66, 0.66, -2.98],
+        "rotation": [0, 12, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "knife"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e82",
+      "name": "Knife_Stuck",
+      "parent": "e10",
+      "active": false,
+      "tags": [],
+      "transform": {
+        "position": [3.05, 3, 2.15],
+        "rotation": [0, 35, 4],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "knife_stuck"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e83",
+      "name": "Toothbrushes",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.02, 1.505, 0.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "toothbrush_cup"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e84",
+      "name": "Shield",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [5.05, 4.55, 1.3],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "shield"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look at the shield",
+          "range": 1.8,
+          "text": "A shield with a whirl... it was always here."
+        }
+      ]
+    },
+    {
+      "id": "e85",
+      "name": "Bulb_Kitchen",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.2, 2.62, -0.9],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "glow": 3,
+            "kind": "bulb"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e86",
+      "name": "Bulb_Hall",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 2.62, 2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "glow": 1.5,
+            "kind": "bulb"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e87",
+      "name": "Rug_Hall",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0.001, 2.6],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "rug",
+            "size": 1.1
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e88",
+      "name": "Rug_Murphy",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.3, 3.001, 2.3],
+        "rotation": [0, 10, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "color": "#3d4f6b",
+            "kind": "rug",
+            "size": 0.9
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e89",
+      "name": "Ball",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.7, 3, 3.1],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "ball"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e90",
+      "name": "Blocks",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.8, 3, 3],
+        "rotation": [0, 20, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "blocks"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e91",
+      "name": "Rocking_Horse",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [4.6, 3, 3.4],
+        "rotation": [0, -130, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "horse"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e92",
+      "name": "Dirt_1",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.7, 3, -1.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 1.3
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e93",
+      "name": "Dirt_2",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.4, 3, -2.5],
+        "rotation": [0, 67, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 0.9
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e94",
+      "name": "Dirt_3",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.9, 3, 1.8],
+        "rotation": [0, 134, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 1.1
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e95",
+      "name": "Dirt_4",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0.6, 3, 3.3],
+        "rotation": [0, 201, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 0.8
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e96",
+      "name": "Dirt_5",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.2, 3, 2],
+        "rotation": [0, 268, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 1.4
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e97",
+      "name": "Cobweb_1",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-5.06, 2.2, -3.86],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "cobweb",
+            "size": 1
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e98",
+      "name": "Cobweb_2",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [5.06, 2.25, -3.86],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "cobweb",
+            "size": 1.3
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e99",
+      "name": "Cobweb_3",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.34, 2.2, 3.86],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "cobweb",
+            "size": 1.6
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e100",
+      "name": "Cobweb_4",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.06, 5.05, -3.86],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "cobweb",
+            "size": 1
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e101",
+      "name": "Cobweb_5",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [5.06, 5.05, 3.86],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "cobweb",
+            "size": 1.3
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e102",
+      "name": "Cobweb_6",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.34, 5.1, 0.74],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "cobweb",
+            "size": 1.6
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e103",
+      "name": "Milch",
+      "parent": "e10",
+      "active": true,
+      "tags": ["Player"],
+      "transform": {
+        "position": [-3.3, 0, -2.3],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "CharacterController",
+          "height": 1.78,
+          "maxSlope": 50,
+          "radius": 0.28,
+          "snapToGround": 0.3,
+          "stepHeight": 0.35
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "runSpeed": 4.2,
+            "walkSpeed": 1.5
+          },
+          "script": "builtin:PlayerController"
+        },
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "color": "#6d6f73",
+          "primitive": "capsule",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e104",
+      "name": "Camera",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.3, 1.7, -0.6],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "distance": 2.3,
+            "fov": 62,
+            "height": 1.55,
+            "shoulder": 0.45,
+            "target": "Milch"
+          },
+          "script": "builtin:ThirdPersonCamera"
+        }
+      ]
+    },
+    {
+      "id": "e105",
+      "name": "Trigger_Hall",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.5, 1, -0.85],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [1.3, 2, 1]
+        },
+        {
+          "type": "Trigger",
+          "cutscene": "cutscenes/cs2_hall.cutscene.json",
+          "delay": 0,
+          "once": true,
+          "setFlag": "entered_hall",
+          "tag": "Player"
+        }
+      ]
+    },
+    {
+      "id": "e106",
+      "name": "Trigger_Kitchen",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.95, 1, 0.62],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [0.9, 2, 1.1]
+        },
+        {
+          "type": "Trigger",
+          "cutscene": "cutscenes/cs3_kitchen.cutscene.json",
+          "delay": 0,
+          "once": true,
+          "requireFlag": "entered_hall",
+          "setFlag": "searched_kitchen",
+          "tag": "Player"
+        }
+      ]
+    },
+    {
+      "id": "e107",
+      "name": "Trigger_Table",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.2, 1, -0.9],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [2.6, 2, 2.6]
+        },
+        {
+          "type": "Trigger",
+          "delay": 0,
+          "once": true,
+          "requireFlag": "has_knife",
+          "setFlag": "saw_table",
+          "tag": "Player",
+          "voice": "milch_table"
+        }
+      ]
+    },
+    {
+      "id": "e108",
+      "name": "Trigger_Bathroom",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-2.2, 1, 2.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [1.6, 2, 1.6]
+        },
+        {
+          "type": "Trigger",
+          "delay": 0,
+          "once": true,
+          "setFlag": "found_bathroom",
+          "tag": "Player"
+        }
+      ]
+    },
+    {
+      "id": "e109",
+      "name": "Trigger_Storage",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.1, 1, 2.8],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [3.2, 2, 2]
+        },
+        {
+          "type": "Trigger",
+          "delay": 0,
+          "once": true,
+          "setFlag": "found_storage",
+          "tag": "Player"
+        }
+      ]
+    },
+    {
+      "id": "e110",
+      "name": "Trigger_Upstairs",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 4, 1],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [2.2, 2, 1.2]
+        },
+        {
+          "type": "Trigger",
+          "delay": 0,
+          "once": true,
+          "requireFlag": "stairs_unlocked",
+          "tag": "Player",
+          "voice": "milch_upstairs"
+        }
+      ]
+    },
+    {
+      "id": "e111",
+      "name": "Trigger_Murphys_Room",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.3, 4, 2.4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [2.6, 2, 2.4]
+        },
+        {
+          "type": "Trigger",
+          "cutscene": "cutscenes/cs4_empty.cutscene.json",
+          "delay": 0,
+          "once": true,
+          "requireFlag": "stairs_unlocked",
+          "setFlag": "fainted",
+          "tag": "Player"
+        }
+      ]
+    },
+    {
+      "id": "e112",
+      "name": "Trigger_Leave",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 1, 4.35],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [1.2, 2, 0.5]
+        },
+        {
+          "type": "Trigger",
+          "cutscene": "cutscenes/cs6_leave.cutscene.json",
+          "delay": 0,
+          "once": true,
+          "requireFlag": "leave_cabin",
+          "tag": "Player"
+        }
+      ]
+    },
+    {
+      "id": "e113",
+      "name": "Chapter1",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "scripts/Chapter1.cs"
+        }
+      ]
+    },
+    {
+      "id": "e114",
+      "name": "Environment_Night",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Environment",
+          "ambient": 0.7,
+          "autoExposure": 0.5,
+          "bloom": 0.35,
+          "bloomThreshold": 0.9,
+          "contrast": 1.1,
+          "exposure": 1.35,
+          "fogBaseHeight": 0,
+          "fogColor": "#1b2230",
+          "fogDensity": 0.006,
+          "fogHeightFalloff": 0.2,
+          "gi": "sdfgi",
+          "grain": 0.18,
+          "hdri": "textures/hdri/moonlit_golf_2k.hdr",
+          "hdriRotation": 140,
+          "lightShafts": 0,
+          "saturation": 0.72,
+          "sky": "none",
+          "skyEnergy": 0.35,
+          "ssao": 1,
+          "ssaoRadius": 0.35,
+          "ssil": true,
+          "sunDirection": [-0.4, 0.45, -0.8],
+          "temperature": -0.3,
+          "tint": 0,
+          "toneMapping": "agx",
+          "vignette": 0.38,
+          "volumetricFog": 0.025
+        }
+      ]
+    },
+    {
+      "id": "e115",
+      "name": "Moon",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [-50.4, -44.4, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": true,
+          "color": "#9fb4dc",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 1.5,
+          "kind": "directional",
+          "range": 0
+        }
+      ]
+    },
+    {
+      "id": "e116",
+      "name": "Lightning",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [-50.4, 44.4, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": true,
+          "color": "#cdd9ff",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0,
+          "kind": "directional",
+          "range": 0
+        }
+      ]
+    },
+    {
+      "id": "e117",
+      "name": "Light_Kitchen",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.2, 2, -0.9],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": true,
+          "color": "#ffb46b",
+          "flicker": 0.25,
+          "groundColor": "#444444",
+          "intensity": 0.9,
+          "kind": "point",
+          "range": 6
+        }
+      ]
+    },
+    {
+      "id": "e118",
+      "name": "Light_Hall",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 2, 2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": true,
+          "color": "#ffac60",
+          "flicker": 0.55,
+          "groundColor": "#444444",
+          "intensity": 0.55,
+          "kind": "point",
+          "range": 5
+        }
+      ]
+    },
+    {
+      "id": "e119",
+      "name": "Fill_Bedroom",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.2, 2.2, -2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#7688ad",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0.35,
+          "kind": "point",
+          "range": 5
+        }
+      ]
+    },
+    {
+      "id": "e120",
+      "name": "Fill_Bathroom",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.2, 2.2, 2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#7688ad",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0.25,
+          "kind": "point",
+          "range": 5
+        }
+      ]
+    },
+    {
+      "id": "e121",
+      "name": "Fill_Hall",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.4, 2.2, -2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#7688ad",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0.2,
+          "kind": "point",
+          "range": 4
+        }
+      ]
+    },
+    {
+      "id": "e122",
+      "name": "Fill_Storage",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.2, 2.2, 2.8],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#7688ad",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0.2,
+          "kind": "point",
+          "range": 4
+        }
+      ]
+    },
+    {
+      "id": "e123",
+      "name": "Fill_Upstairs_Hall",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.4, 5.1, 0.5],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#7688ad",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0.3,
+          "kind": "point",
+          "range": 7
+        }
+      ]
+    },
+    {
+      "id": "e124",
+      "name": "Fill_Murphy",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.2, 5.1, 2.3],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#7688ad",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 0.3,
+          "kind": "point",
+          "range": 5
+        }
+      ]
+    },
+    {
+      "id": "e125",
+      "name": "Environment_Morning",
+      "parent": "e8",
+      "active": false,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Environment",
+          "ambient": 0.8,
+          "autoExposure": 0.5,
+          "bloom": 0.35,
+          "bloomThreshold": 0.9,
+          "contrast": 1.05,
+          "exposure": 1,
+          "fogBaseHeight": 0,
+          "fogColor": "#d9c7a4",
+          "fogDensity": 0.003,
+          "fogHeightFalloff": 0.2,
+          "gi": "sdfgi",
+          "grain": 0.1,
+          "hdri": "textures/hdri/autumn_forest_01_2k.hdr",
+          "hdriRotation": 0,
+          "lightShafts": 0,
+          "saturation": 0.95,
+          "sky": "none",
+          "skyEnergy": 1,
+          "ssao": 0.8,
+          "ssaoRadius": 0.35,
+          "ssil": true,
+          "sunDirection": [-0.4, 0.45, -0.8],
+          "temperature": 0.25,
+          "tint": 0,
+          "toneMapping": "agx",
+          "vignette": 0.25,
+          "volumetricFog": 0.018
+        }
+      ]
+    },
+    {
+      "id": "e126",
+      "name": "Sun",
+      "parent": "e8",
+      "active": false,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [-35.7, 53.1, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": true,
+          "color": "#ffd7a3",
+          "flicker": 0,
+          "groundColor": "#444444",
+          "intensity": 2.4,
+          "kind": "directional",
+          "range": 0
+        }
+      ]
+    },
+    {
+      "id": "e127",
+      "name": "Storm",
+      "parent": "e9",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "AudioSource",
+          "ambience": "storm",
+          "loop": true,
+          "playOnStart": true,
+          "range": 12,
+          "spatial": false,
+          "volume": 0.55
+        }
+      ]
+    },
+    {
+      "id": "e128",
+      "name": "Rain_Bedroom_Window",
+      "parent": "e9",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-5.05, 1.5, -2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "AudioSource",
+          "ambience": "rain_window",
+          "loop": true,
+          "playOnStart": true,
+          "range": 5,
+          "spatial": true,
+          "volume": 0.6
+        }
+      ]
+    },
+    {
+      "id": "e129",
+      "name": "Rain_Kitchen_Window",
+      "parent": "e9",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.15, 1.5, -3.95],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "AudioSource",
+          "ambience": "rain_window",
+          "loop": true,
+          "playOnStart": true,
+          "range": 5,
+          "spatial": true,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "e130",
+      "name": "Fridge_Hum",
+      "parent": "e9",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [4.73, 1, -3.3],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "AudioSource",
+          "ambience": "fridge_hum",
+          "loop": true,
+          "playOnStart": true,
+          "range": 6,
+          "spatial": true,
+          "volume": 0.5
+        }
+      ]
+    },
+    {
+      "id": "e131",
+      "name": "Creaks",
+      "parent": "e9",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "AudioSource",
+          "ambience": "creaks",
+          "loop": true,
+          "playOnStart": true,
+          "range": 12,
+          "spatial": false,
+          "volume": 0.25
+        }
+      ]
+    },
+    {
+      "id": "e132",
+      "name": "Birds",
+      "parent": "e9",
+      "active": false,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "AudioSource",
+          "ambience": "birds",
+          "loop": true,
+          "playOnStart": true,
+          "range": 12,
+          "spatial": false,
+          "volume": 0.6
+        }
+      ]
+    },
+    {
+      "id": "e133",
+      "name": "Dust_Bedroom",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.2, 1.3, -2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "ParticleSystem",
+          "area": [3.6, 2.4, 3.6],
+          "color": "#fff3d6",
+          "count": 450,
+          "opacity": 0.45,
+          "preset": "dust",
+          "size": 0.012,
+          "speed": 1
+        }
+      ]
+    },
+    {
+      "id": "e134",
+      "name": "Dust_Kitchen",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.2, 1.3, -1.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "ParticleSystem",
+          "area": [3.6, 2.4, 4.8],
+          "color": "#fff3d6",
+          "count": 400,
+          "opacity": 0.45,
+          "preset": "dust",
+          "size": 0.012,
+          "speed": 1
+        }
+      ]
+    },
+    {
+      "id": "e135",
+      "name": "Dust_Upstairs",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 4.2, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "ParticleSystem",
+          "area": [9, 2.2, 7],
+          "color": "#fff3d6",
+          "count": 700,
+          "opacity": 0.45,
+          "preset": "dust",
+          "size": 0.012,
+          "speed": 1
+        }
+      ]
+    },
+    {
+      "id": "e136",
+      "name": "Ground",
+      "parent": "e11",
+      "active": true,
+      "tags": ["Floor"],
+      "transform": {
+        "position": [0, -0.2, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "beams": "materials/log_wood.material.json",
+            "slab": "materials/ground_mud.material.json"
+          },
+          "model": "models/slab.model.ts",
+          "params": {
+            "beams": false,
+            "depth": 80,
+            "thickness": 0.3,
+            "width": 80
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    }
+  ],
+  "nextId": 137,
+  "settings": {
+    "ambientColor": "#ffffff",
+    "ambientIntensity": 0.4,
+    "background": "#87b5e0",
+    "environment": "outdoor",
+    "fog": null,
+    "killY": -50
+  }
+}
