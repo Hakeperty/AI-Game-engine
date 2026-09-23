@@ -55,13 +55,37 @@ Then ask Claude something like *"Create an AIGE project called coin-quest and bu
 { "mcpServers": { "aige": { "command": "node", "args": ["<path-to-repo>/apps/cli/bin/aige.mjs", "mcp"] } } }
 ```
 
+## Use it with a local model (Ollama) or the Claude API
+The in-editor agent also runs headlessly:
+
+```bash
+# local model (Ollama at http://localhost:11434)
+aige agent "Build a coin platformer with 5 coins and a goal flag" -p my-game --provider ollama --model qwen3.8:27b
+# Claude (needs ANTHROPIC_API_KEY)
+aige agent "Build a coin platformer with 5 coins and a goal flag" -p my-game --provider anthropic
+```
+
+See [`examples/coin-platformer-qwen`](examples/coin-platformer-qwen). A local `qwen3.8:27b` built that game autonomously, and it wins its play-test.
+
 ## CLI
 ```bash
 aige new my-game                                  # scaffold a project
 aige call model_from_template '{"template":"tree"}' -p my-game --out tree.png
 aige screenshot -p my-game --views camera,iso --out shot.png
+aige call game_run_headless '{"seconds":10,"inputs":[{"at":0,"axis":"move_y","value":1}]}' -p my-game
+aige call export_web '{}' -p my-game              # playable build in my-game/dist/
 aige tools                                        # list all tools
 ```
+
+## How an AI builds a game
+| Step | Tools |
+|---|---|
+| Inspect | `scene_tree`, `project_info`, `api_docs` |
+| Model | `model_from_template`, `model_create` (TypeScript recipes: primitives, extrude, booleans, SDF sculpting…), `model_preview` |
+| Build | `entity_create`, `batch`, `entity_duplicate`, `prefab_*`, `material_*`, `texture_generate` |
+| Code | `script_write` (type-checked against the runtime API), built-in behaviours |
+| Verify | `render_screenshot`, `scene_validate`, `game_run_headless` (scripted input → score, errors, win/lose, screenshots) |
+| Ship | `export_web` (static build, smoke-tested in a headless browser) |
 
 ## Roadmap (v0.1)
 - [x] M0 Scaffold (monorepo, tooling, CI)
@@ -69,10 +93,10 @@ aige tools                                        # list all tools
 - [x] M2 Modeling kernel + recipes + 12 templates
 - [x] M3 Rendering + headless screenshots (GPU via ANGLE, SwiftShader fallback)
 - [x] M4 MCP server + CLI
-- [ ] M5 Runtime (physics, scripting, headless play-tests)
-- [ ] M6 Editor
-- [ ] M7 In-editor agent (Claude and Ollama)
-- [ ] M8 Modeling workspace + web export
+- [x] M5 Runtime (Rapier physics, scripting API, built-in behaviours, headless play-tests)
+- [ ] M6 Editor (in progress)
+- [x] M7 In-editor agent (Claude and Ollama); editor chat panel in progress
+- [x] M8 Web export (modeling workspace UI comes with the editor)
 - [ ] M9 Acceptance: an AI builds a 3D coin platformer from a single prompt
 
 ## License
