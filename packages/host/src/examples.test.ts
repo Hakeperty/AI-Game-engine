@@ -2,9 +2,14 @@
 import { existsSync, mkdtempSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { canonicalJson, SceneDoc } from '@aige/core';
+import { canonicalJson, parseComponent, SceneDoc } from '@aige/core';
 import { describe, expect, it } from 'vitest';
 import { ProjectHost } from './index.ts';
+
+const normalizeScene = (s: SceneDoc): SceneDoc => ({
+  ...s,
+  entities: s.entities.map((e) => ({ ...e, components: e.components.map((c) => parseComponent(c)) })),
+});
 
 const EXAMPLES = resolve(import.meta.dirname, '..', '..', '..', 'examples');
 const examples = existsSync(EXAMPLES)
@@ -31,8 +36,9 @@ describe.skipIf(examples.length === 0)('example replays', () => {
         await host.bus.replay(log);
         for (const file of readdirSync(join(dir, 'scenes'))) {
           const expected = SceneDoc.parse(JSON.parse(readFileSync(join(dir, 'scenes', file), 'utf8')));
-          const actual = host.state.scenes[`scenes/${file}`];
-          expect(canonicalJson(actual)).toBe(canonicalJson(expected));
+          const actual = host.state.scenes[`scenes/${file}`]!;
+          // Normalize components through their schemas so newly added defaulted fields don't count as changes.
+          expect(canonicalJson(normalizeScene(actual))).toBe(canonicalJson(normalizeScene(expected)));
         }
       } finally {
         await host.close();
