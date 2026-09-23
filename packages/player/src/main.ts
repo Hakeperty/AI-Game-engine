@@ -50,7 +50,7 @@ function loadScripts(data: GameData, errors: string[]): Record<string, Behaviour
   for (const [path, code] of Object.entries(data.scripts)) {
     try {
       const module = { exports: {} as Record<string, unknown> };
-      // biome-ignore lint/security/noGlobalEval: compiled user scripts are the game's own code
+      // compiled user scripts are the game's own code
       new Function('module', 'exports', `${code}\n//# sourceURL=${path}`)(module, module.exports);
       out[path] = (module.exports.default ?? module.exports) as BehaviourClass;
     } catch (err) {

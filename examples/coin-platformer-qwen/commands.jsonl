@@ -1,0 +1,15 @@
+{"name":"model_from_template","input":{"name":"blob","template":"blob-character"},"seq":1,"source":"agent","t":"2026-09-22T20:15:26.377Z"}
+{"name":"model_from_template","input":{"name":"coin","template":"coin"},"seq":2,"source":"agent","t":"2026-09-22T20:15:26.535Z"}
+{"name":"model_from_template","input":{"name":"platform","template":"platform"},"seq":3,"source":"agent","t":"2026-09-22T20:15:26.589Z"}
+{"name":"model_from_template","input":{"name":"flag","template":"flag"},"seq":4,"source":"agent","t":"2026-09-22T20:15:26.782Z"}
+{"name":"entity_create","input":{"name":"Player","tags":["Player"],"position":[0,0,0],"components":[{"type":"MeshRenderer","model":"models/blob.model.ts"},{"type":"CharacterController","height":1.2,"radius":0.45},{"type":"Script","script":"builtin:PlayerController"}]},"seq":5,"source":"agent","t":"2026-09-22T20:16:09.913Z"}
+{"name":"component_add","input":{"component":{"type":"Script","props":{"offset":[0,5,9],"target":"Player"},"script":"builtin:FollowCamera"},"entity":"Main Camera"},"seq":6,"source":"agent","t":"2026-09-22T20:16:09.916Z"}
+{"name":"entity_create","input":{"name":"Coin","tags":["Coin"],"position":[0,1,-4],"components":[{"type":"MeshRenderer","model":"models/coin.model.ts"},{"type":"Collider","isTrigger":true,"radius":0.5,"shape":"sphere"},{"type":"Script","script":"builtin:Collectible"}]},"seq":7,"source":"agent","t":"2026-09-22T20:16:23.100Z"}
+{"name":"entity_duplicate","input":{"count":4,"entity":"Coin","offset":[0,0,-4]},"seq":8,"source":"agent","t":"2026-09-22T20:16:35.007Z"}
+{"name":"entity_create","input":{"name":"GoalPlatform","position":[0,0,-22],"components":[{"type":"MeshRenderer","model":"models/platform.model.ts"},{"type":"Collider","size":[4,1,4]}]},"seq":9,"source":"agent","t":"2026-09-22T20:16:35.009Z"}
+{"name":"entity_update","input":{"position":[0,0.5,-22],"entity":"GoalPlatform"},"seq":10,"source":"agent","t":"2026-09-22T20:17:38.991Z"}
+{"name":"entity_create","input":{"name":"Goal","position":[0,0.5,-22],"components":[{"type":"MeshRenderer","model":"models/flag.model.ts"},{"type":"Collider","height":3,"isTrigger":true,"offset":[0,1.5,0],"radius":0.8,"shape":"cylinder"},{"type":"Script","props":{"message":"You win!","requireAll":"Coin"},"script":"builtin:Goal"}]},"seq":11,"source":"agent","t":"2026-09-22T20:17:38.993Z"}
+{"name":"entity_create","input":{"name":"ScoreHUD","components":[{"id":"score","type":"UIText","anchor":"top-left","fontSize":24,"text":"Coins: 0 / 5"},{"type":"Script","props":{"format":"Coins: {score} / 5","id":"score"},"script":"builtin:HudText"}]},"seq":12,"source":"agent","t":"2026-09-22T20:17:38.995Z"}
+{"name":"entity_update","input":{"position":[0,0,-22],"scale":[1,0.3,1],"entity":"GoalPlatform"},"seq":13,"source":"agent","t":"2026-09-22T20:19:51.249Z"}
+{"name":"component_update","input":{"type":"Collider","entity":"GoalPlatform","props":{"offset":[0,-0.15,0],"size":[4,0.3,4]}},"seq":14,"source":"agent","t":"2026-09-22T20:19:51.252Z"}
+{"name":"entity_update","input":{"position":[0,0.3,-22],"entity":"Goal"},"seq":15,"source":"agent","t":"2026-09-22T20:19:51.252Z"}
