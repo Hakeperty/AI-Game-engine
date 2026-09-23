@@ -134,7 +134,10 @@ export class ProjectHost {
     const [root, key] = p.path as (string | number)[];
     if (root === 'project') this.dirty.add('project');
     else if (root === 'activeScene') this.workspaceDirty = true;
-    else if ((root === 'scenes' || root === 'materials' || root === 'prefabs' || root === 'cutscenes') && typeof key === 'string')
+    else if (
+      (root === 'scenes' || root === 'materials' || root === 'prefabs' || root === 'cutscenes') &&
+      typeof key === 'string'
+    )
       this.dirty.add(`${root}|${key}`);
   }
 

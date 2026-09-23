@@ -230,7 +230,20 @@ export const AudioSource = defineComponent({
     clip: AssetPath.optional(),
     sfx: z.enum(['coin', 'jump', 'hit', 'explosion', 'powerup', 'laser', 'click', 'win', 'lose']).optional(),
     ambience: z
-      .enum(['wind', 'storm', 'rain', 'rain_window', 'fridge_hum', 'fire', 'creaks', 'birds', 'crickets', 'room_tone', 'heartbeat', 'breathing'])
+      .enum([
+        'wind',
+        'storm',
+        'rain',
+        'rain_window',
+        'fridge_hum',
+        'fire',
+        'creaks',
+        'birds',
+        'crickets',
+        'room_tone',
+        'heartbeat',
+        'breathing',
+      ])
       .optional()
       .describe('Looping procedural ambience'),
     volume: z.number().min(0).max(1).default(0.8),
@@ -252,7 +265,9 @@ export const Animator = defineComponent({
     clips: z
       .array(AssetPath)
       .default([])
-      .describe("Extra clip files ('animations/wave.anim.json'); built-in humanoid clips are always available"),
+      .describe(
+        "Extra clip files ('animations/wave.anim.json'); built-in humanoid clips are always available",
+      ),
     initial: z.string().default('idle').describe('Clip to play at start'),
     locomotion: z.boolean().default(true).describe('Auto idle/walk/run from movement speed'),
     speed: z.number().positive().default(1).describe('Playback speed multiplier'),
@@ -265,7 +280,7 @@ export const Interactable = defineComponent({
   category: 'gameplay',
   multiple: false,
   description:
-    "Something the player can interact with (press E when close and facing it): examine, pick up, open. Shows `prompt` on screen. On interact it can play a cutscene or voice line, show a thought text, give an item (the entity is then hidden), and set a story flag. `requireFlag` hides the prompt until that flag is set.",
+    'Something the player can interact with (press E when close and facing it): examine, pick up, open. Shows `prompt` on screen. On interact it can play a cutscene or voice line, show a thought text, give an item (the entity is then hidden), and set a story flag. `requireFlag` hides the prompt until that flag is set.',
   schema: z.object({
     prompt: z.string().default('Examine'),
     range: z.number().positive().default(1.8),
@@ -325,9 +340,11 @@ export const ParticleSystem = defineComponent({
   category: 'rendering',
   multiple: true,
   description:
-    "Floating/falling particles inside a box `area` around the entity: dust motes in the air, rain, snow, embers, fireflies, smoke, falling leaves.",
+    'Floating/falling particles inside a box `area` around the entity: dust motes in the air, rain, snow, embers, fireflies, smoke, falling leaves.',
   schema: z.object({
-    preset: z.enum(['dust', 'rain', 'snow', 'embers', 'fireflies', 'smoke', 'sparks', 'leaves']).default('dust'),
+    preset: z
+      .enum(['dust', 'rain', 'snow', 'embers', 'fireflies', 'smoke', 'sparks', 'leaves'])
+      .default('dust'),
     count: z.number().int().min(1).max(20000).default(300),
     area: Vec3.default([4, 2.5, 4]).describe('Box size in meters (centered on the entity)'),
     color: Color.default('#fff3d6'),

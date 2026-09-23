@@ -1,5 +1,12 @@
 import { AigeError, didYouMean } from './errors.ts';
-import type { CutsceneDoc, Entity, MaterialDoc, PrefabDoc, ProjectDoc, SceneDoc } from './schema/documents.ts';
+import type {
+  CutsceneDoc,
+  Entity,
+  MaterialDoc,
+  PrefabDoc,
+  ProjectDoc,
+  SceneDoc,
+} from './schema/documents.ts';
 import { createProjectDoc, createSceneDoc } from './schema/documents.ts';
 
 /**

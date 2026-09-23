@@ -159,13 +159,21 @@ export const CutsceneTrack = z.discriminatedUnion('type', [
     type: z.literal('animation'),
     actor: z.string(),
     clips: z.array(
-      z.object({ t: z.number().min(0), clip: z.string(), loop: z.boolean().default(false), fade: z.number().min(0).default(0.25), speed: z.number().positive().default(1) }),
+      z.object({
+        t: z.number().min(0),
+        clip: z.string(),
+        loop: z.boolean().default(false),
+        fade: z.number().min(0).default(0.25),
+        speed: z.number().positive().default(1),
+      }),
     ),
   }),
   z.object({
     type: z.literal('move'),
     actor: z.string(),
-    keys: z.array(z.object({ t: z.number().min(0), position: Vec3, rotation: EulerDeg.optional(), ease: Ease })).min(1),
+    keys: z
+      .array(z.object({ t: z.number().min(0), position: Vec3, rotation: EulerDeg.optional(), ease: Ease }))
+      .min(1),
   }),
   z.object({
     type: z.literal('voice'),
@@ -192,14 +200,31 @@ export const CutsceneTrack = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('subtitle'),
-    items: z.array(z.object({ t: z.number().min(0), duration: z.number().positive(), text: z.string(), speaker: z.string().optional() })),
+    items: z.array(
+      z.object({
+        t: z.number().min(0),
+        duration: z.number().positive(),
+        text: z.string(),
+        speaker: z.string().optional(),
+      }),
+    ),
   }),
   z.object({
     type: z.literal('fx'),
     items: z.array(
       z.object({
         t: z.number().min(0),
-        effect: z.enum(['fade', 'vignette', 'blur', 'darken', 'desaturate', 'flash', 'shake', 'letterbox', 'heartbeat']),
+        effect: z.enum([
+          'fade',
+          'vignette',
+          'blur',
+          'darken',
+          'desaturate',
+          'flash',
+          'shake',
+          'letterbox',
+          'heartbeat',
+        ]),
         to: z.number().min(0).max(1).describe('Target strength (fade 1 = black)'),
         duration: z.number().min(0).default(0.5),
         color: Color.optional(),
@@ -209,7 +234,13 @@ export const CutsceneTrack = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('light'),
     items: z.array(
-      z.object({ t: z.number().min(0), entity: z.string(), intensity: z.number().min(0), duration: z.number().min(0).default(0), color: Color.optional() }),
+      z.object({
+        t: z.number().min(0),
+        entity: z.string(),
+        intensity: z.number().min(0),
+        duration: z.number().min(0).default(0),
+        color: Color.optional(),
+      }),
     ),
   }),
   z.object({
