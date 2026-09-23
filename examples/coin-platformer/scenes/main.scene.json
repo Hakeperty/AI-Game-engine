@@ -1,0 +1,1246 @@
+{
+  "format": "aige.scene",
+  "version": 1,
+  "name": "main",
+  "entities": [
+    {
+      "id": "e1",
+      "name": "Main Camera",
+      "parent": null,
+      "active": true,
+      "tags": [
+        "MainCamera"
+      ],
+      "transform": {
+        "position": [0, 4.5, 9.8],
+        "rotation": [-22, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Camera",
+          "far": 500,
+          "fov": 60,
+          "near": 0.1,
+          "primary": true
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "offset": [0, 4.2, 8],
+            "smooth": 5,
+            "target": "Fox"
+          },
+          "script": "builtin:FollowCamera"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "name": "Sun",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 10, 0],
+        "rotation": [-50, 30, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": true,
+          "color": "#ffffff",
+          "groundColor": "#444444",
+          "intensity": 2.2,
+          "kind": "directional",
+          "range": 0
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "name": "Sea",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, -9, -18],
+        "rotation": [0, 0, 0],
+        "scale": [260, 1, 260]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": false,
+          "material": "materials/sea.material.json",
+          "primitive": "plane",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e5",
+      "name": "Level",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e6",
+      "name": "Start Island",
+      "parent": "e5",
+      "active": true,
+      "tags": [
+        "Island"
+      ],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 47, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/sky-island.model.ts",
+          "params": {
+            "depth": 3.2,
+            "seed": 1,
+            "width": 7
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e7",
+      "name": "Island 2",
+      "parent": "e5",
+      "active": true,
+      "tags": [
+        "Island"
+      ],
+      "transform": {
+        "position": [0.8, 0.4, -8.5],
+        "rotation": [0, 94, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/sky-island.model.ts",
+          "params": {
+            "depth": 2.4,
+            "seed": 2,
+            "width": 4.6
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e8",
+      "name": "Island 3",
+      "parent": "e5",
+      "active": true,
+      "tags": [
+        "Island"
+      ],
+      "transform": {
+        "position": [-0.8, 1.2, -15],
+        "rotation": [0, 141, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/sky-island.model.ts",
+          "params": {
+            "depth": 2.6,
+            "seed": 3,
+            "width": 4.6
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e9",
+      "name": "Island 4",
+      "parent": "e5",
+      "active": true,
+      "tags": [
+        "Island"
+      ],
+      "transform": {
+        "position": [0.6, 2, -21.5],
+        "rotation": [0, 188, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/sky-island.model.ts",
+          "params": {
+            "depth": 2.8,
+            "seed": 4,
+            "width": 4.8
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e10",
+      "name": "Island 5",
+      "parent": "e5",
+      "active": true,
+      "tags": [
+        "Island"
+      ],
+      "transform": {
+        "position": [0, 2.8, -28.5],
+        "rotation": [0, 235, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/sky-island.model.ts",
+          "params": {
+            "depth": 2.6,
+            "seed": 5,
+            "width": 5
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e11",
+      "name": "Goal Island",
+      "parent": "e5",
+      "active": true,
+      "tags": [
+        "Island"
+      ],
+      "transform": {
+        "position": [0, 3.6, -36.5],
+        "rotation": [0, 282, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/sky-island.model.ts",
+          "params": {
+            "depth": 3.4,
+            "seed": 6,
+            "width": 7.5
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e12",
+      "name": "Fox",
+      "parent": null,
+      "active": true,
+      "tags": [
+        "Player"
+      ],
+      "transform": {
+        "position": [0, 0, 1.8],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/fox.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "CharacterController",
+          "height": 0.9,
+          "maxSlope": 50,
+          "radius": 0.32,
+          "snapToGround": 0.3,
+          "stepHeight": 0.35
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "jumpSpeed": 9.5,
+            "speed": 6
+          },
+          "script": "builtin:PlayerController"
+        }
+      ]
+    },
+    {
+      "id": "e13",
+      "name": "HUD",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "id": "score",
+          "type": "UIText",
+          "anchor": "top-left",
+          "color": "#ffffff",
+          "fontSize": 30,
+          "offset": [16, 16],
+          "text": "Coins: 0 / 12"
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "format": "Coins: {score} / 12",
+            "id": "score"
+          },
+          "script": "builtin:HudText"
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "scripts/level-timer.ts"
+        }
+      ]
+    },
+    {
+      "id": "e14",
+      "name": "Coins",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e15",
+      "name": "Coin",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 1, -0.8],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e16",
+      "name": "Coin (2)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 1, -2.6],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e17",
+      "name": "Coin (3)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 1.4, -8.5],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e18",
+      "name": "Coin (4)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 2.2, -15],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e19",
+      "name": "Coin (5)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 3, -21.5],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e20",
+      "name": "Coin (6)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 3.8, -28.5],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e21",
+      "name": "Coin (7)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 4.6, -36.5],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "scoreKey": "score"
+          },
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e22",
+      "name": "Spikes",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.9, 2, -21.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/spike.model.ts",
+          "params": {
+            "count": 3,
+            "size": 1.2
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0.35, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [1.2, 0.7, 1.2]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "action": "respawn"
+          },
+          "script": "builtin:Hazard"
+        }
+      ]
+    },
+    {
+      "id": "e23",
+      "name": "Goal Flag",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 3.6, -38.4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/flag.model.ts",
+          "params": {
+            "cloth": "#ffcf33",
+            "height": 3
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 1.5, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "box",
+          "size": [1.6, 3, 1.6]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {
+            "message": "All 12 coins! You win!",
+            "requireAll": "Coin"
+          },
+          "script": "builtin:Goal"
+        }
+      ]
+    },
+    {
+      "id": "e24",
+      "name": "Decor",
+      "parent": null,
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": []
+    },
+    {
+      "id": "e25",
+      "name": "Tree",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-2.4, 0, -0.6],
+        "rotation": [0, 30, 0],
+        "scale": [0.9, 0.9, 0.9]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/tree-organic.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e26",
+      "name": "Mushroom",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.3, 0, 0.8],
+        "rotation": [0, 0, 0],
+        "scale": [1.4, 1.4, 1.4]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/mushroom.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e27",
+      "name": "Flower",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.6, 0, -1.8],
+        "rotation": [0, 20, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/flower.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e28",
+      "name": "Flower (2)",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.4, 0, 1.4],
+        "rotation": [0, 80, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/flower.model.ts",
+          "params": {
+            "style": "tulip"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e29",
+      "name": "Bush",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-2, 1.2, -15.8],
+        "rotation": [0, 0, 0],
+        "scale": [0.8, 0.8, 0.8]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/bush.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e30",
+      "name": "Rock",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.5, 2, -22.3],
+        "rotation": [0, 40, 0],
+        "scale": [0.8, 0.8, 0.8]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/rock.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e31",
+      "name": "Mushroom (2)",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.8, 2.8, -29.4],
+        "rotation": [0, 60, 0],
+        "scale": [1.1, 1.1, 1.1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/mushroom.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e32",
+      "name": "Tree (2)",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-2.6, 3.6, -37.2],
+        "rotation": [0, 200, 0],
+        "scale": [1.1, 1.1, 1.1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/tree-organic.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e33",
+      "name": "Bush (2)",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.6, 3.6, -35.4],
+        "rotation": [0, 90, 0],
+        "scale": [0.9, 0.9, 0.9]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/bush.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e34",
+      "name": "Flower (3)",
+      "parent": "e24",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.5, 3.6, -37.8],
+        "rotation": [0, 10, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/flower.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e35",
+      "name": "Air Coin",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 2.75, -5.9],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e36",
+      "name": "Air Coin (2)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 3.15, -13.1],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e37",
+      "name": "Air Coin (3)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 3.95, -19.4],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e38",
+      "name": "Air Coin (4)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 4.75, -26.3],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "builtin:Collectible"
+        }
+      ]
+    },
+    {
+      "id": "e39",
+      "name": "Air Coin (5)",
+      "parent": "e14",
+      "active": true,
+      "tags": [
+        "Coin"
+      ],
+      "transform": {
+        "position": [0, 5.55, -31.8],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/coin.model.ts",
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": true,
+          "offset": [0, 0, 0],
+          "radius": 0.7,
+          "restitution": 0,
+          "shape": "sphere",
+          "size": [1, 1, 1]
+        },
+        {
+          "type": "Script",
+          "enabled": true,
+          "props": {},
+          "script": "builtin:Collectible"
+        }
+      ]
+    }
+  ],
+  "nextId": 40,
+  "settings": {
+    "ambientColor": "#ffffff",
+    "ambientIntensity": 0.35,
+    "background": "#8fc8ff",
+    "environment": "outdoor",
+    "fog": {
+      "color": "#cde8ff",
+      "far": 110,
+      "near": 30
+    },
+    "killY": -7
+  }
+}

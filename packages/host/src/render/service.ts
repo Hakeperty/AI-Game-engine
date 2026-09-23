@@ -92,12 +92,14 @@ export class RenderService {
     // Frame what matters: skip ground planes unless they are all there is.
     let focus = opts.focus?.map((ref) => resolveEntity(scene, ref).id);
     if (!focus) {
+      // skip grounds, seas and other huge backdrop planes
       const interesting = scene.entities.filter(
         (e) =>
           e.active &&
           e.components.some((c) => c.type === 'MeshRenderer') &&
-          !e.tags.includes('Ground') &&
-          e.name !== 'Ground',
+          !e.tags.some((t) => t === 'Ground' || t === 'Background') &&
+          e.name !== 'Ground' &&
+          Math.max(...e.transform.scale.map(Math.abs)) < 30,
       );
       if (interesting.length) focus = interesting.map((e) => e.id);
     }

@@ -179,6 +179,7 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
       probes: z.array(z.string()).max(10).optional().describe("Entities to track (default: the entity tagged 'Player')"),
       screenshotsAt: z.array(z.number().min(0)).max(4).default([]).describe('Times (s) to capture game-camera screenshots'),
       stopOnGameOver: z.boolean().default(true),
+      sampleRate: z.number().min(1).max(20).default(2).describe('Probe samples per second (raise to 10 to time jumps precisely)'),
       seed: z.number().int().default(1),
     })
     .strict(),
@@ -197,7 +198,7 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
         probes,
         captureAt: input.screenshotsAt,
         stopOnGameOver: input.stopOnGameOver,
-        sampleRate: 4,
+        sampleRate: input.sampleRate,
       },
     });
     const result = await runPlayTest(payload);
@@ -216,7 +217,7 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
     const probeTracks = Object.fromEntries(
       Object.entries(result.probes).map(([ref, samples]) => [
         ref,
-        samples.filter((_, i) => i % 2 === 0).map((s) => `${s.t.toFixed(1)}s:${s.position.map((n) => n.toFixed(2)).join(',')}${s.grounded === false ? ' air' : ''}${s.destroyed ? ' destroyed' : ''}`),
+        samples.map((s) => `${s.t.toFixed(2)}s:${s.position.map((n) => n.toFixed(2)).join(',')}${s.grounded === false ? ' air' : ''}${s.destroyed ? ' destroyed' : ''}`),
       ]),
     );
     return {

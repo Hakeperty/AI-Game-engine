@@ -128,20 +128,13 @@ export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, model
       let count = 0;
       for (const [id, obj] of sr.objects) {
         if (count >= 40) break;
+        // Only the entity's own visual (not child entities): group entities get no label.
         const box = new Box3();
-        obj.traverse((o) => {
-          if ((o as import('three').Mesh).isMesh && o.userData.meshRenderer !== undefined) box.expandByObject(o);
-        });
-        let hasMesh = !box.isEmpty();
-        if (!hasMesh) {
-          obj.traverse((o) => {
-            if ((o as import('three').Mesh).isMesh) {
-              box.expandByObject(o);
-              hasMesh = true;
-            }
-          });
+        for (const child of obj.children) {
+          if (child.userData.entityId || !child.userData.meshRenderer) continue;
+          box.expandByObject(child);
         }
-        if (!hasMesh || box.getSize(new Vector3()).length() > size.length() * 0.9) continue;
+        if (box.isEmpty() || box.getSize(new Vector3()).length() > size.length() * 0.9) continue;
         const top = new Vector3((box.min.x + box.max.x) / 2, box.max.y, (box.min.z + box.max.z) / 2);
         const s = projectToScreen(top, cam, cw, ch);
         if (!s.visible) continue;

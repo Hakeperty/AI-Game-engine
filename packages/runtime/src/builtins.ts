@@ -53,6 +53,8 @@ export class Bobber extends Behaviour {
   }
 }
 
+const JUMP_BUFFER_SECONDS = 0.15;
+
 /**
  * Third-person movement from the move_x / move_y axes, 'sprint' and 'jump' actions. Uses the entity's
  * CharacterController when present (else a dynamic RigidBody, else moves the transform), faces the
@@ -69,6 +71,7 @@ export class PlayerController extends Behaviour {
   };
   private vy = 0;
   private baseY = 0;
+  private jumpBuffer = 0;
   /** Last movement direction (world space, unit length or zero). */
   readonly moveDirection = new Vector3();
 
@@ -96,13 +99,17 @@ export class PlayerController extends Behaviour {
     const sprint = numOr(p.sprintMultiplier, 1.6);
     const speed = numOr(p.speed, 6) * (Input.held('sprint') ? sprint : 1);
     const vel = dir.clone().multiplyScalar(speed);
-    const jump = Input.pressed('jump');
+    // Jump buffering: a press shortly before landing still jumps (feels right, and makes scripted
+    // play-tests robust to small timing errors).
+    if (Input.pressed('jump')) this.jumpBuffer = JUMP_BUFFER_SECONDS;
+    else this.jumpBuffer = Math.max(0, this.jumpBuffer - dt);
+    const jump = this.jumpBuffer > 0;
     const jumpSpeed = numOr(p.jumpSpeed, 9);
     const ch = this.entity.character;
     const body = this.entity.body;
     if (ch) {
       ch.move(vel, dt);
-      if (jump) ch.jump(jumpSpeed);
+      if (jump && ch.jump(jumpSpeed)) this.jumpBuffer = 0;
     } else if (body && body.kind === 'dynamic') {
       const v = body.velocity;
       v.x = vel.x;

@@ -536,7 +536,9 @@ export const sceneValidate = defineCommand({
           uiIds.set(c.id as string, label(e));
         }
       }
-      if (e.transform.position[1] < scene.settings.killY) warnings.push(`${label(e)} is below the kill height (${scene.settings.killY}).`);
+      const movable = types.includes('RigidBody') || types.includes('CharacterController');
+      if (movable && e.transform.position[1] < scene.settings.killY)
+        warnings.push(`${label(e)} starts below the kill height (${scene.settings.killY}) and will be respawned/destroyed immediately.`);
     }
     if (!hasPlayerController && scene.entities.some((e) => e.tags.includes('Player')))
       warnings.push("An entity is tagged 'Player' but has no PlayerController or custom movement script.");
