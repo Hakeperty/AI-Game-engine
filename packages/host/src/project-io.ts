@@ -9,6 +9,7 @@ import {
   createSceneDoc,
   MaterialDoc,
   PrefabDoc,
+  CutsceneDoc,
   ProjectDoc,
   type ProjectState,
   SceneDoc,
@@ -57,6 +58,7 @@ export async function loadProject(fs: ProjectFs): Promise<ProjectState> {
     scenes: {},
     materials: {},
     prefabs: {},
+    cutscenes: {},
     activeScene: project.startScene,
   };
   for (const path of await fs.list('', { pattern: /\.scene\.json$/ })) {
@@ -67,6 +69,9 @@ export async function loadProject(fs: ProjectFs): Promise<ProjectState> {
   }
   for (const path of await fs.list('', { pattern: /\.prefab\.json$/ })) {
     state.prefabs[path] = parseDoc(PrefabDoc, (await fs.read(path))!, path);
+  }
+  for (const path of await fs.list('', { pattern: /.cutscene.json$/ })) {
+    state.cutscenes[path] = parseDoc(CutsceneDoc, (await fs.read(path))!, path);
   }
   const ws = await fs.read('.aige/workspace.json');
   if (ws) {
@@ -92,7 +97,7 @@ export async function loadProject(fs: ProjectFs): Promise<ProjectState> {
 export async function writeDoc(
   fs: ProjectFs,
   state: ProjectState,
-  kind: 'project' | 'scenes' | 'materials' | 'prefabs',
+  kind: 'project' | 'scenes' | 'materials' | 'prefabs' | 'cutscenes',
   key?: string,
 ): Promise<void> {
   if (kind === 'project') {
@@ -130,6 +135,7 @@ export async function createProjectFiles(fs: ProjectFs, opts: CreateProjectOptio
     scenes: { [project.startScene]: scene },
     materials: {},
     prefabs: {},
+    cutscenes: {},
     activeScene: project.startScene,
   };
   await fs.write('project.json', canonicalJson(project));

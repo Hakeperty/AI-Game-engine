@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AssetPath, Color, Transform, Vec3 } from './common.ts';
+import { AssetPath, Color, EulerDeg, Transform, Vec3 } from './common.ts';
 
 export const EntityId = z.string().min(1).describe("Entity id, e.g. 'e12'");
 
@@ -134,6 +134,136 @@ export const PrefabDoc = z.object({
   entities: z.array(Entity),
 });
 export type PrefabDoc = z.infer<typeof PrefabDoc>;
+
+// ---------------------------------------------------------------------------------------------
+// Cutscenes: a timeline of tracks. Times are seconds from the start of the cutscene.
+// ---------------------------------------------------------------------------------------------
+
+const Ease = z.enum(['linear', 'in', 'out', 'inOut', 'hold']).default('inOut');
+const CamTarget = z.union([Vec3, z.string()]).describe('Point [x,y,z] or entity ref to look at');
+
+export const CameraKey = z.object({
+  t: z.number().min(0),
+  position: z.union([Vec3, z.string()]).describe('World position, or an entity ref (e.g. a camera marker)'),
+  lookAt: CamTarget,
+  fov: z.number().min(10).max(120).default(50),
+  ease: Ease,
+  /** Hard cut to this shot instead of blending from the previous key. */
+  cut: z.boolean().default(false),
+  shake: z.number().min(0).max(1).default(0),
+});
+
+export const CutsceneTrack = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('camera'), keys: z.array(CameraKey).min(1) }),
+  z.object({
+    type: z.literal('animation'),
+    actor: z.string(),
+    clips: z.array(
+      z.object({ t: z.number().min(0), clip: z.string(), loop: z.boolean().default(false), fade: z.number().min(0).default(0.25), speed: z.number().positive().default(1) }),
+    ),
+  }),
+  z.object({
+    type: z.literal('move'),
+    actor: z.string(),
+    keys: z.array(z.object({ t: z.number().min(0), position: Vec3, rotation: EulerDeg.optional(), ease: Ease })).min(1),
+  }),
+  z.object({
+    type: z.literal('voice'),
+    clips: z.array(
+      z.object({
+        t: z.number().min(0),
+        line: z.string().describe('Voice line id (audio/voice/<id>.json)'),
+        actor: z.string().optional().describe('Entity whose jaw moves (lip-sync)'),
+        subtitle: z.boolean().default(true),
+      }),
+    ),
+  }),
+  z.object({
+    type: z.literal('sound'),
+    clips: z.array(
+      z.object({
+        t: z.number().min(0),
+        clip: AssetPath.optional(),
+        sfx: z.string().optional(),
+        volume: z.number().min(0).max(1).default(1),
+        at: z.string().optional().describe('Entity to play it from (spatial)'),
+      }),
+    ),
+  }),
+  z.object({
+    type: z.literal('subtitle'),
+    items: z.array(z.object({ t: z.number().min(0), duration: z.number().positive(), text: z.string(), speaker: z.string().optional() })),
+  }),
+  z.object({
+    type: z.literal('fx'),
+    items: z.array(
+      z.object({
+        t: z.number().min(0),
+        effect: z.enum(['fade', 'vignette', 'blur', 'darken', 'desaturate', 'flash', 'shake', 'letterbox', 'heartbeat']),
+        to: z.number().min(0).max(1).describe('Target strength (fade 1 = black)'),
+        duration: z.number().min(0).default(0.5),
+        color: Color.optional(),
+      }),
+    ),
+  }),
+  z.object({
+    type: z.literal('light'),
+    items: z.array(
+      z.object({ t: z.number().min(0), entity: z.string(), intensity: z.number().min(0), duration: z.number().min(0).default(0), color: Color.optional() }),
+    ),
+  }),
+  z.object({
+    type: z.literal('event'),
+    items: z.array(
+      z.object({
+        t: z.number().min(0),
+        setFlag: z.string().optional(),
+        clearFlag: z.string().optional(),
+        enable: z.string().optional(),
+        disable: z.string().optional(),
+        give: z.string().optional().describe('Item id to add to the inventory'),
+        take: z.string().optional(),
+        objective: z.string().optional(),
+        teleport: z.object({ entity: z.string(), position: Vec3, rotation: EulerDeg.optional() }).optional(),
+        emit: z.string().optional().describe('Game event name (Game.on)'),
+      }),
+    ),
+  }),
+]);
+export type CutsceneTrack = z.infer<typeof CutsceneTrack>;
+
+export const CutsceneDoc = z.object({
+  format: z.literal('aige.cutscene'),
+  version: z.literal(1),
+  name: z.string(),
+  /** Seconds; defaults to the end of the last track item. */
+  duration: z.number().positive().optional(),
+  skippable: z.boolean().default(true),
+  letterbox: z.boolean().default(true),
+  /** Hand control back to the player at the end (false = the next cutscene/event takes over). */
+  returnControl: z.boolean().default(true),
+  tracks: z.array(CutsceneTrack),
+});
+export type CutsceneDoc = z.infer<typeof CutsceneDoc>;
+
+/**
+ * A generated voice line (audio/voice/<id>.json, written by the voice_line tool).
+ * `mouth` is a lip-sync curve (jaw open 0..1) sampled at `fps`.
+ */
+export const VoiceLineDoc = z.object({
+  format: z.literal('aige.voiceline'),
+  version: z.literal(1),
+  id: z.string(),
+  speaker: z.string(),
+  text: z.string(),
+  voice: z.string().describe("Voice profile ('voices/milch.voice.json')"),
+  instruct: z.string().default('').describe('Delivery/emotion instruction used for generation'),
+  audio: AssetPath.describe("'audio/voice/<id>.ogg'"),
+  duration: z.number().nonnegative(),
+  fps: z.number().positive().default(30),
+  mouth: z.array(z.number().min(0).max(1)).default([]),
+});
+export type VoiceLineDoc = z.infer<typeof VoiceLineDoc>;
 
 export function createSceneDoc(name: string): SceneDoc {
   return {

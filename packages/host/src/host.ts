@@ -36,7 +36,7 @@ export interface HostOptions {
   commands?: AnyCommand[];
 }
 
-type DocKind = 'project' | 'scenes' | 'materials' | 'prefabs';
+type DocKind = 'project' | 'scenes' | 'materials' | 'prefabs' | 'cutscenes';
 
 /** Extra command providers registered by other packages (runtime/scripting, export). */
 const extraCommandProviders: (() => AnyCommand[])[] = [];
@@ -123,6 +123,7 @@ export class ProjectHost {
       for (const k of Object.keys(e.state.scenes)) this.dirty.add(`scenes|${k}`);
       for (const k of Object.keys(e.state.materials)) this.dirty.add(`materials|${k}`);
       for (const k of Object.keys(e.state.prefabs)) this.dirty.add(`prefabs|${k}`);
+      for (const k of Object.keys(e.state.cutscenes ?? {})) this.dirty.add(`cutscenes|${k}`);
     } else if (e.type === 'command') {
       if (this.dirty.size || this.workspaceDirty)
         this.saving = this.saving.then(() => this.save()).catch(() => undefined);
@@ -133,7 +134,7 @@ export class ProjectHost {
     const [root, key] = p.path as (string | number)[];
     if (root === 'project') this.dirty.add('project');
     else if (root === 'activeScene') this.workspaceDirty = true;
-    else if ((root === 'scenes' || root === 'materials' || root === 'prefabs') && typeof key === 'string')
+    else if ((root === 'scenes' || root === 'materials' || root === 'prefabs' || root === 'cutscenes') && typeof key === 'string')
       this.dirty.add(`${root}|${key}`);
   }
 

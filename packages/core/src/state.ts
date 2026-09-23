@@ -1,5 +1,5 @@
 import { AigeError, didYouMean } from './errors.ts';
-import type { Entity, MaterialDoc, PrefabDoc, ProjectDoc, SceneDoc } from './schema/documents.ts';
+import type { CutsceneDoc, Entity, MaterialDoc, PrefabDoc, ProjectDoc, SceneDoc } from './schema/documents.ts';
 import { createProjectDoc, createSceneDoc } from './schema/documents.ts';
 
 /**
@@ -13,6 +13,8 @@ export interface ProjectState {
   scenes: Record<string, SceneDoc>;
   materials: Record<string, MaterialDoc>;
   prefabs: Record<string, PrefabDoc>;
+  /** Keyed by path, e.g. 'cutscenes/intro.cutscene.json'. */
+  cutscenes: Record<string, CutsceneDoc>;
   activeScene: string;
 }
 
@@ -23,6 +25,7 @@ export function createProjectState(name: string): ProjectState {
     scenes: { [scenePath]: createSceneDoc('main') },
     materials: {},
     prefabs: {},
+    cutscenes: {},
     activeScene: scenePath,
   };
 }

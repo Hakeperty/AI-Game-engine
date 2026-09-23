@@ -97,6 +97,11 @@ export class RuntimeEntity {
   /** Component data (live). Prefer `get(type)`. */
   components: ComponentData[];
   prefab: string | undefined;
+  /**
+   * Lip-sync state: voice playback (cutscenes, Interactable/Trigger voice lines) writes `mouth`
+   * (jaw open 0..1) every frame while `speaking`; the Animator reads it to move the jaw.
+   */
+  readonly speech = { mouth: 0, speaking: false, line: '' as string };
 
   /** @internal */ _active: boolean;
   /** @internal */ _parent: RuntimeEntity | null = null;

@@ -133,6 +133,7 @@ export const Light = defineComponent({
     range: z.number().min(0).default(0).describe('Point/spot: 0 = infinite'),
     angle: z.number().min(1).max(89).default(30).describe('Spot cone angle in degrees'),
     castShadow: z.boolean().default(false),
+    flicker: z.number().min(0).max(1).default(0).describe('0 = steady, 1 = a dying bulb / candle'),
   }),
   example: { kind: 'directional', intensity: 2, castShadow: true },
 });
@@ -224,16 +225,117 @@ export const AudioSource = defineComponent({
   category: 'audio',
   multiple: true,
   description:
-    'Plays a sound. Use `clip` for an audio file or `sfx` for a synthesized preset (no files needed).',
+    "Plays a sound. Use `clip` for an audio file ('audio/sfx/creak.ogg'), `sfx` for a synthesized one-shot preset, or `ambience` for a looping synthesized ambience (wind, rain, fridge hum...). Spatial sources fade out over `range` meters.",
   schema: z.object({
     clip: AssetPath.optional(),
     sfx: z.enum(['coin', 'jump', 'hit', 'explosion', 'powerup', 'laser', 'click', 'win', 'lose']).optional(),
+    ambience: z
+      .enum(['wind', 'storm', 'rain', 'rain_window', 'fridge_hum', 'fire', 'creaks', 'birds', 'crickets', 'room_tone', 'heartbeat', 'breathing'])
+      .optional()
+      .describe('Looping procedural ambience'),
     volume: z.number().min(0).max(1).default(0.8),
     loop: z.boolean().default(false),
     playOnStart: z.boolean().default(false),
     spatial: z.boolean().default(false),
+    range: z.number().positive().default(12).describe('Spatial: distance at which the sound fades out'),
   }),
-  example: { sfx: 'coin' },
+  example: { ambience: 'wind', volume: 0.5, playOnStart: true },
+});
+
+export const Animator = defineComponent({
+  type: 'Animator',
+  category: 'rendering',
+  multiple: false,
+  description:
+    "Plays skeletal animations on a character model (a skinned GLB, e.g. from character_create). With `locomotion` it blends idle/walk/run from how fast the entity moves. Scripts and cutscenes play clips by name ('sit_up', 'look_around', 'faint'...). Voice lines drive the jaw automatically (lip-sync).",
+  schema: z.object({
+    clips: z
+      .array(AssetPath)
+      .default([])
+      .describe("Extra clip files ('animations/wave.anim.json'); built-in humanoid clips are always available"),
+    initial: z.string().default('idle').describe('Clip to play at start'),
+    locomotion: z.boolean().default(true).describe('Auto idle/walk/run from movement speed'),
+    speed: z.number().positive().default(1).describe('Playback speed multiplier'),
+  }),
+  example: { initial: 'lie_asleep', locomotion: true },
+});
+
+export const Interactable = defineComponent({
+  type: 'Interactable',
+  category: 'gameplay',
+  multiple: false,
+  description:
+    "Something the player can interact with (press E when close and facing it): examine, pick up, open. Shows `prompt` on screen. On interact it can play a cutscene or voice line, show a thought text, give an item (the entity is then hidden), and set a story flag. `requireFlag` hides the prompt until that flag is set.",
+  schema: z.object({
+    prompt: z.string().default('Examine'),
+    range: z.number().positive().default(1.8),
+    once: z.boolean().default(false),
+    requireFlag: z.string().optional(),
+    setFlag: z.string().optional(),
+    cutscene: AssetPath.optional().describe("'cutscenes/intro.cutscene.json'"),
+    voice: z.string().optional().describe("Voice line id to play (Milch's thoughts)"),
+    text: z.string().optional().describe('Thought text shown as a subtitle when there is no voice line'),
+    item: z.string().optional().describe("Item id added to the inventory ('knife'); hides this entity"),
+    enabled: z.boolean().default(true),
+  }),
+  example: { prompt: 'Look at picture', voice: 'milch_picture_1', setFlag: 'saw_picture_1' },
+});
+
+export const Door = defineComponent({
+  type: 'Door',
+  category: 'gameplay',
+  multiple: false,
+  description:
+    'A hinged door the player opens with E. The entity origin is the hinge; the door swings around its local Y axis. Locked doors show `lockedText`; they unlock when `unlockFlag` is set.',
+  schema: z.object({
+    openAngle: z.number().min(-180).max(180).default(100).describe('Degrees; negative swings the other way'),
+    speed: z.number().positive().default(1.6).describe('Swings per second'),
+    locked: z.boolean().default(false),
+    unlockFlag: z.string().optional(),
+    lockedText: z.string().default("It won't open."),
+    startOpen: z.boolean().default(false),
+    prompt: z.string().default('Open'),
+  }),
+  example: { openAngle: 100, locked: true, unlockFlag: 'upstairs_unlocked', lockedText: 'Not yet...' },
+});
+
+export const Trigger = defineComponent({
+  type: 'Trigger',
+  category: 'gameplay',
+  multiple: true,
+  description:
+    "Fires when the player enters this entity's trigger Collider (isTrigger): plays a cutscene, voice line, sound or thought text, sets a flag, or sets the current objective. Use it for story beats ('audio plays near the table') and room transitions.",
+  schema: z.object({
+    once: z.boolean().default(true),
+    tag: z.string().default('Player'),
+    requireFlag: z.string().optional(),
+    setFlag: z.string().optional(),
+    cutscene: AssetPath.optional(),
+    voice: z.string().optional(),
+    sound: AssetPath.optional(),
+    text: z.string().optional(),
+    objective: z.string().optional().describe('Sets the current objective text'),
+    delay: z.number().min(0).default(0).describe('Seconds to wait after entering'),
+  }),
+  example: { voice: 'milch_three_chairs', once: true, setFlag: 'saw_table' },
+});
+
+export const ParticleSystem = defineComponent({
+  type: 'ParticleSystem',
+  category: 'rendering',
+  multiple: true,
+  description:
+    "Floating/falling particles inside a box `area` around the entity: dust motes in the air, rain, snow, embers, fireflies, smoke, falling leaves.",
+  schema: z.object({
+    preset: z.enum(['dust', 'rain', 'snow', 'embers', 'fireflies', 'smoke', 'sparks', 'leaves']).default('dust'),
+    count: z.number().int().min(1).max(20000).default(300),
+    area: Vec3.default([4, 2.5, 4]).describe('Box size in meters (centered on the entity)'),
+    color: Color.default('#fff3d6'),
+    size: z.number().positive().default(0.02).describe('Particle size in meters'),
+    speed: z.number().min(0).default(1).describe('Speed multiplier'),
+    opacity: z.number().min(0).max(1).default(0.6),
+  }),
+  example: { preset: 'dust', count: 400, area: [4, 2.6, 4] },
 });
 
 export const UIText = defineComponent({
