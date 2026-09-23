@@ -12,7 +12,10 @@ AIGE is a game engine plus 3D modeler that you drive entirely through tools.
 
 ## Recommended workflow
 1. \`scene_tree\`: see what exists. \`project_info\`: list assets.
-2. Models: \`model_from_template\` (coin, gem, crate, platform, tree, rock, blob-character, flag, key, door, torch, spike) or \`model_create\` with a recipe.
+2. Models: \`model_from_template\` or \`model_create\` with a recipe (SDF sculpting for organic shapes).
+   - Props: coin, gem, crate, platform, flag, key, door, torch, spike.
+   - Nature: tree, tree-organic, rock, bush, flower, mushroom, cactus, island-terrain.
+   - Creatures: blob-character, creature, slime, fish, snake, tentacle.
    ALWAYS inspect the returned preview image and fix problems (floating parts, wrong scale, inside-out, ugly colors).
 3. Entities: \`entity_create\` / \`batch\` / \`entity_duplicate\` / \`prefab_instantiate\`.
    Attach models with {"type":"MeshRenderer","model":"models/x.model.ts"}.
@@ -90,20 +93,97 @@ export default defineModel({
 - 'top' (a face group), ['top', 'front'], or { normal: '+y', minDot: 0.7 }
 - { within: { min, max } }, { above: y }, or a function (face) => boolean
 
-## SDF sculpting (organic shapes)
-Available shapes:
-- sdf.sphere(r, center), sdf.ellipsoid([rx, ry, rz], c), sdf.box(size, c, round)
-- sdf.capsule(a, b, r, rb?), sdf.cylinder(r, h), sdf.torus(R, r), sdf.cone(r, h)
+## Organic modeling (creatures, plants, rocks, slimes, terrain)
+Sculpt with signed distance fields (SDF): combine shapes with smooth unions, color them, then call .mesh(). SDF meshes are always watertight and manifold. Meshing takes about 0.1 to 0.7 s.
 
-Chain these onto a shape:
-- .smoothUnion(other, k), .union, .subtract, .smoothSubtract, .intersect
-- .translate, .rotate, .scale, .round(r), .shell(t), .displace(amount, scale, seed), .mirrorX()
-- .color('#hex') or .colorBy(p => '#hex')
+\`\`\`ts
+// models/critter.model.ts
+import { defineModel, eye, model, p, sdf } from 'aige/model';
 
-When the shape is finished, call .mesh({ resolution: 48 }) to get a regular mesh.
+export default defineModel({
+  name: 'critter',
+  params: { height: p.number(0.8, { min: 0.2, max: 5 }), fur: p.color('#c8622a'), belly: p.color('#f6e2c4') },
+  build({ height, fur, belly }, { seed }) {
+    const legs = [];
+    for (const x of [-0.1, 0.1])
+      for (const z of [0.14, -0.16])
+        legs.push(sdf.chain([[x, 0.36, z], [x * 1.1, 0.18, z + 0.02], [x * 1.1, 0.04, z + 0.03]], [0.07, 0.055, 0.05]));
+    const shape = sdf
+      .smoothUnionAll(
+        [
+          sdf.ellipsoid([0.2, 0.18, 0.3], [0, 0.38, 0]), // body first (fastest)
+          sdf.sphere(0.18, [0, 0.6, 0.26]), // head
+          sdf.ellipsoid([0.08, 0.06, 0.08], [0, 0.54, 0.42]), // snout
+          ...legs,
+          sdf.chain([[0, 0.42, -0.28], [0, 0.55, -0.45], [0, 0.72, -0.42]], (t) => 0.04 + 0.04 * Math.sin(Math.PI * t)), // tail
+          sdf.roundCone([0.1, 0.72, 0.22], [0.15, 0.86, 0.2], 0.05, 0.012).mirrorX(), // ears
+        ],
+        0.07,
+      )
+      .color(fur)
+      .colorByNormal(belly, '-y', 0.2) // light belly and chin
+      .colorSpots('#6b3a1e', { scale: 9, size: 0.25, seed })
+      .cutBelow(0, 0.01); // flat paws on y = 0
+    const s = height / 0.88;
+    const eyes = [-1, 1].map((side) =>
+      eye({ radius: 0.05, iris: '#3b2414' }).rotate([0, side * 16, 0]).translate([side * 0.08, 0.64, 0.4]),
+    );
+    return model({
+      body: shape.mesh({ detail: 'high', decimate: 12000, ao: 0.6 }).scale(s).material({ roughness: 0.7 }),
+      eyes: eyes[0].merge(eyes[1]).scale(s).material({ roughness: 0.15 }),
+    });
+  },
+});
+\`\`\`
+
+SDF shapes:
+- sdf.sphere(r, center), sdf.ellipsoid([rx, ry, rz], c), sdf.box(size, c, round), sdf.capsule(a, b, r, rb?), sdf.cylinder(r, h), sdf.torus(R, r), sdf.cone(r, h)
+- sdf.roundCone(a, b, ra, rb): an exact tapered capsule. Use it for horns, claws, snouts and fingers.
+- sdf.chain(points, radii | [r per point] | (t) => r, { curve: true, smooth }): a smooth spline tube for limbs, tails, necks, worms, tentacles and branches.
+- sdf.tube(path, r | (t) => r): follows curves.helix / curves.catmullRom output.
+- sdf.metaballs([{ center, radius, color? }, ...], threshold 0.5): goo that melts together.
+- sdf.smoothUnionAll([body, head, ...legs], k): the fastest way to build big creatures. Put the body first.
+
+Operators (each returns a new Sdf):
+- Booleans: .smoothUnion(o, k), .union, .subtract, .smoothSubtract(o, k) (carve mouths and sockets), .intersect
+- Transforms: .translate, .rotate(deg, pivot?), .scale(s), .stretch([sx, sy, sz]), .mirror('x') / .mirrorX()
+- .twist(degPerMeter, axis) and .bend(degPerMeter): bend curls +Y toward +X, so build the part upright, then rotate it.
+- .elongate([hx, hy, hz]), .round(r), .shell(t), .onion(t) (hollow, keeps the outside)
+- .warp(amount, scale, seed): noise domain warp. Makes shapes look natural and hand-made.
+- .displace(amount, scale, seed): bumps.
+- .displaceBy(p => meters, maxMeters): custom ribs, rings and grooves.
+- .cutBelow(y, k) / .cutAbove(y, k): flat bottoms that stand on the ground. Use k > 0 for a rounded edge.
+
+Colors:
+- .color('#hex'), .gradient('y', from, to, range?)
+- .colorBy(([x, y, z], base) => '#hex')
+- .colorByNoise([c1, c2], scale, seed): patches.
+- .colorSpots(c, { scale, size, seed })
+- .stripes([c1, c2], { direction: 'z', width, wobble })
+- .colorByNormal(c, '-y', threshold): belly, underside or back.
+
+.mesh({ detail: 'low' | 'medium' (default) | 'high' | 'ultra', resolution?, smooth: 2, decimate: 12000 | 0.5, ao: true | 0.6, colorSmooth: 1 })
+- decimate is a triangle target or a ratio.
+- ao bakes ambient occlusion into the vertex colors.
+- Thin parts (fins, ears, petals) must be at least 2 cells thick, where one cell is the model size divided by the resolution. Use detail 'high' for them.
+
+Mesh ops (on any mesh):
+- .smoothMesh({ iterations }): Taubin smoothing that preserves volume.
+- .relax()
+- .brush({ center, radius, mode: 'inflate' | 'grab' | 'pinch' | 'flatten' | 'smooth' | 'noise', strength, direction })
+- .decimate(n | ratio), .bakeAO({ strength }), .repairManifold()
+
+Helpers:
+- eye({ radius, iris, pupil, irisSize, pupilSize }): a crisp cartoon eye that looks along +Z. Keep eyes as a separate part.
+- terrain({ size, resolution, height: number | (x, z) => y, island, slab, noise: { scale, ridged, warp }, colors, seed }): a level heightfield with sand, grass, rock and snow colors.
+  - terrainHeight(sameOpts)(x, z) returns the surface height, for placing props.
+- plants.tree({ length, levels, foliage: 'cloud' | 'blobs' | 'leaves', leafColor, barkColor, seed }) returns { wood, leaves }.
+  - Lower-level parts: plants.branches(opts), plants.branchMesh(branches), plants.leaf({ shape: 'leaf' | 'round' | 'blade' }), plants.leaves(points, leafMesh).
+
+Organic templates: creature, slime, fish, mushroom, bush, flower, cactus, snake (or worm), tentacle, tree-organic, island-terrain, blob-character.
 
 ## Tips
-- Keep triangle counts modest (under 20k per prop). Lower segments or SDF resolution if needed.
+- Keep triangle counts modest (under 20k per prop). Lower segments, or use .mesh({ decimate }) for SDF models.
 - flatShading: true gives a low-poly look. Use vertex colors (color/gradient) for cheap variety.
 - Return model({ partA, partB }).socket('hand', [x, y, z]).setCollider({ shape: 'capsule', radius, height, offset }) for rich models.
 - Use params for anything a level designer might tweak; entities override them with MeshRenderer.params.

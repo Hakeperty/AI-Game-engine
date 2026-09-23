@@ -70,6 +70,32 @@ export class Noise {
     return sum / norm;
   }
 
+  /**
+   * Cellular (Worley) noise: distance to the nearest random feature point, roughly [0, 1.2].
+   * One feature point per unit cell, so `worley(p * 5)` gives about 5 spots per meter.
+   */
+  worley(x: number, y: number, z: number): number {
+    const P = this.perm;
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const zi = Math.floor(z);
+    let best = 9;
+    for (let dz = -1; dz <= 1; dz++)
+      for (let dy = -1; dy <= 1; dy++)
+        for (let dx = -1; dx <= 1; dx++) {
+          const cx = xi + dx;
+          const cy = yi + dy;
+          const cz = zi + dz;
+          const h = P[(P[(P[cx & 255]! + cy) & 255]! + cz) & 255]!;
+          const fx = cx + P[h]! / 255 - x;
+          const fy = cy + P[(h + 71) & 255]! / 255 - y;
+          const fz = cz + P[(h + 151) & 255]! / 255 - z;
+          const d = fx * fx + fy * fy + fz * fz;
+          if (d < best) best = d;
+        }
+    return Math.sqrt(best);
+  }
+
   /** Ridged noise in [0, 1] (mountain ridges, cracks). */
   ridged(x: number, y: number, z: number, octaves = 4): number {
     let amp = 0.5;

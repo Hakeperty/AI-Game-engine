@@ -19,6 +19,18 @@ import {
   uvPlanar,
   uvSpherical,
 } from './ops/deform.ts';
+import {
+  type AOOptions,
+  type BrushOptions,
+  bakeAO,
+  brush,
+  type DecimateOptions,
+  decimate,
+  relax,
+  repairManifold,
+  type SmoothOptions,
+  smoothMesh,
+} from './ops/organic.ts';
 import { type ExtrudeOptions, extrude, inset, subdivide } from './ops/topology.ts';
 import { type FaceSelector, PolyMesh } from './polymesh.ts';
 import { type MeshReport, validateMesh } from './validate.ts';
@@ -60,6 +72,18 @@ declare module './polymesh.ts' {
     subtract(...others: PolyMesh[]): PolyMesh;
     intersect(...others: PolyMesh[]): PolyMesh;
     validate(): MeshReport;
+    /** Taubin smoothing (no shrinking; closed meshes keep their volume). */
+    smoothMesh(opts?: SmoothOptions): PolyMesh;
+    /** Evens out vertex spacing by sliding vertices along the surface. */
+    relax(opts?: { iterations?: number; strength?: number; sel?: FaceSelector }): PolyMesh;
+    /** Sculpt brush: inflate, grab, pinch, flatten, smooth or noise with smooth falloff. */
+    brush(opts: BrushOptions): PolyMesh;
+    /** Fewer triangles (meshoptimizer): target > 1 = triangle count, 0..1 = ratio. Needs initModeling(). */
+    decimate(target: number, opts?: DecimateOptions): PolyMesh;
+    /** Bakes ambient occlusion into vertex colors (darker creases and undersides). */
+    bakeAO(opts?: AOOptions): PolyMesh;
+    /** Splits edges shared by more than two faces so the mesh becomes manifold. */
+    repairManifold(): PolyMesh;
   }
 }
 
@@ -123,4 +147,22 @@ P.intersect = function (...others) {
 };
 P.validate = function () {
   return validateMesh(this);
+};
+P.smoothMesh = function (opts) {
+  return smoothMesh(this, opts);
+};
+P.relax = function (opts) {
+  return relax(this, opts);
+};
+P.brush = function (opts) {
+  return brush(this, opts);
+};
+P.decimate = function (target, opts) {
+  return decimate(this, target, opts);
+};
+P.bakeAO = function (opts) {
+  return bakeAO(this, opts);
+};
+P.repairManifold = function () {
+  return repairManifold(this);
 };

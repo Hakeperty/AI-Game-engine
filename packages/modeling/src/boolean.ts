@@ -1,6 +1,7 @@
 import type { ManifoldToplevel } from 'manifold-3d';
 import Module from 'manifold-3d';
 import { DEFAULT_MATERIAL, type MaterialSpec, materialKey } from './material.ts';
+import { initDecimator } from './ops/organic.ts';
 import type { RGB, V2, V3 } from './math.ts';
 import { PolyMesh } from './polymesh.ts';
 
@@ -10,8 +11,9 @@ type ManifoldObj = InstanceType<Wasm['Manifold']>;
 let wasm: Wasm | null = null;
 let loading: Promise<Wasm> | null = null;
 
-/** Loads the manifold-3d WASM module. Call once (await) before using booleans or hull. */
+/** Loads the WASM modules (manifold-3d booleans, meshoptimizer decimation). Call once (await) before using booleans, hull or decimate. */
 export async function initModeling(): Promise<void> {
+  await initDecimator();
   if (wasm) return;
   loading ??= (async () => {
     const m = await Module();

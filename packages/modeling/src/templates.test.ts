@@ -11,8 +11,8 @@ beforeAll(async () => {
 });
 
 describe('model templates', () => {
-  it('there are at least 12 templates', () => {
-    expect(files.length).toBeGreaterThanOrEqual(12);
+  it('there are at least 23 templates', () => {
+    expect(files.length).toBeGreaterThanOrEqual(23);
   });
 
   it.each(files)('%s builds, validates and exports', async (file) => {
@@ -21,10 +21,12 @@ describe('model templates', () => {
     const model = buildRecipe(mod.default, {});
     const report = validateModel(model);
     expect(report.triangles).toBeGreaterThan(10);
-    expect(report.triangles).toBeLessThan(150_000);
+    expect(report.triangles, `${file} triangle budget`).toBeLessThan(30_000);
     for (const part of report.parts) {
       expect(part.report.degenerateFaces, `${file}/${part.name}`).toBeLessThan(part.report.faces * 0.02 + 1);
       expect(part.report.insideOut, `${file}/${part.name} inside out`).toBe(false);
+      expect(part.report.nonManifoldEdges, `${file}/${part.name} non-manifold`).toBe(0);
+      expect(part.report.watertight, `${file}/${part.name} watertight`).toBe(true);
     }
     const size = Math.max(...report.bounds.size);
     expect(size).toBeGreaterThan(0.05);
@@ -33,7 +35,8 @@ describe('model templates', () => {
     expect(data.parts.length).toBeGreaterThan(0);
     const glb = await exportGlb(model);
     expect(glb.byteLength).toBeGreaterThan(500);
-    // different seeds must not crash
-    buildRecipe(mod.default, { seed: 42 });
+    // different seeds must not crash (and must stay solid)
+    for (const part of validateModel(buildRecipe(mod.default, { seed: 42 })).parts)
+      expect(part.report.watertight, `${file}/${part.name} seed 42`).toBe(true);
   });
 });

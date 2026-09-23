@@ -1,0 +1,17 @@
+# Conventions
+- Units are meters. Y is up. Rotations are Euler degrees [x, y, z] (XYZ order).
+- The default camera is at +Z looking toward -Z. "Forward" for the player (move_y > 0) is -Z, away from the camera.
+- Models face +Z (their front is visible from the default camera). Characters and props stand on y = 0 unless the template says otherwise.
+- Colors are '#rrggbb'.
+- Entities are addressed by id ('e12'), path ('Level/Platform 3') or unique name. Sibling names are made unique automatically ("Coin (2)").
+- Tags mark roles: 'Player', 'Coin', 'Enemy', 'Ground', 'MainCamera'.
+- Physics:
+  - Collider without RigidBody = static.
+  - RigidBody 'dynamic' falls.
+  - CharacterController = player-style movement.
+  - isTrigger colliders fire onTriggerEnter (use for pickups, goals, hazards).
+- Typical sizes:
+  - player 1.2–1.8 m;
+  - coin radius 0.3–0.5;
+  - platform 3–6 m wide;
+  - jump height about 2 m with default gravity (-20).
