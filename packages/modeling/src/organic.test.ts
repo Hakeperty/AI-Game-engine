@@ -82,13 +82,29 @@ describe('SDF meshing', () => {
     const parts = [sdf.ellipsoid([0.5, 0.4, 0.7], [0, 0.8, 0])];
     for (const x of [-0.3, 0.3])
       for (const z of [-0.4, 0.4]) {
-        parts.push(sdf.chain([[x, 0.7, z], [x, 0.35, z + 0.05], [x, 0.08, z]], [0.13, 0.1, 0.09]));
+        parts.push(
+          sdf.chain(
+            [
+              [x, 0.7, z],
+              [x, 0.35, z + 0.05],
+              [x, 0.08, z],
+            ],
+            [0.13, 0.1, 0.09],
+          ),
+        );
         parts.push(sdf.ellipsoid([0.11, 0.07, 0.15], [x, 0.07, z + 0.05]));
         parts.push(sdf.sphere(0.12, [x, 0.5, z]));
       }
     parts.push(sdf.sphere(0.35, [0, 1.15, 0.75]), sdf.roundCone([0, 0.9, -0.6], [0, 1.1, -1.1], 0.08, 0.03));
-    parts.push(sdf.capsule([0.15, 1.35, 0.7], [0.25, 1.65, 0.65], 0.07), sdf.capsule([-0.15, 1.35, 0.7], [-0.25, 1.65, 0.65], 0.07));
-    parts.push(sdf.sphere(0.08, [0.14, 1.22, 1.03]), sdf.sphere(0.08, [-0.14, 1.22, 1.03]), sdf.sphere(0.06, [0, 1.12, 1.08]));
+    parts.push(
+      sdf.capsule([0.15, 1.35, 0.7], [0.25, 1.65, 0.65], 0.07),
+      sdf.capsule([-0.15, 1.35, 0.7], [-0.25, 1.65, 0.65], 0.07),
+    );
+    parts.push(
+      sdf.sphere(0.08, [0.14, 1.22, 1.03]),
+      sdf.sphere(0.08, [-0.14, 1.22, 1.03]),
+      sdf.sphere(0.06, [0, 1.12, 1.08]),
+    );
     expect(parts.length).toBeGreaterThanOrEqual(20);
     const shape = sdf.smoothUnionAll(parts, 0.08).color('#c86a2a').colorByNormal('#f5e3c0', '-y');
     const t0 = performance.now();
@@ -175,7 +191,13 @@ describe('organic SDF shapes', () => {
 
   it('domain operators keep correct bounds', () => {
     const base = sdf.box([0.2, 1, 0.3], [0.1, 0.5, 0], 0.02);
-    for (const s of [base.twist(120), base.bend(80), base.warp(0.08, 3), base.elongate([0.2, 0, 0.1]), base.mirror('x')]) {
+    for (const s of [
+      base.twist(120),
+      base.bend(80),
+      base.warp(0.08, 3),
+      base.elongate([0.2, 0, 0.1]),
+      base.mirror('x'),
+    ]) {
       within(s.mesh({ detail: 'low' }), s.bounds, 0.01);
     }
     const cut = sdf.sphere(0.5).cutBelow(0, 0.03);

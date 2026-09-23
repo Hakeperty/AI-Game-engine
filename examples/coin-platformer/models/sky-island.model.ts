@@ -30,6 +30,11 @@ export default defineModel({
         return mixColor(mixColor(rock, '#b09376', 0.5 + 0.5 * n), '#5a4634', deep * 0.7);
       });
     const mesh = shape.mesh({ detail: 'medium', ao: 0.6, decimate: 9000 }).material({ roughness: 0.92 });
-    return model({ island: mesh }).setCollider({ shape: 'cylinder', radius: r * 0.93, height: 0.6, offset: [0, -0.3, 0] });
+    return model({ island: mesh }).setCollider({
+      shape: 'cylinder',
+      radius: r * 0.93,
+      height: 0.6,
+      offset: [0, -0.3, 0],
+    });
   },
 });

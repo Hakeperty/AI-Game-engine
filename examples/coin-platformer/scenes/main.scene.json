@@ -8,9 +8,7 @@
       "name": "Main Camera",
       "parent": null,
       "active": true,
-      "tags": [
-        "MainCamera"
-      ],
+      "tags": ["MainCamera"],
       "transform": {
         "position": [0, 4.5, 9.8],
         "rotation": [-22, 0, 0],
@@ -100,9 +98,7 @@
       "name": "Start Island",
       "parent": "e5",
       "active": true,
-      "tags": [
-        "Island"
-      ],
+      "tags": ["Island"],
       "transform": {
         "position": [0, 0, 0],
         "rotation": [0, 47, 0],
@@ -139,9 +135,7 @@
       "name": "Island 2",
       "parent": "e5",
       "active": true,
-      "tags": [
-        "Island"
-      ],
+      "tags": ["Island"],
       "transform": {
         "position": [0.8, 0.4, -8.5],
         "rotation": [0, 94, 0],
@@ -178,9 +172,7 @@
       "name": "Island 3",
       "parent": "e5",
       "active": true,
-      "tags": [
-        "Island"
-      ],
+      "tags": ["Island"],
       "transform": {
         "position": [-0.8, 1.2, -15],
         "rotation": [0, 141, 0],
@@ -217,9 +209,7 @@
       "name": "Island 4",
       "parent": "e5",
       "active": true,
-      "tags": [
-        "Island"
-      ],
+      "tags": ["Island"],
       "transform": {
         "position": [0.6, 2, -21.5],
         "rotation": [0, 188, 0],
@@ -256,9 +246,7 @@
       "name": "Island 5",
       "parent": "e5",
       "active": true,
-      "tags": [
-        "Island"
-      ],
+      "tags": ["Island"],
       "transform": {
         "position": [0, 2.8, -28.5],
         "rotation": [0, 235, 0],
@@ -295,9 +283,7 @@
       "name": "Goal Island",
       "parent": "e5",
       "active": true,
-      "tags": [
-        "Island"
-      ],
+      "tags": ["Island"],
       "transform": {
         "position": [0, 3.6, -36.5],
         "rotation": [0, 282, 0],
@@ -334,9 +320,7 @@
       "name": "Fox",
       "parent": null,
       "active": true,
-      "tags": [
-        "Player"
-      ],
+      "tags": ["Player"],
       "transform": {
         "position": [0, 0, 1.8],
         "rotation": [0, 180, 0],
@@ -425,9 +409,7 @@
       "name": "Coin",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -0.8],
         "rotation": [0, 0, 0],
@@ -467,9 +449,7 @@
       "name": "Coin (2)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -2.6],
         "rotation": [0, 0, 0],
@@ -509,9 +489,7 @@
       "name": "Coin (3)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1.4, -8.5],
         "rotation": [0, 0, 0],
@@ -551,9 +529,7 @@
       "name": "Coin (4)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 2.2, -15],
         "rotation": [0, 0, 0],
@@ -593,9 +569,7 @@
       "name": "Coin (5)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 3, -21.5],
         "rotation": [0, 0, 0],
@@ -635,9 +609,7 @@
       "name": "Coin (6)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 3.8, -28.5],
         "rotation": [0, 0, 0],
@@ -677,9 +649,7 @@
       "name": "Coin (7)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 4.6, -36.5],
         "rotation": [0, 0, 0],
@@ -1034,9 +1004,7 @@
       "name": "Air Coin",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 2.75, -5.9],
         "rotation": [0, 0, 0],
@@ -1074,9 +1042,7 @@
       "name": "Air Coin (2)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 3.15, -13.1],
         "rotation": [0, 0, 0],
@@ -1114,9 +1080,7 @@
       "name": "Air Coin (3)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 3.95, -19.4],
         "rotation": [0, 0, 0],
@@ -1154,9 +1118,7 @@
       "name": "Air Coin (4)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 4.75, -26.3],
         "rotation": [0, 0, 0],
@@ -1194,9 +1156,7 @@
       "name": "Air Coin (5)",
       "parent": "e14",
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 5.55, -31.8],
         "rotation": [0, 0, 0],

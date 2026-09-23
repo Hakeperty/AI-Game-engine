@@ -29,7 +29,10 @@ export interface LocalApi {
  * token (Authorization header or ?token=). Browser origins are rejected (DNS-rebinding / CSRF).
  * Writes ~/.aige/editor.json and <project>/.aige/host.json so MCP servers can find and attach to it.
  */
-export async function startLocalApi(workspace: Workspace, opts: { port?: number; lockFile?: string | null } = {}): Promise<LocalApi> {
+export async function startLocalApi(
+  workspace: Workspace,
+  opts: { port?: number; lockFile?: string | null } = {},
+): Promise<LocalApi> {
   const token = randomBytes(24).toString('hex');
   const http: Server = createServer((_req, res) => {
     res.writeHead(404).end();
@@ -63,7 +66,13 @@ export async function startLocalApi(workspace: Workspace, opts: { port?: number;
   const port = (http.address() as { port: number }).port;
   const lockFile = opts.lockFile === undefined ? EDITOR_LOCK : opts.lockFile;
   const writeLocks = () => {
-    const info: LockInfo = { port, token, pid: process.pid, root: workspace.current?.root ?? null, startedAt: new Date().toISOString() };
+    const info: LockInfo = {
+      port,
+      token,
+      pid: process.pid,
+      root: workspace.current?.root ?? null,
+      startedAt: new Date().toISOString(),
+    };
     if (lockFile) writeJson(lockFile, info);
     if (workspace.current) writeJson(join(workspace.current.root, '.aige', 'host.json'), info);
   };
@@ -124,13 +133,18 @@ export function readLiveLock(path: string = EDITOR_LOCK): LockInfo | null {
 export class RemoteHostClient {
   private socket: WebSocket | null = null;
   private nextId = 1;
-  private readonly pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: unknown) => void }>();
+  private readonly pending = new Map<
+    number,
+    { resolve: (v: unknown) => void; reject: (e: unknown) => void }
+  >();
   readonly events = new Set<(msg: ServerMessage) => void>();
 
   static async connect(lock: LockInfo): Promise<RemoteHostClient> {
     const client = new RemoteHostClient();
     await new Promise<void>((resolve, reject) => {
-      const ws = new WebSocket(`ws://127.0.0.1:${lock.port}/`, { headers: { authorization: `Bearer ${lock.token}` } });
+      const ws = new WebSocket(`ws://127.0.0.1:${lock.port}/`, {
+        headers: { authorization: `Bearer ${lock.token}` },
+      });
       ws.once('open', () => resolve());
       ws.once('error', reject);
       ws.on('message', (data) => client.onMessage(JSON.parse(String(data)) as ServerMessage));

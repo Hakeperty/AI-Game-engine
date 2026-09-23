@@ -1,4 +1,16 @@
-import { curves, defineModel, icosphere, mixColor, model, Noise, p, plants, PolyMesh, tube, type V3 } from 'aige/model';
+import {
+  curves,
+  defineModel,
+  icosphere,
+  mixColor,
+  model,
+  Noise,
+  PolyMesh,
+  p,
+  plants,
+  tube,
+  type V3,
+} from 'aige/model';
 
 /**
  * Garden flower: curved stem with leaves, a ring of soft petals (daisy, tulip or poppy) and a bumpy center.
@@ -6,7 +18,8 @@ import { curves, defineModel, icosphere, mixColor, model, Noise, p, plants, Poly
  */
 export default defineModel({
   name: 'flower',
-  description: 'Single flower (daisy, tulip or poppy) with curved stem, leaves, petals and seed center. Base on y = 0.',
+  description:
+    'Single flower (daisy, tulip or poppy) with curved stem, leaves, petals and seed center. Base on y = 0.',
   params: {
     height: p.number(0.6, { min: 0.05, max: 10 }),
     style: p.choice(['daisy', 'tulip', 'poppy'], 'daisy'),
@@ -32,7 +45,11 @@ export default defineModel({
         .rotate([0, (i % 2 ? -1 : 1) * 90 + rng.range(-25, 25), 0])
         .translate([lean * y, y, 0.01]),
     );
-    const green = PolyMesh.merge(stem, ...leaves).gradient('y', mixColor(stemColor, '#1d3a10', 0.3), mixColor(stemColor, '#a8d45a', 0.3));
+    const green = PolyMesh.merge(stem, ...leaves).gradient(
+      'y',
+      mixColor(stemColor, '#1d3a10', 0.3),
+      mixColor(stemColor, '#a8d45a', 0.3),
+    );
 
     // bloom built facing +Y at the origin, then tilted toward +Z
     const daisy = style === 'daisy';

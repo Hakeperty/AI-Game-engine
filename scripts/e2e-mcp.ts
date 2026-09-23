@@ -40,7 +40,19 @@ console.log('coin model', coin.json.model, coin.json.size, `images: ${coin.image
 await call('batch', {
   commands: [
     { tool: 'entity_create', input: { name: 'Coins' } },
-    { tool: 'entity_create', input: { name: 'Coin', parent: '$0.id', position: [0, 1, 0], tags: ['Coin'], components: [{ type: 'MeshRenderer', model: coin.json.model }, { type: 'Collider', shape: 'sphere', radius: 0.4, isTrigger: true }] } },
+    {
+      tool: 'entity_create',
+      input: {
+        name: 'Coin',
+        parent: '$0.id',
+        position: [0, 1, 0],
+        tags: ['Coin'],
+        components: [
+          { type: 'MeshRenderer', model: coin.json.model },
+          { type: 'Collider', shape: 'sphere', radius: 0.4, isTrigger: true },
+        ],
+      },
+    },
     { tool: 'entity_duplicate', input: { entity: '$1.id', count: 4, offset: [1.5, 0, 0] } },
   ],
 });
@@ -48,13 +60,18 @@ const v = await call('scene_validate');
 console.log('validate', JSON.stringify(v.json));
 if (!noRender) {
   const shot = await call('render_screenshot', { views: ['camera', 'iso'] });
-  if (shot.images.length !== 1 || shot.images[0]!.mimeType !== 'image/png') throw new Error('expected one PNG image');
+  if (shot.images.length !== 1 || shot.images[0]!.mimeType !== 'image/png')
+    throw new Error('expected one PNG image');
   const out = join(workspace, 'e2e-screenshot.png');
   writeFileSync(out, Buffer.from(shot.images[0]!.data!, 'base64'));
   console.log('screenshot saved', out);
 }
-const bad = (await client.callTool({ name: 'entity_update', arguments: { entity: 'Coinn', position: [0, 0, 0] } })) as { content: Content[]; isError?: boolean };
-if (!bad.isError || !bad.content[0]!.text!.includes('Did you mean')) throw new Error('expected a helpful error');
+const bad = (await client.callTool({
+  name: 'entity_update',
+  arguments: { entity: 'Coinn', position: [0, 0, 0] },
+})) as { content: Content[]; isError?: boolean };
+if (!bad.isError || !bad.content[0]!.text!.includes('Did you mean'))
+  throw new Error('expected a helpful error');
 console.log('error hint ok');
 await client.close();
 console.log(`e2e ok in ${Date.now() - t0} ms (workspace ${workspace})`);

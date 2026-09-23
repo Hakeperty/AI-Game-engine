@@ -18,7 +18,9 @@ import { DEFAULT_WORKSPACE_DIR, ProjectHost, projectRootFor, Workspace } from '@
 const USAGE = `aige: AI-native game engine
 
 Usage:
-  aige mcp [--project <dir>] [--workspace <dir>] [--no-render]
+  aige editor [--project <dir>]
+  aige mcp [--project <dir>] [--workspace <dir>] [--no-render] [--standalone]
+  aige agent "<what to build>" [-p <dir>] [--provider anthropic|ollama] [--model <id>]
   aige new <name> [--dir <dir>] [--template basic|empty]
   aige call <tool> [json-input] [--project <dir>] [--out <file.png>]
   aige screenshot [--project <dir>] [--model <path>] [--views camera,iso] [--out shot.png]
@@ -72,7 +74,11 @@ function printResult(r: ToolResult, out?: string): void {
   const result = r.result as { images?: { data: string; path?: string; label?: string }[] } | undefined;
   if (result?.images?.length) {
     result.images.forEach((img, i) => {
-      const file = out ? (i === 0 ? out : out.replace(/(\.png)?$/, `-${i + 1}.png`)) : `aige-image-${i + 1}.png`;
+      const file = out
+        ? i === 0
+          ? out
+          : out.replace(/(\.png)?$/, `-${i + 1}.png`)
+        : `aige-image-${i + 1}.png`;
       writeFileSync(file, Buffer.from(img.data, 'base64'));
       (img as { data?: string }).data = undefined;
       (img as { saved?: string }).saved = resolve(file);
@@ -106,7 +112,12 @@ async function main(): Promise<void> {
         api = {
           tools: () => remote.request({ type: 'tools' }),
           call: async (name, input) => {
-            const res = await remote.request<{ __error?: import('@aige/core').ErrorInfo }>({ type: 'call', name, input, source: 'mcp' });
+            const res = await remote.request<{ __error?: import('@aige/core').ErrorInfo }>({
+              type: 'call',
+              name,
+              input,
+              source: 'mcp',
+            });
             return res && typeof res === 'object' && '__error' in res && res.__error
               ? { ok: false as const, error: res.__error }
               : { ok: true as const, result: res };
@@ -117,7 +128,9 @@ async function main(): Promise<void> {
         if (values.project) await ws.open(resolve(values.project));
         api = { tools: () => ws.tools(), call: (n: string, i: unknown) => ws.call(n, i, 'mcp') };
       }
-      const handle = serveStdio(() => createMcpServer(api), { onerror: (e) => process.stderr.write(`mcp error: ${e.message}\n`) });
+      const handle = serveStdio(() => createMcpServer(api), {
+        onerror: (e) => process.stderr.write(`mcp error: ${e.message}\n`),
+      });
       const shutdown = async () => {
         await handle.close().catch(() => undefined);
         await ws.close().catch(() => undefined);
@@ -126,13 +139,19 @@ async function main(): Promise<void> {
       process.on('SIGINT', shutdown);
       process.on('SIGTERM', shutdown);
       process.stdin.on('end', shutdown);
-      process.stderr.write(`aige MCP server ready (workspace: ${ws.dir}${ws.current ? `, project: ${ws.current.root}` : ''})\n`);
+      process.stderr.write(
+        `aige MCP server ready (workspace: ${ws.dir}${ws.current ? `, project: ${ws.current.root}` : ''})\n`,
+      );
       return;
     }
     case 'new': {
       const name = rest[0] ?? fail('aige new <name>');
       const dir = resolve(values.dir ?? name);
-      const host = await ProjectHost.create(dir, { name, template: values.template === 'empty' ? 'empty' : 'basic' }, { render: null });
+      const host = await ProjectHost.create(
+        dir,
+        { name, template: values.template === 'empty' ? 'empty' : 'basic' },
+        { render: null },
+      );
       await host.close();
       process.stdout.write(`Created ${dir}\n`);
       return;
@@ -141,7 +160,11 @@ async function main(): Promise<void> {
       const ws = new Workspace({ render: null });
       const tools = await ws.tools();
       if (values.json) process.stdout.write(`${JSON.stringify(tools, null, 2)}\n`);
-      else for (const t of tools) process.stdout.write(`${t.name.padEnd(22)} ${t.kind.padEnd(8)} ${t.description.split('\n')[0]!.slice(0, 100)}\n`);
+      else
+        for (const t of tools)
+          process.stdout.write(
+            `${t.name.padEnd(22)} ${t.kind.padEnd(8)} ${t.description.split('\n')[0]!.slice(0, 100)}\n`,
+          );
       await ws.close();
       return;
     }
@@ -174,7 +197,11 @@ async function main(): Promise<void> {
     case 'replay': {
       const src = projectDir();
       const into = values.into ?? fail('--into <newDir> is required');
-      const log = readFileSync(resolve(src, '.aige/logs/commands.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
+      const log = readFileSync(resolve(src, '.aige/logs/commands.jsonl'), 'utf8')
+        .trim()
+        .split('\n')
+        .filter(Boolean)
+        .map((l) => JSON.parse(l));
       const srcHost = await ProjectHost.open(src, { render: null });
       const name = srcHost.state.project.name;
       await srcHost.close();
@@ -184,10 +211,36 @@ async function main(): Promise<void> {
       process.stdout.write(`Replayed ${n} commands into ${resolve(into)}\n`);
       return;
     }
+    case 'editor': {
+      // Launch the desktop editor (builds it on first run). Optional: --project <dir> to open.
+      const editorDir = resolve(import.meta.dirname, '..', '..', 'editor');
+      const { spawn, spawnSync } = await import('node:child_process');
+      if (!existsSync(resolve(editorDir, 'dist', 'main.cjs'))) {
+        process.stdout.write('Building the editor (first run)...\n');
+        const b = spawnSync(process.execPath, [resolve(editorDir, 'scripts', 'build.mjs')], {
+          stdio: 'inherit',
+          cwd: editorDir,
+        });
+        if (b.status !== 0) fail('Editor build failed.');
+      }
+      const { createRequire } = await import('node:module');
+      const electronPath = createRequire(resolve(editorDir, 'package.json'))('electron') as unknown as string;
+      const env = {
+        ...process.env,
+        ...(values.project ? { AIGE_OPEN_PROJECT: resolve(values.project) } : {}),
+      };
+      const child = spawn(electronPath, [editorDir], { stdio: 'inherit', env, detached: false });
+      child.on('exit', (code) => process.exit(code ?? 0));
+      return;
+    }
     case 'agent': {
       // Run the in-editor agent headlessly: aige agent "make a spinning red cube" -p my-game --provider ollama
-      const prompt = rest.join(' ') || fail('aige agent "<what to build>" [-p project] [--provider anthropic|ollama] [--model id]');
-      const { Agent, createProvider, DEFAULT_ANTHROPIC_MODEL, DEFAULT_OLLAMA_BASE_URL } = await import('@aige/agent');
+      const prompt =
+        rest.join(' ') ||
+        fail('aige agent "<what to build>" [-p project] [--provider anthropic|ollama] [--model id]');
+      const { Agent, createProvider, DEFAULT_ANTHROPIC_MODEL, DEFAULT_OLLAMA_BASE_URL } = await import(
+        '@aige/agent'
+      );
       const { workspaceToolHost } = await import('@aige/host');
       const ws = new Workspace({ workspaceDir: values.workspace ?? DEFAULT_WORKSPACE_DIR });
       if (values.project) {
@@ -199,7 +252,11 @@ async function main(): Promise<void> {
       const provider =
         providerKind === 'anthropic'
           ? createProvider({ kind: 'anthropic', model: values.model ?? DEFAULT_ANTHROPIC_MODEL })
-          : createProvider({ kind: 'openai-compat', baseURL: values['base-url'] ?? DEFAULT_OLLAMA_BASE_URL, model: values.model ?? 'qwen3.8:27b' });
+          : createProvider({
+              kind: 'openai-compat',
+              baseURL: values['base-url'] ?? DEFAULT_OLLAMA_BASE_URL,
+              model: values.model ?? 'qwen3.8:27b',
+            });
       let imageN = 0;
       const agent = new Agent({
         provider,
@@ -213,7 +270,9 @@ async function main(): Promise<void> {
               process.stdout.write(`\n\x1b[36m→ ${e.name}\x1b[0m ${JSON.stringify(e.input).slice(0, 160)}\n`);
               break;
             case 'tool_end':
-              process.stdout.write(`${e.ok ? '\x1b[32m✓' : '\x1b[31m✗'} ${e.name}\x1b[0m ${e.durationMs}ms ${(e.error?.message ?? e.summary).slice(0, 200)}\n`);
+              process.stdout.write(
+                `${e.ok ? '\x1b[32m✓' : '\x1b[31m✗'} ${e.name}\x1b[0m ${e.durationMs}ms ${(e.error?.message ?? e.summary).slice(0, 200)}\n`,
+              );
               break;
             case 'image': {
               const file = resolve(`aige-agent-${++imageN}.png`);
@@ -222,7 +281,9 @@ async function main(): Promise<void> {
               break;
             }
             case 'plan':
-              process.stdout.write(`\n\x1b[33mplan:\x1b[0m ${e.items.map((i) => `${i.status === 'done' ? '✓' : i.status === 'in_progress' ? '▸' : '·'} ${i.text}`).join(' | ')}\n`);
+              process.stdout.write(
+                `\n\x1b[33mplan:\x1b[0m ${e.items.map((i) => `${i.status === 'done' ? '✓' : i.status === 'in_progress' ? '▸' : '·'} ${i.text}`).join(' | ')}\n`,
+              );
               break;
             case 'usage':
               process.stderr.write(`\x1b[2m[${e.model}: $${e.runCostUsd.toFixed(4)} this run]\x1b[0m\n`);
@@ -236,7 +297,10 @@ async function main(): Promise<void> {
       return;
     }
     case 'doctor': {
-      const report: Record<string, unknown> = { node: process.version, platform: `${process.platform}-${process.arch}` };
+      const report: Record<string, unknown> = {
+        node: process.version,
+        platform: `${process.platform}-${process.arch}`,
+      };
       const { PlaywrightBackend } = await import('@aige/host');
       const backend = new PlaywrightBackend();
       try {
@@ -253,7 +317,9 @@ async function main(): Promise<void> {
       } catch {
         report.ollama = 'not reachable at http://localhost:11434';
       }
-      report.anthropicKey = process.env.ANTHROPIC_API_KEY ? 'set' : 'not set (in-editor Claude agent needs it, MCP does not)';
+      report.anthropicKey = process.env.ANTHROPIC_API_KEY
+        ? 'set'
+        : 'not set (in-editor Claude agent needs it, MCP does not)';
       process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
       return;
     }

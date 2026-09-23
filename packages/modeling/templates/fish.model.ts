@@ -1,4 +1,4 @@
-import { defineModel, eye, mixColor, model, p, sdf, type Sdf } from 'aige/model';
+import { defineModel, eye, mixColor, model, p, type Sdf, sdf } from 'aige/model';
 
 /**
  * Stylized fish: smooth tapered body, forked tail, dorsal/pectoral/belly fins, dark back and light belly, with
@@ -32,7 +32,8 @@ export default defineModel({
         if (d > 0.05) return base;
         return d < 0.035 ? patternColor : '#1c1c1c';
       });
-    else if (pattern === 'spots') trunk = trunk.colorSpots(patternColor, { scale: 12, size: 0.28, seed, softness: 0.04 });
+    else if (pattern === 'spots')
+      trunk = trunk.colorSpots(patternColor, { scale: 12, size: 0.28, seed, softness: 0.04 });
     const thin = (s: Sdf) => s.stretch([0.22, 1, 1]);
     const tail = thin(
       sdf.smoothUnionAll(
@@ -54,7 +55,11 @@ export default defineModel({
         [0.03, 0.045, 0.02],
       ),
     ).translate([0, h * 0.8, 0]);
-    const bellyFin = thin(sdf.roundCone([0, 0, 0], [0, -0.09, -0.08], 0.035, 0.02)).translate([0, -h * 0.75, -0.14]);
+    const bellyFin = thin(sdf.roundCone([0, 0, 0], [0, -0.09, -0.08], 0.035, 0.02)).translate([
+      0,
+      -h * 0.75,
+      -0.14,
+    ]);
     const pecs = [-1, 1].map((side) =>
       sdf
         .ellipsoid([0.08, 0.014, 0.045], [0.07, 0, 0])
@@ -65,7 +70,9 @@ export default defineModel({
     const finShape = sdf
       .unionAll([tail, dorsal, bellyFin, ...pecs])
       .color(fins)
-      .colorBy(([, , z], base) => mixColor(base, mixColor(fins, '#ffffff', 0.45), Math.max(0, Math.min(1, (-z - 0.5) * 6))));
+      .colorBy(([, , z], base) =>
+        mixColor(base, mixColor(fins, '#ffffff', 0.45), Math.max(0, Math.min(1, (-z - 0.5) * 6))),
+      );
     const mouth = sdf.ellipsoid([0.035, 0.012, 0.04], [0, -0.03, 0.42]).color('#5a1f0e');
     const fish = trunk.smoothUnion(finShape, 0.035).smoothSubtract(mouth, 0.01);
     const s = length / 1.02;

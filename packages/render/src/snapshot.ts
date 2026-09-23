@@ -1,8 +1,25 @@
 import type { MaterialDoc, ProjectDoc, SceneDoc } from '@aige/core';
-import { AxesHelper, Box3, Box3Helper, Color, GridHelper, type Object3D, PerspectiveCamera, Vector3, type WebGLRenderer } from 'three';
+import {
+  AxesHelper,
+  Box3,
+  Box3Helper,
+  Color,
+  GridHelper,
+  type Object3D,
+  type PerspectiveCamera,
+  Vector3,
+  type WebGLRenderer,
+} from 'three';
 import type { ModelCache } from './assets.ts';
 import type { SceneRenderer } from './scene-renderer.ts';
-import { customCamera, framingCamera, layoutFor, projectToScreen, VIEW_LABELS, type ViewSpec } from './views.ts';
+import {
+  customCamera,
+  framingCamera,
+  layoutFor,
+  projectToScreen,
+  VIEW_LABELS,
+  type ViewSpec,
+} from './views.ts';
 
 export interface SnapshotRequest {
   width: number;
@@ -34,7 +51,12 @@ export interface SnapshotResult {
 }
 
 /** Renders one or more labeled views of a scene into a single PNG (a "contact sheet"). */
-export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, models: ModelCache, req: SnapshotRequest): Promise<SnapshotResult> {
+export async function snapshot(
+  renderer: WebGLRenderer,
+  sr: SceneRenderer,
+  models: ModelCache,
+  req: SnapshotRequest,
+): Promise<SnapshotResult> {
   for (const [key, glb] of Object.entries(req.models ?? {})) if (!models.has(key)) await models.add(key, glb);
   for (const [path, png] of Object.entries(req.textures ?? {})) sr.textures.add(path, png);
   await sr.textures.ready();
@@ -57,7 +79,8 @@ export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, model
     helpers.push(grid);
   }
   if (req.overlays?.axes) helpers.push(new AxesHelper(Math.max(size.x, size.y, size.z) * 0.6));
-  if (req.overlays?.bounds && !bounds.isEmpty()) helpers.push(new Box3Helper(bounds.clone(), new Color('#ffcc00')));
+  if (req.overlays?.bounds && !bounds.isEmpty())
+    helpers.push(new Box3Helper(bounds.clone(), new Color('#ffcc00')));
   for (const h of helpers) sr.scene.add(h);
 
   const { cols, rows } = layoutFor(req.views.length);
@@ -110,7 +133,8 @@ export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, model
   ctx.drawImage(renderer.domElement, 0, 0, W, H);
   ctx.textBaseline = 'top';
   const scale = Math.max(0.75, Math.min(1.6, W / 1024));
-  const font = (px: number, weight = 600) => `${weight} ${Math.round(px * scale)}px system-ui, Segoe UI, sans-serif`;
+  const font = (px: number, weight = 600) =>
+    `${weight} ${Math.round(px * scale)}px system-ui, Segoe UI, sans-serif`;
   req.views.forEach((view, i) => {
     const col = i % cols;
     const row = Math.floor(i / cols);
@@ -121,7 +145,15 @@ export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, model
       ctx.lineWidth = 1;
       ctx.strokeRect(ox + 0.5, oy + 0.5, cw - 1, ch - 1);
     }
-    tag(ctx, view.label ?? VIEW_LABELS[view.kind], ox + 8, oy + 8, font(13, 700), '#ffffff', 'rgba(0,0,0,0.55)');
+    tag(
+      ctx,
+      view.label ?? VIEW_LABELS[view.kind],
+      ox + 8,
+      oy + 8,
+      font(13, 700),
+      '#ffffff',
+      'rgba(0,0,0,0.55)',
+    );
     if (req.overlays?.labels) {
       const cam = cameras[i]!;
       const drawn: { x: number; y: number }[] = [];
@@ -140,7 +172,16 @@ export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, model
         if (!s.visible) continue;
         if (drawn.some((d) => Math.abs(d.x - s.x) < 60 * scale && Math.abs(d.y - s.y) < 14 * scale)) continue;
         drawn.push(s);
-        tag(ctx, `${id} ${obj.name}`, ox + s.x, oy + s.y - 16 * scale, font(11, 600), '#101010', 'rgba(255,221,87,0.85)', true);
+        tag(
+          ctx,
+          `${id} ${obj.name}`,
+          ox + s.x,
+          oy + s.y - 16 * scale,
+          font(11, 600),
+          '#101010',
+          'rgba(255,221,87,0.85)',
+          true,
+        );
         count++;
       }
     }
@@ -164,7 +205,10 @@ export async function snapshot(renderer: WebGLRenderer, sr: SceneRenderer, model
       cam.getWorldDirection(dir);
       return {
         label: v.label ?? VIEW_LABELS[v.kind],
-        camera: { position: cam.position.toArray().map(r3), target: cam.position.clone().add(dir.multiplyScalar(5)).toArray().map(r3) },
+        camera: {
+          position: cam.position.toArray().map(r3),
+          target: cam.position.clone().add(dir.multiplyScalar(5)).toArray().map(r3),
+        },
       };
     }),
     stats: {
@@ -189,7 +233,16 @@ function niceStep(raw: number): number {
   return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * p;
 }
 
-function tag(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, font: string, fg: string, bg: string, center = false): void {
+function tag(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  font: string,
+  fg: string,
+  bg: string,
+  center = false,
+): void {
   ctx.font = font;
   const m = ctx.measureText(text);
   const pad = 4;

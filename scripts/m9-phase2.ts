@@ -19,7 +19,13 @@ await call('scene_settings', {
   killY: -7,
   ambientIntensity: 0.35,
 });
-await call('material_create', { name: 'sea', color: '#2f86d0', roughness: 0.25, metalness: 0.05, opacity: 0.9 });
+await call('material_create', {
+  name: 'sea',
+  color: '#2f86d0',
+  roughness: 0.25,
+  metalness: 0.05,
+  opacity: 0.9,
+});
 
 type Island = { name: string; pos: [number, number, number]; width: number; depth: number; seed: number };
 const islands: Island[] = [
@@ -32,7 +38,22 @@ const islands: Island[] = [
 ];
 
 const commands: { tool: string; input: Record<string, unknown> }[] = [
-  { tool: 'entity_create', input: { name: 'Sea', position: [0, -9, -18], scale: [260, 1, 260], components: [{ type: 'MeshRenderer', primitive: 'plane', material: 'materials/sea.material.json', castShadow: false }] } },
+  {
+    tool: 'entity_create',
+    input: {
+      name: 'Sea',
+      position: [0, -9, -18],
+      scale: [260, 1, 260],
+      components: [
+        {
+          type: 'MeshRenderer',
+          primitive: 'plane',
+          material: 'materials/sea.material.json',
+          castShadow: false,
+        },
+      ],
+    },
+  },
   { tool: 'entity_create', input: { name: 'Level' } },
 ];
 for (const i of islands) {
@@ -45,7 +66,11 @@ for (const i of islands) {
       rotation: [0, i.seed * 47, 0],
       tags: ['Island'],
       components: [
-        { type: 'MeshRenderer', model: 'models/sky-island.model.ts', params: { width: i.width, depth: i.depth, seed: i.seed } },
+        {
+          type: 'MeshRenderer',
+          model: 'models/sky-island.model.ts',
+          params: { width: i.width, depth: i.depth, seed: i.seed },
+        },
         { type: 'Collider', shape: 'auto' },
       ],
     },
@@ -68,7 +93,17 @@ commands.push(
     },
   },
   { tool: 'entity_update', input: { entity: 'Main Camera', position: [0, 4.5, 9.8] } },
-  { tool: 'component_add', input: { entity: 'Main Camera', component: { type: 'Script', script: 'builtin:FollowCamera', props: { target: 'Fox', offset: [0, 4.2, 8], smooth: 5 } } } },
+  {
+    tool: 'component_add',
+    input: {
+      entity: 'Main Camera',
+      component: {
+        type: 'Script',
+        script: 'builtin:FollowCamera',
+        props: { target: 'Fox', offset: [0, 4.2, 8], smooth: 5 },
+      },
+    },
+  },
   {
     tool: 'entity_create',
     input: {
@@ -120,15 +155,33 @@ commands.push(
       components: [
         { type: 'MeshRenderer', model: 'models/flag.model.ts', params: { height: 3, cloth: '#ffcf33' } },
         { type: 'Collider', shape: 'box', size: [1.6, 3, 1.6], offset: [0, 1.5, 0], isTrigger: true },
-        { type: 'Script', script: 'builtin:Goal', props: { requireAll: 'Coin', message: 'All 12 coins! You win!' } },
+        {
+          type: 'Script',
+          script: 'builtin:Goal',
+          props: { requireAll: 'Coin', message: 'All 12 coins! You win!' },
+        },
       ],
     },
   },
 );
 // Decorations (no colliders: purely visual).
-const deco = (name: string, model: string, pos: [number, number, number], rot = 0, scale = 1, params?: Record<string, unknown>) => ({
+const deco = (
+  name: string,
+  model: string,
+  pos: [number, number, number],
+  rot = 0,
+  scale = 1,
+  params?: Record<string, unknown>,
+) => ({
   tool: 'entity_create',
-  input: { name, parent: 'Decor', position: pos, rotation: [0, rot, 0], scale, components: [{ type: 'MeshRenderer', model, ...(params ? { params } : {}) }] },
+  input: {
+    name,
+    parent: 'Decor',
+    position: pos,
+    rotation: [0, rot, 0],
+    scale,
+    components: [{ type: 'MeshRenderer', model, ...(params ? { params } : {}) }],
+  },
 });
 commands.push(
   { tool: 'entity_create', input: { name: 'Decor' } },
@@ -171,7 +224,10 @@ export default class LevelTimer extends Behaviour {
 `,
 });
 console.log('timer script', JSON.stringify(timer.diagnostics));
-await call('component_add', { entity: 'HUD', component: { type: 'Script', script: 'scripts/level-timer.ts' } });
+await call('component_add', {
+  entity: 'HUD',
+  component: { type: 'Script', script: 'scripts/level-timer.ts' },
+});
 
 console.log('validate', JSON.stringify(await call('scene_validate', {})));
 const shot = await call('render_screenshot', { views: ['camera', 'iso'] });

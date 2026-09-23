@@ -5,48 +5,20 @@
   "description": "Floating-island coin platformer built by an AI through AIGE tools",
   "input": {
     "actions": {
-      "fire": [
-        "MouseLeft",
-        "KeyJ",
-        "GamepadX"
-      ],
-      "interact": [
-        "KeyE",
-        "GamepadB"
-      ],
-      "jump": [
-        "Space",
-        "GamepadA"
-      ],
-      "pause": [
-        "Escape",
-        "GamepadStart"
-      ],
-      "sprint": [
-        "ShiftLeft",
-        "GamepadLB"
-      ]
+      "fire": ["MouseLeft", "KeyJ", "GamepadX"],
+      "interact": ["KeyE", "GamepadB"],
+      "jump": ["Space", "GamepadA"],
+      "pause": ["Escape", "GamepadStart"],
+      "sprint": ["ShiftLeft", "GamepadLB"]
     },
     "axes": {
       "move_x": {
-        "negative": [
-          "KeyA",
-          "ArrowLeft"
-        ],
-        "positive": [
-          "KeyD",
-          "ArrowRight"
-        ]
+        "negative": ["KeyA", "ArrowLeft"],
+        "positive": ["KeyD", "ArrowRight"]
       },
       "move_y": {
-        "negative": [
-          "KeyS",
-          "ArrowDown"
-        ],
-        "positive": [
-          "KeyW",
-          "ArrowUp"
-        ]
+        "negative": ["KeyS", "ArrowDown"],
+        "positive": ["KeyW", "ArrowUp"]
       }
     }
   },

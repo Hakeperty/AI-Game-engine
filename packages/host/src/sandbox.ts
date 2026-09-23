@@ -44,7 +44,8 @@ export async function compileUserModule(opts: CompileOptions): Promise<CompiledM
           setup(b: esbuild.PluginBuild) {
             b.onResolve({ filter: /.*/ }, (args: esbuild.OnResolveArgs) => {
               if (args.path in opts.virtuals) return { path: args.path, namespace: 'aige-virtual' };
-              if (args.kind === 'entry-point' || args.path.startsWith('.') || args.path.startsWith('/')) return undefined;
+              if (args.kind === 'entry-point' || args.path.startsWith('.') || args.path.startsWith('/'))
+                return undefined;
               if (/^[a-zA-Z]:[\\/]/.test(args.path)) return undefined;
               return {
                 errors: [
@@ -92,7 +93,10 @@ export interface RunOptions {
  * network, timers). Returns module.exports and captured console output.
  * Note: vm is isolation against accidents, not a security boundary.
  */
-export function runModule(mod: CompiledModule, opts: RunOptions): { exports: any; logs: string[]; context: vm.Context } {
+export function runModule(
+  mod: CompiledModule,
+  opts: RunOptions,
+): { exports: any; logs: string[]; context: vm.Context } {
   const logs: string[] = [];
   const fmt = (args: unknown[]) => args.map((a) => (typeof a === 'string' ? a : safeJson(a))).join(' ');
   const sandboxConsole = {
@@ -102,9 +106,16 @@ export function runModule(mod: CompiledModule, opts: RunOptions): { exports: any
     error: (...a: unknown[]) => logs.push(`error: ${fmt(a)}`),
   };
   const module = { exports: {} as any };
-  const context = vm.createContext({ ...opts.globals, module, exports: module.exports, console: sandboxConsole });
+  const context = vm.createContext({
+    ...opts.globals,
+    module,
+    exports: module.exports,
+    console: sandboxConsole,
+  });
   try {
-    new vm.Script(mod.code, { filename: opts.filename }).runInContext(context, { timeout: opts.timeoutMs ?? 10_000 });
+    new vm.Script(mod.code, { filename: opts.filename }).runInContext(context, {
+      timeout: opts.timeoutMs ?? 10_000,
+    });
   } catch (err) {
     throw toScriptError(err, mod, opts.filename);
   }
@@ -112,9 +123,17 @@ export function runModule(mod: CompiledModule, opts: RunOptions): { exports: any
 }
 
 /** Runs `code` inside an existing module context with a timeout (used to call recipe.build safely). */
-export function runInModuleContext<T>(context: vm.Context, code: string, mod: CompiledModule, filename: string, timeoutMs = 20_000): T {
+export function runInModuleContext<T>(
+  context: vm.Context,
+  code: string,
+  mod: CompiledModule,
+  filename: string,
+  timeoutMs = 20_000,
+): T {
   try {
-    return new vm.Script(code, { filename: 'aige-call.js' }).runInContext(context, { timeout: timeoutMs }) as T;
+    return new vm.Script(code, { filename: 'aige-call.js' }).runInContext(context, {
+      timeout: timeoutMs,
+    }) as T;
   } catch (err) {
     throw toScriptError(err, mod, filename);
   }

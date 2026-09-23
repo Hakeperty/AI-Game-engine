@@ -1,4 +1,4 @@
-import { defineModel, eye, mixColor, model, p, type PolyMesh, sdf, type Sdf, type V3 } from 'aige/model';
+import { defineModel, eye, mixColor, model, type PolyMesh, p, type Sdf, sdf, type V3 } from 'aige/model';
 
 /**
  * Snake or worm lying in an S-curve: one smooth tapered SDF chain with a raised head, diamond back pattern,
@@ -30,7 +30,9 @@ export default defineModel({
     const radii: number[] = [];
     for (let i = 0; i <= n; i++) {
       const t = i / n; // 0 = head, 1 = tail
-      const r = worm ? r0 * (1 - 0.35 * t ** 2) : r0 * (t < 0.08 ? 0.9 : 1 - 0.85 * ((t - 0.08) / 0.92) ** 1.4);
+      const r = worm
+        ? r0 * (1 - 0.35 * t ** 2)
+        : r0 * (t < 0.08 ? 0.9 : 1 - 0.85 * ((t - 0.08) / 0.92) ** 1.4);
       const lift = worm ? 0 : Math.max(0, 0.16 - t) * 0.9; // raise the head
       pts.push([spineX(t), r * 0.92 + lift, L * 0.5 - t * L]);
       radii.push(r);
@@ -42,7 +44,10 @@ export default defineModel({
       body = body.displaceBy(([, , z]) => -0.006 * Math.abs(Math.sin(z * 55)) ** 0.5, 0.006);
     } else {
       body = body.smoothUnion(
-        sdf.ellipsoid([0.075 * thickness, 0.05 * thickness, 0.1 * thickness], [head[0], head[1] + 0.01, head[2] + 0.06]),
+        sdf.ellipsoid(
+          [0.075 * thickness, 0.05 * thickness, 0.1 * thickness],
+          [head[0], head[1] + 0.01, head[2] + 0.06],
+        ),
         0.05,
       );
     }
@@ -51,8 +56,12 @@ export default defineModel({
     if (worm) {
       skin = body
         .color(color)
-        .colorBy(([, , z], base) => mixColor(base, mixColor(color, '#ffffff', 0.3), Math.abs(Math.sin(z * 55)) ** 8 * 0.6))
-        .colorBy(([, , z], base) => (Math.abs(z - (head[2] - 0.45)) < 0.07 ? mixColor(base, '#b8405a', 0.45) : base));
+        .colorBy(([, , z], base) =>
+          mixColor(base, mixColor(color, '#ffffff', 0.3), Math.abs(Math.sin(z * 55)) ** 8 * 0.6),
+        )
+        .colorBy(([, , z], base) =>
+          Math.abs(z - (head[2] - 0.45)) < 0.07 ? mixColor(base, '#b8405a', 0.45) : base,
+        );
     } else {
       // diamonds along the spine
       skin = body.color(color).colorBy(([x, , z], base) => {
@@ -93,7 +102,12 @@ export default defineModel({
     if (!worm) {
       const tip: V3 = [head[0], head[1] - 0.005, head[2] + 0.16 * thickness];
       const fork = (dx: number) =>
-        sdf.roundCone([tip[0], tip[1], tip[2] + 0.04], [tip[0] + dx, tip[1] + 0.005, tip[2] + 0.075], 0.0045, 0.0025);
+        sdf.roundCone(
+          [tip[0], tip[1], tip[2] + 0.04],
+          [tip[0] + dx, tip[1] + 0.005, tip[2] + 0.075],
+          0.0045,
+          0.0025,
+        );
       parts.tongue = sdf
         .roundCone([tip[0], tip[1], tip[2] - 0.04], [tip[0], tip[1], tip[2] + 0.04], 0.006, 0.0045)
         .union(fork(0.016), fork(-0.016))

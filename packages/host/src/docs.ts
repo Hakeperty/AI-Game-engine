@@ -283,5 +283,13 @@ export function toolsDoc(tools: ToolDefinition[]): string {
   return out;
 }
 
-export const DOC_TOPICS = ['overview', 'conventions', 'components', 'modeling', 'templates', 'scripting', 'tools'] as const;
+export const DOC_TOPICS = [
+  'overview',
+  'conventions',
+  'components',
+  'modeling',
+  'templates',
+  'scripting',
+  'tools',
+] as const;
 export type DocTopic = (typeof DOC_TOPICS)[number];

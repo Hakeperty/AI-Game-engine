@@ -1,4 +1,13 @@
-import { AigeError, type Entity, type ImageRef, type ProjectState, type SceneDoc, createSceneDoc, getScene, resolveEntity } from '@aige/core';
+import {
+  AigeError,
+  createSceneDoc,
+  type Entity,
+  getScene,
+  type ImageRef,
+  type ProjectState,
+  resolveEntity,
+  type SceneDoc,
+} from '@aige/core';
 import { toBase64 } from '@aige/modeling';
 import type { SnapshotRequest, SnapshotResult, ViewSpec } from '@aige/render';
 import type { AssetPipeline, ModelInfo } from '../assets.ts';
@@ -53,7 +62,12 @@ export class RenderService {
   }
 
   /** Builds every model the scene uses; failures become warnings (rendered as magenta boxes). */
-  async collectModels(scene: SceneDoc): Promise<{ models: Record<string, string>; meshKeys: Record<string, string>; warnings: string[]; infos: Record<string, ModelInfo> }> {
+  async collectModels(scene: SceneDoc): Promise<{
+    models: Record<string, string>;
+    meshKeys: Record<string, string>;
+    warnings: string[];
+    infos: Record<string, ModelInfo>;
+  }> {
     const models: Record<string, string> = {};
     const meshKeys: Record<string, string> = {};
     const infos: Record<string, ModelInfo> = {};
@@ -62,7 +76,10 @@ export class RenderService {
       const mr = e.components.find((c) => c.type === 'MeshRenderer');
       if (!mr?.model) continue;
       try {
-        const built = await this.ctx.assets.build(mr.model as string, (mr.params as Record<string, unknown>) ?? {});
+        const built = await this.ctx.assets.build(
+          mr.model as string,
+          (mr.params as Record<string, unknown>) ?? {},
+        );
         meshKeys[e.id] = built.info.key;
         infos[e.id] = built.info;
         if (!models[built.info.key]) models[built.info.key] = toBase64(built.glb);
@@ -84,11 +101,14 @@ export class RenderService {
     return out;
   }
 
-  async screenshot(opts: ScreenshotOptions = {}): Promise<{ image: ImageRef; result: SnapshotResult; warnings: string[] }> {
+  async screenshot(
+    opts: ScreenshotOptions = {},
+  ): Promise<{ image: ImageRef; result: SnapshotResult; warnings: string[] }> {
     const state = this.ctx.state();
     const scene = opts.sceneDoc ?? getScene(state, opts.scene);
     const hasCamera = scene.entities.some((e) => e.active && e.components.some((c) => c.type === 'Camera'));
-    const views: ViewSpec[] = opts.views ?? (hasCamera ? [{ kind: 'camera' }, { kind: 'iso' }] : [{ kind: 'iso' }, { kind: 'top' }]);
+    const views: ViewSpec[] =
+      opts.views ?? (hasCamera ? [{ kind: 'camera' }, { kind: 'iso' }] : [{ kind: 'iso' }, { kind: 'top' }]);
     // Frame what matters: skip ground planes unless they are all there is.
     let focus = opts.focus?.map((ref) => resolveEntity(scene, ref).id);
     if (!focus) {
@@ -122,7 +142,12 @@ export class RenderService {
       title: scene.name,
     };
     const result = await this.need().snapshot(req);
-    const image = await this.saveImage(result, opts.name ?? scene.name, opts.save ?? true, 'scene screenshot');
+    const image = await this.saveImage(
+      result,
+      opts.name ?? scene.name,
+      opts.save ?? true,
+      'scene screenshot',
+    );
     return { image, result, warnings };
   }
 
@@ -141,7 +166,9 @@ export class RenderService {
       active: true,
       tags: [],
       transform: { position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
-      components: [{ type: 'MeshRenderer', model: path, castShadow: true, receiveShadow: true, visible: true }],
+      components: [
+        { type: 'MeshRenderer', model: path, castShadow: true, receiveShadow: true, visible: true },
+      ],
     };
     scene.entities.push(entity);
     const size = opts.size ?? 1024;
@@ -157,12 +184,28 @@ export class RenderService {
       studio: true,
       title: entity.name,
     });
-    const image = await this.saveImage(result, `model-${entity.name}`, opts.save ?? true, `preview of ${path}`);
+    const image = await this.saveImage(
+      result,
+      `model-${entity.name}`,
+      opts.save ?? true,
+      `preview of ${path}`,
+    );
     return { image, info: built.info, result };
   }
 
-  private async saveImage(result: SnapshotResult, name: string, save: boolean, label: string): Promise<ImageRef> {
-    const image: ImageRef = { mimeType: 'image/png', data: result.png, label, width: result.width, height: result.height };
+  private async saveImage(
+    result: SnapshotResult,
+    name: string,
+    save: boolean,
+    label: string,
+  ): Promise<ImageRef> {
+    const image: ImageRef = {
+      mimeType: 'image/png',
+      data: result.png,
+      label,
+      width: result.width,
+      height: result.height,
+    };
     if (save) {
       const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
       const path = `.aige/screenshots/${stamp}-${name.replace(/[^\w-]+/g, '_')}.png`;

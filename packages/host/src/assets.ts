@@ -75,7 +75,10 @@ export class AssetPipeline {
       return { kind: 'glb' as const, path: norm, key: `g${hash(bytes)}`, bytes };
     }
     if (!/\.model\.(ts|js)$/.test(norm)) {
-      throw new AigeError('INVALID_INPUT', `'${path}' is not a model. Models are 'models/<name>.model.ts' recipes or '.glb' files.`);
+      throw new AigeError(
+        'INVALID_INPUT',
+        `'${path}' is not a model. Models are 'models/<name>.model.ts' recipes or '.glb' files.`,
+      );
     }
     if (!(await this.fs.exists(norm))) throw this.notFound(norm);
     const compiled = await compileUserModule({
@@ -94,7 +97,11 @@ export class AssetPipeline {
   }
 
   /** Builds (or loads from cache) a model with the given parameter overrides. */
-  async build(path: string, params: Record<string, unknown> = {}, opts: { keepModel?: boolean } = {}): Promise<BuiltModel> {
+  async build(
+    path: string,
+    params: Record<string, unknown> = {},
+    opts: { keepModel?: boolean } = {},
+  ): Promise<BuiltModel> {
     const prep = await this.prepare(path, params);
     const cached = this.memory.get(prep.key);
     if (cached && (!opts.keepModel || cached.model)) return cached;
@@ -113,7 +120,11 @@ export class AssetPipeline {
     if (prep.kind === 'glb') {
       model = await importGlb(prep.bytes);
     } else {
-      const { exports, logs: l, context } = runModule(prep.compiled, {
+      const {
+        exports,
+        logs: l,
+        context,
+      } = runModule(prep.compiled, {
         filename: prep.path,
         globals: { [MODEL_GLOBAL]: modeling },
       });
@@ -136,7 +147,11 @@ export class AssetPipeline {
           Number(process.env.AIGE_BUILD_TIMEOUT_MS) || 20_000,
         );
       } catch (err) {
-        if (err instanceof AigeError && err.code === 'SCRIPT_ERROR' && /Unknown parameter|must be/.test(err.message)) {
+        if (
+          err instanceof AigeError &&
+          err.code === 'SCRIPT_ERROR' &&
+          /Unknown parameter|must be/.test(err.message)
+        ) {
           throw new AigeError('INVALID_INPUT', err.message, {
             hint: `Parameters: ${Object.entries(paramDefs)
               .map(([k, d]) => `${k} (${d.type}, default ${JSON.stringify(d.default)})`)

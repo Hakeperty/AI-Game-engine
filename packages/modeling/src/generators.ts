@@ -11,8 +11,8 @@ import {
   mixColor,
   mul,
   normalize,
-  type RGB,
   Random,
+  type RGB,
   rotateAxis,
   smoothstep,
   sub,
@@ -99,7 +99,8 @@ const DEFAULT_PALETTE = {
  * the surface: const h = terrainHeight(opts); tree.translate([x, h(x, z), z]).
  */
 export function terrainHeight(opts: TerrainOptions = {}): (x: number, z: number) => number {
-  const [sx, sz] = typeof opts.size === 'number' || opts.size === undefined ? [opts.size ?? 20, opts.size ?? 20] : opts.size;
+  const [sx, sz] =
+    typeof opts.size === 'number' || opts.size === undefined ? [opts.size ?? 20, opts.size ?? 20] : opts.size;
   if (typeof opts.height === 'function') return opts.height;
   const H = opts.height ?? 3;
   const no = opts.noise ?? {};
@@ -110,7 +111,8 @@ export function terrainHeight(opts: TerrainOptions = {}): (x: number, z: number)
   const ridged = clamp(no.ridged ?? 0.3, 0, 1);
   const warp = no.warp ?? 0.3;
   const exponent = no.exponent ?? 1.5;
-  const island = opts.island === true ? 0.5 : typeof opts.island === 'number' ? clamp(opts.island, 0, 0.95) : null;
+  const island =
+    opts.island === true ? 0.5 : typeof opts.island === 'number' ? clamp(opts.island, 0, 0.95) : null;
   const L = Math.max(sx, sz);
   return (x, z) => {
     let u = (x / L) * scale;
@@ -122,7 +124,8 @@ export function terrainHeight(opts: TerrainOptions = {}): (x: number, z: number)
       v += wv * warp * 1.5;
     }
     let t = clamp(0.5 + noise.fbm(u, 0.37, v, octaves) * 0.9, 0, 1);
-    if (ridged > 0) t = lerp1(t, clamp(noise.ridged(u * 0.7 + 3.1, 1.3, v * 0.7, octaves) * 1.2, 0, 1), ridged);
+    if (ridged > 0)
+      t = lerp1(t, clamp(noise.ridged(u * 0.7 + 3.1, 1.3, v * 0.7, octaves) * 1.2, 0, 1), ridged);
     t = t ** exponent;
     if (island === null) return H * t;
     const r = Math.hypot(x / (sx / 2), z / (sz / 2));
@@ -138,7 +141,8 @@ export function terrainHeight(opts: TerrainOptions = {}): (x: number, z: number)
  * Centered on x/z = 0; y = height. Example: terrain({ size: 40, height: 6, island: true, seed: 3 })
  */
 export function terrain(opts: TerrainOptions = {}): PolyMesh {
-  const [sx, sz] = typeof opts.size === 'number' || opts.size === undefined ? [opts.size ?? 20, opts.size ?? 20] : opts.size;
+  const [sx, sz] =
+    typeof opts.size === 'number' || opts.size === undefined ? [opts.size ?? 20, opts.size ?? 20] : opts.size;
   let nx: number;
   let nz: number;
   if (Array.isArray(opts.resolution)) [nx, nz] = opts.resolution;
@@ -179,9 +183,13 @@ export function terrain(opts: TerrainOptions = {}): PolyMesh {
       const gz = (hu - hd) / (dzs * (k > 0 && k < nz ? 2 : 1));
       slopeCos[idx(i, k)] = 1 / Math.hypot(gx, 1, gz);
     }
-  const palette = opts.colors === false ? null : { ...DEFAULT_PALETTE, ...(typeof opts.colors === 'object' ? opts.colors : {}) };
+  const palette =
+    opts.colors === false
+      ? null
+      : { ...DEFAULT_PALETTE, ...(typeof opts.colors === 'object' ? opts.colors : {}) };
   const sea = opts.seaLevel ?? (opts.island ? 0 : undefined);
-  const range = typeof opts.height === 'number' || opts.height === undefined ? H : Math.max(1e-6, maxY - minY);
+  const range =
+    typeof opts.height === 'number' || opts.height === undefined ? H : Math.max(1e-6, maxY - minY);
   const base = typeof opts.height === 'function' ? minY : 0;
   const noise = new Noise((opts.noise?.seed ?? opts.seed ?? 1) + 101);
   let vcol: RGB[] | null = null;
@@ -200,12 +208,22 @@ export function terrain(opts: TerrainOptions = {}): PolyMesh {
       if (sea !== undefined) {
         const above = y - sea + n * range * 0.02;
         c = mixColor(sand, c, smoothstep(range * 0.03, range * 0.07, above));
-        if (above < 0) c = mixColor(c, [c[0] * 0.75, c[1] * 0.78, c[2] * 0.8], smoothstep(0, -range * 0.1, above));
+        if (above < 0)
+          c = mixColor(c, [c[0] * 0.75, c[1] * 0.78, c[2] * 0.8], smoothstep(0, -range * 0.1, above));
       }
       const sc = slopeCos[vi]!;
-      const rockT = Math.max(smoothstep(rockCos + 0.06, rockCos - 0.06, sc), smoothstep(palette.snowLine - 0.25, palette.snowLine - 0.1, h) * 0.8);
-      c = mixColor(c, mixColor(rock, [rock[0] * 0.8, rock[1] * 0.8, rock[2] * 0.8], clamp(0.5 + n * 2, 0, 1)), rockT);
-      const snowT = smoothstep(palette.snowLine - 0.03, palette.snowLine + 0.03, h) * smoothstep(rockCos - 0.15, rockCos + 0.1, sc);
+      const rockT = Math.max(
+        smoothstep(rockCos + 0.06, rockCos - 0.06, sc),
+        smoothstep(palette.snowLine - 0.25, palette.snowLine - 0.1, h) * 0.8,
+      );
+      c = mixColor(
+        c,
+        mixColor(rock, [rock[0] * 0.8, rock[1] * 0.8, rock[2] * 0.8], clamp(0.5 + n * 2, 0, 1)),
+        rockT,
+      );
+      const snowT =
+        smoothstep(palette.snowLine - 0.03, palette.snowLine + 0.03, h) *
+        smoothstep(rockCos - 0.15, rockCos + 0.1, sc);
       c = mixColor(c, snow, snowT);
       return c;
     });
@@ -253,7 +271,14 @@ export function terrain(opts: TerrainOptions = {}): PolyMesh {
     u += el;
   }
   const bot = [...bottom];
-  m.f.push({ v: bot, uv: bot.map(uvOf), c: palette ? bot.map(() => dark) : null, g: 'bottom', m: 0, sm: false });
+  m.f.push({
+    v: bot,
+    uv: bot.map(uvOf),
+    c: palette ? bot.map(() => dark) : null,
+    g: 'bottom',
+    m: 0,
+    sm: false,
+  });
   // outward winding: bottom faces down, walls face away from the center
   if (m.faceNormal(m.f.length - 1)[1] > 0) reverseFace(m.f[m.f.length - 1]!);
   for (const f of m.f) {
@@ -325,7 +350,8 @@ function branches(opts: BranchOptions = {}): Branch[] {
   const levels = Math.max(0, Math.min(6, Math.round(opts.levels ?? 3)));
   const length = opts.length ?? 2;
   const r0 = opts.radius ?? length * 0.06;
-  const [cmin, cmax] = typeof opts.children === 'number' ? [opts.children, opts.children] : (opts.children ?? [2, 4]);
+  const [cmin, cmax] =
+    typeof opts.children === 'number' ? [opts.children, opts.children] : (opts.children ?? [2, 4]);
   const angle = ((opts.angle ?? 35) * Math.PI) / 180;
   const lengthRatio = opts.lengthRatio ?? 0.65;
   const radiusRatio = opts.radiusRatio ?? 0.7;
@@ -379,7 +405,10 @@ function branches(opts: BranchOptions = {}): Branch[] {
  * Wood mesh for branches: smooth tapered tubes along each path (closed ends). sides = tube segments for the
  * trunk (thinner branches get fewer). Group 'bark', cylindrical-ish UVs.
  */
-function branchMesh(list: Branch[], opts: { sides?: number; minSides?: number; smoothness?: number } = {}): PolyMesh {
+function branchMesh(
+  list: Branch[],
+  opts: { sides?: number; minSides?: number; smoothness?: number } = {},
+): PolyMesh {
   const sides = Math.max(3, Math.round(opts.sides ?? 10));
   const minSides = Math.max(3, Math.round(opts.minSides ?? 5));
   const spp = Math.max(1, Math.round(opts.smoothness ?? 3));
@@ -435,7 +464,13 @@ function leaf(opts: LeafOptions = {}): PolyMesh {
   const rows = Math.max(3, Math.round(na));
   const cols = Math.max(1, Math.round(nc));
   const widthAt = (t: number) => {
-    if (shape === 'round') return W * Math.sqrt(Math.max(0, Math.sin(Math.PI * Math.min(1, t * 0.9 + 0.1)))) * (t < 0.15 ? t / 0.15 : 1) * 0.5;
+    if (shape === 'round')
+      return (
+        W *
+        Math.sqrt(Math.max(0, Math.sin(Math.PI * Math.min(1, t * 0.9 + 0.1)))) *
+        (t < 0.15 ? t / 0.15 : 1) *
+        0.5
+      );
     if (shape === 'blade') return W * 0.5 * (1 - t ** 3) * Math.min(1, t * 8);
     return W * 0.5 * Math.sin(Math.PI * t) ** 0.75 * (1 - 0.25 * t);
   };
@@ -553,7 +588,9 @@ function tree(opts: TreeOptions = {}): { wood: PolyMesh; leaves: PolyMesh } {
   const size = opts.leafSize ?? length * 0.22;
   const foliage = opts.foliage ?? 'cloud';
   const tips = list.filter((b) => b.tip).map((b) => b.path[b.path.length - 1]!);
-  const tipDirs = list.filter((b) => b.tip).map((b) => normalize(sub(b.path[b.path.length - 1]!, b.path[b.path.length - 2]!)));
+  const tipDirs = list
+    .filter((b) => b.tip)
+    .map((b) => normalize(sub(b.path[b.path.length - 1]!, b.path[b.path.length - 2]!)));
   const rng = new Random((opts.seed ?? 1) + 7);
   let leavesMesh = new PolyMesh();
   if (foliage === 'cloud' && tips.length) {
@@ -563,7 +600,9 @@ function tree(opts: TreeOptions = {}): { wood: PolyMesh; leaves: PolyMesh } {
     const hi = Math.max(...tips.map((t) => t[1]));
     const cells = new Noise((opts.seed ?? 1) + 5);
     const f = 3.2 / size;
-    const clumps = tips.map((t, i) => sdf.sphere(size * rng.range(0.7, 1.05), add(t, mul(tipDirs[i]!, size * 0.3))));
+    const clumps = tips.map((t, i) =>
+      sdf.sphere(size * rng.range(0.7, 1.05), add(t, mul(tipDirs[i]!, size * 0.3))),
+    );
     const canopy = sdf
       .smoothUnionAll(clumps, size * 0.35)
       .displaceBy(([x, y, z]) => size * 0.13 * (0.55 - cells.worley(x * f, y * f, z * f)), size * 0.1, 1.5)
@@ -575,7 +614,11 @@ function tree(opts: TreeOptions = {}): { wood: PolyMesh; leaves: PolyMesh } {
         return mixColor(shade, leafColor2, Math.max(0, bump) * 0.45);
       });
     const detail = Math.round(clamp(52 + tips.length * 0.5, 52, 76));
-    leavesMesh = canopy.mesh({ resolution: detail, ao: 0.7, decimate: Math.min(14000, 3000 + tips.length * 400) });
+    leavesMesh = canopy.mesh({
+      resolution: detail,
+      ao: 0.7,
+      decimate: Math.min(14000, 3000 + tips.length * 400),
+    });
   } else if (foliage === 'blobs' && tips.length) {
     const parts = tips.map((t, i) =>
       icosphere({ radius: size * rng.range(0.75, 1.1), detail: 1 })
@@ -585,7 +628,13 @@ function tree(opts: TreeOptions = {}): { wood: PolyMesh; leaves: PolyMesh } {
     );
     const merged = PolyMesh.merge(...parts);
     const bb = merged.bounds();
-    leavesMesh = merged.colorBy((p) => mixColor(mixColor(leafColor, [leafColor[0] * 0.55, leafColor[1] * 0.6, leafColor[2] * 0.55], 0.5), leafColor2, smoothstep(bb.min[1], bb.max[1], p[1])));
+    leavesMesh = merged.colorBy((p) =>
+      mixColor(
+        mixColor(leafColor, [leafColor[0] * 0.55, leafColor[1] * 0.6, leafColor[2] * 0.55], 0.5),
+        leafColor2,
+        smoothstep(bb.min[1], bb.max[1], p[1]),
+      ),
+    );
   } else if (foliage === 'leaves' && tips.length) {
     const lm = leaf({ length: size * 0.6, segments: tips.length > 30 ? [4, 1] : [6, 2] });
     const tint = new Noise((opts.seed ?? 1) + 3);
@@ -594,7 +643,9 @@ function tree(opts: TreeOptions = {}): { wood: PolyMesh; leaves: PolyMesh } {
       spread: size * 0.35,
       seed: (opts.seed ?? 1) + 11,
       outward: tipDirs,
-    }).colorBy((p) => mixColor(leafColor, leafColor2, clamp(0.5 + tint.fbm(p[0] * 3, p[1] * 3, p[2] * 3, 2) * 2, 0, 1)));
+    }).colorBy((p) =>
+      mixColor(leafColor, leafColor2, clamp(0.5 + tint.fbm(p[0] * 3, p[1] * 3, p[2] * 3, 2) * 2, 0, 1)),
+    );
   }
   return { wood, leaves: leavesMesh };
 }
@@ -627,13 +678,19 @@ export interface EyeOptions {
 export function eye(opts: EyeOptions = {}): PolyMesh {
   const r = opts.radius ?? 0.1;
   const seg = Math.max(8, Math.round(opts.segments ?? 20));
-  const ball = sphere({ radius: r, segments: seg, rings: Math.round(seg * 0.65) }).color(opts.sclera ?? '#ffffff');
+  const ball = sphere({ radius: r, segments: seg, rings: Math.round(seg * 0.65) }).color(
+    opts.sclera ?? '#ffffff',
+  );
   const parts: PolyMesh[] = [ball];
   const irisR = r * (opts.irisSize ?? 0.62);
   const pupilR = r * (opts.pupilSize ?? 0.36);
   // flattened discs that hug the front of the eyeball
   const disc = (radius: number, depth: number, color: ColorInput, z: number) =>
-    sphere({ radius: 1, segments: Math.max(10, Math.round(seg * 0.7)), rings: Math.max(6, Math.round(seg * 0.4)) })
+    sphere({
+      radius: 1,
+      segments: Math.max(10, Math.round(seg * 0.7)),
+      rings: Math.max(6, Math.round(seg * 0.4)),
+    })
       .scale([radius, radius, depth])
       .translate([0, 0, z])
       .color(color);

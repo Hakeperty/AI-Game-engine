@@ -14,6 +14,7 @@ export default class LevelTimer extends Behaviour {
   }
 
   update() {
-    if (!this.finished) UI.text(this.props.id, `Time: ${Time.time.toFixed(1)} s`, { anchor: 'top-right', fontSize: 26 });
+    if (!this.finished)
+      UI.text(this.props.id, `Time: ${Time.time.toFixed(1)} s`, { anchor: 'top-right', fontSize: 26 });
   }
 }

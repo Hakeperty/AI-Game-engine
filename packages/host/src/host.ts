@@ -18,7 +18,14 @@ import type { Patch } from 'immer';
 import { AssetPipeline } from './assets.ts';
 import { type HostServices, hostCommands } from './commands.ts';
 import { ProjectFs } from './fs.ts';
-import { createProjectFiles, isProject, loadProject, writeDoc, writeProjectSupportFiles, writeWorkspace } from './project-io.ts';
+import {
+  createProjectFiles,
+  isProject,
+  loadProject,
+  writeDoc,
+  writeProjectSupportFiles,
+  writeWorkspace,
+} from './project-io.ts';
 import type { RenderBackend } from './render/playwright.ts';
 import { RenderService } from './render/service.ts';
 
@@ -61,7 +68,10 @@ export class ProjectHost {
     this.bus.register(...hostCommands);
     for (const provider of extraCommandProviders) this.bus.register(...provider());
     if (opts.commands) this.bus.register(...opts.commands);
-    this.render = new RenderService({ fs: this.fs, assets: this.assets, state: () => this.bus.state }, opts.render);
+    this.render = new RenderService(
+      { fs: this.fs, assets: this.assets, state: () => this.bus.state },
+      opts.render,
+    );
     this.bus.on((e) => this.onBusEvent(e));
     this.bus.onLog((entry) => {
       const line = `${compactJson({ ...entry, t: new Date().toISOString() })}\n`;
@@ -78,7 +88,11 @@ export class ProjectHost {
     return host;
   }
 
-  static async create(root: string, init: { name: string; template?: 'empty' | 'basic'; description?: string }, opts: HostOptions = {}): Promise<ProjectHost> {
+  static async create(
+    root: string,
+    init: { name: string; template?: 'empty' | 'basic'; description?: string },
+    opts: HostOptions = {},
+  ): Promise<ProjectHost> {
     const fs = new ProjectFs(root);
     const state = await createProjectFiles(fs, init);
     return new ProjectHost(root, state, opts);
@@ -89,7 +103,11 @@ export class ProjectHost {
   }
 
   /** Calls a tool; never throws. */
-  call<O = unknown>(name: string, input: unknown = {}, source: CommandSource = 'internal'): Promise<ToolResult<O>> {
+  call<O = unknown>(
+    name: string,
+    input: unknown = {},
+    source: CommandSource = 'internal',
+  ): Promise<ToolResult<O>> {
     return this.bus.call<O>(name, input, { source });
   }
 
@@ -106,7 +124,8 @@ export class ProjectHost {
       for (const k of Object.keys(e.state.materials)) this.dirty.add(`materials|${k}`);
       for (const k of Object.keys(e.state.prefabs)) this.dirty.add(`prefabs|${k}`);
     } else if (e.type === 'command') {
-      if (this.dirty.size || this.workspaceDirty) this.saving = this.saving.then(() => this.save()).catch(() => undefined);
+      if (this.dirty.size || this.workspaceDirty)
+        this.saving = this.saving.then(() => this.save()).catch(() => undefined);
     }
   }
 
@@ -114,7 +133,8 @@ export class ProjectHost {
     const [root, key] = p.path as (string | number)[];
     if (root === 'project') this.dirty.add('project');
     else if (root === 'activeScene') this.workspaceDirty = true;
-    else if ((root === 'scenes' || root === 'materials' || root === 'prefabs') && typeof key === 'string') this.dirty.add(`${root}|${key}`);
+    else if ((root === 'scenes' || root === 'materials' || root === 'prefabs') && typeof key === 'string')
+      this.dirty.add(`${root}|${key}`);
   }
 
   /** Writes changed documents to disk (called automatically after every command). */
@@ -190,10 +210,13 @@ const WORKSPACE_TOOLS: ToolDefinition[] = [
     group: 'project',
     kind: 'mutation',
     tier: 'core',
-    description: 'Open an existing AIGE project folder (one containing project.json). Example: {"path":"coin-quest"}',
+    description:
+      'Open an existing AIGE project folder (one containing project.json). Example: {"path":"coin-quest"}',
     input_schema: {
       type: 'object',
-      properties: { path: { type: 'string', description: 'Folder (absolute, or relative to the workspace folder)' } },
+      properties: {
+        path: { type: 'string', description: 'Folder (absolute, or relative to the workspace folder)' },
+      },
       required: ['path'],
       additionalProperties: false,
     },
@@ -233,7 +256,9 @@ export class Workspace {
   async open(path: string): Promise<ProjectHost> {
     const root = this.resolvePath(path);
     if (!(await isProject(new ProjectFs(root)))) {
-      throw new AigeError('NOT_FOUND', `No AIGE project at '${root}'.`, { hint: 'Use project_create, or project_list to see existing projects.' });
+      throw new AigeError('NOT_FOUND', `No AIGE project at '${root}'.`, {
+        hint: 'Use project_create, or project_list to see existing projects.',
+      });
     }
     await this.current?.close();
     this.current = await ProjectHost.open(root, this.opts);
@@ -241,11 +266,21 @@ export class Workspace {
     return this.current;
   }
 
-  async create(name: string, path?: string, template?: 'basic' | 'empty', description?: string): Promise<ProjectHost> {
-    if (!/^[\w-]+$/.test(name)) throw new AigeError('INVALID_INPUT', 'Project name may only contain letters, digits, _ and -.');
+  async create(
+    name: string,
+    path?: string,
+    template?: 'basic' | 'empty',
+    description?: string,
+  ): Promise<ProjectHost> {
+    if (!/^[\w-]+$/.test(name))
+      throw new AigeError('INVALID_INPUT', 'Project name may only contain letters, digits, _ and -.');
     const root = this.resolvePath(path ?? name);
     await this.current?.close();
-    this.current = await ProjectHost.create(root, { name, ...(template ? { template } : {}), ...(description ? { description } : {}) }, this.opts);
+    this.current = await ProjectHost.create(
+      root,
+      { name, ...(template ? { template } : {}), ...(description ? { description } : {}) },
+      this.opts,
+    );
     for (const l of this.listeners) l(this.current);
     return this.current;
   }
@@ -262,29 +297,50 @@ export class Workspace {
     const { mkdtemp } = await import('node:fs/promises');
     const { tmpdir } = await import('node:os');
     const dir = await mkdtemp(join(tmpdir(), 'aige-tools-'));
-    this.template = await ProjectHost.create(dir, { name: 'tools', template: 'empty' }, { ...this.opts, render: null });
+    this.template = await ProjectHost.create(
+      dir,
+      { name: 'tools', template: 'empty' },
+      { ...this.opts, render: null },
+    );
     return this.template;
   }
 
   async call(name: string, input: unknown, source: CommandSource = 'mcp'): Promise<ToolResult> {
     try {
       if (name === 'project_create') {
-        const i = (input ?? {}) as { name?: string; path?: string; template?: 'basic' | 'empty'; description?: string };
+        const i = (input ?? {}) as {
+          name?: string;
+          path?: string;
+          template?: 'basic' | 'empty';
+          description?: string;
+        };
         if (!i.name) throw new AigeError('INVALID_INPUT', "project_create needs a 'name'.");
         const host = await this.create(i.name, i.path, i.template, i.description);
-        return { ok: true, result: { root: host.root, scene: host.state.activeScene, next: 'Use scene_tree to see the starter scene.' } };
+        return {
+          ok: true,
+          result: {
+            root: host.root,
+            scene: host.state.activeScene,
+            next: 'Use scene_tree to see the starter scene.',
+          },
+        };
       }
       if (name === 'project_open') {
         const i = (input ?? {}) as { path?: string };
         if (!i.path) throw new AigeError('INVALID_INPUT', "project_open needs a 'path'.");
         const host = await this.open(i.path);
-        return { ok: true, result: { root: host.root, name: host.state.project.name, scenes: Object.keys(host.state.scenes) } };
+        return {
+          ok: true,
+          result: { root: host.root, name: host.state.project.name, scenes: Object.keys(host.state.scenes) },
+        };
       }
       if (name === 'project_list') {
         const { readdir } = await import('node:fs/promises');
         let entries: string[] = [];
         try {
-          entries = (await readdir(this.dir, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
+          entries = (await readdir(this.dir, { withFileTypes: true }))
+            .filter((d) => d.isDirectory())
+            .map((d) => d.name);
         } catch {
           // workspace folder does not exist yet
         }
@@ -293,7 +349,9 @@ export class Workspace {
         return { ok: true, result: { workspace: this.dir, projects, open: this.current?.root ?? null } };
       }
       if (!this.current) {
-        throw new AigeError('INVALID_STATE', 'No project is open.', { hint: 'Call project_create (new game) or project_open first.' });
+        throw new AigeError('INVALID_STATE', 'No project is open.', {
+          hint: 'Call project_create (new game) or project_open first.',
+        });
       }
       return await this.current.call(name, input, source);
     } catch (err) {

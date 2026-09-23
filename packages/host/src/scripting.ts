@@ -22,10 +22,17 @@ const TSC = join(ENGINE_ROOT, 'node_modules', 'typescript', 'bin', 'tsc');
  * (the project tsconfig maps 'aige' and 'aige/model' to the engine sources).
  * Only diagnostics inside the project are returned.
  */
-export async function typecheckProject(fs: ProjectFs, opts: { files?: string[] } = {}): Promise<Diagnostic[]> {
+export async function typecheckProject(
+  fs: ProjectFs,
+  opts: { files?: string[] } = {},
+): Promise<Diagnostic[]> {
   if (!(await fs.exists('tsconfig.json'))) await writeProjectSupportFiles(fs);
   const out = await new Promise<string>((resolve) => {
-    const child = spawn(process.execPath, [TSC, '-p', fs.abs('tsconfig.json'), '--pretty', 'false', '--noEmit'], { cwd: fs.root });
+    const child = spawn(
+      process.execPath,
+      [TSC, '-p', fs.abs('tsconfig.json'), '--pretty', 'false', '--noEmit'],
+      { cwd: fs.root },
+    );
     let text = '';
     child.stdout.on('data', (d) => (text += d));
     child.stderr.on('data', (d) => (text += d));
@@ -85,15 +92,23 @@ Example: {"name":"spinner","source":"import { Behaviour } from 'aige';\\nexport 
     await ctx.writeFile(path, input.source);
     const h = host(ctx);
     // Syntax/import errors fail the call (and roll the write back).
-    const mod = await compileUserModule({ entry: h.fs.abs(path), root: h.fs.root, virtuals: { aige: '__aigeRuntime' } });
+    const mod = await compileUserModule({
+      entry: h.fs.abs(path),
+      root: h.fs.root,
+      virtuals: { aige: '__aigeRuntime' },
+    });
     // The default export must be a Behaviour subclass.
     const { api } = await import('@aige/runtime');
     const { exports } = runModule(mod, { filename: path, globals: { __aigeRuntime: api }, timeoutMs: 2000 });
     const cls = exports.default;
     if (typeof cls !== 'function' || !(cls.prototype instanceof api.Behaviour)) {
-      throw new AigeError('INVALID_INPUT', `${path} must \`export default class <Name> extends Behaviour\` (import { Behaviour } from 'aige').`, {
-        hint: "import { Behaviour } from 'aige';\nexport default class Mover extends Behaviour { update(dt: number) { /* ... */ } }",
-      });
+      throw new AigeError(
+        'INVALID_INPUT',
+        `${path} must \`export default class <Name> extends Behaviour\` (import { Behaviour } from 'aige').`,
+        {
+          hint: "import { Behaviour } from 'aige';\nexport default class Mover extends Behaviour { update(dt: number) { /* ... */ } }",
+        },
+      );
     }
     const diagnostics = input.typecheck ? await typecheckProject(h.fs, { files: [path] }) : [];
     return {
@@ -101,7 +116,9 @@ Example: {"name":"spinner","source":"import { Behaviour } from 'aige';\\nexport 
       usage: `{"type":"Script","script":"${path}"}`,
       typeErrors: diagnostics.length,
       diagnostics: formatDiagnostics(diagnostics),
-      ...(diagnostics.length ? { hint: 'The file was saved, but it has type errors. Fix them and call script_write again.' } : {}),
+      ...(diagnostics.length
+        ? { hint: 'The file was saved, but it has type errors. Fix them and call script_write again.' }
+        : {}),
     };
   },
 });
@@ -111,11 +128,16 @@ export const scriptTypecheck = defineCommand({
   group: 'scripting',
   kind: 'query',
   tier: 'extended',
-  description: 'Type-check every script and model recipe in the project. Returns diagnostics as file:line:col messages.',
+  description:
+    'Type-check every script and model recipe in the project. Returns diagnostics as file:line:col messages.',
   input: z.object({}).strict(),
   async run(ctx) {
     const diagnostics = await typecheckProject(host(ctx).fs);
-    return { ok: diagnostics.length === 0, errors: diagnostics.length, diagnostics: formatDiagnostics(diagnostics, 50) };
+    return {
+      ok: diagnostics.length === 0,
+      errors: diagnostics.length,
+      diagnostics: formatDiagnostics(diagnostics, 50),
+    };
   },
 });
 

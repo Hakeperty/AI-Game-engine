@@ -1,8 +1,8 @@
 import type { ManifoldToplevel } from 'manifold-3d';
 import Module from 'manifold-3d';
 import { DEFAULT_MATERIAL, type MaterialSpec, materialKey } from './material.ts';
-import { initDecimator } from './ops/organic.ts';
 import type { RGB, V2, V3 } from './math.ts';
+import { initDecimator } from './ops/organic.ts';
 import { PolyMesh } from './polymesh.ts';
 
 type Wasm = ManifoldToplevel;

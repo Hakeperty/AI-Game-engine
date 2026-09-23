@@ -9,7 +9,12 @@ import { type SnapshotRequest, snapshot } from './snapshot.ts';
 
 const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
-const renderer = new WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+const renderer = new WebGLRenderer({
+  canvas,
+  antialias: true,
+  preserveDrawingBuffer: true,
+  powerPreference: 'high-performance',
+});
 const models = new ModelCache();
 const sr = new SceneRenderer(renderer, models);
 

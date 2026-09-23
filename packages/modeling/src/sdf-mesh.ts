@@ -34,7 +34,10 @@ export interface SdfMeshOptions {
 export const DETAIL_RESOLUTION: Record<SdfDetail, number> = { low: 40, medium: 64, high: 100, ultra: 150 };
 
 export function meshSdf(shape: Sdf, opts: SdfMeshOptions = {}): PolyMesh {
-  const res = Math.max(16, Math.min(240, Math.round(opts.resolution ?? DETAIL_RESOLUTION[opts.detail ?? 'medium'])));
+  const res = Math.max(
+    16,
+    Math.min(240, Math.round(opts.resolution ?? DETAIL_RESOLUTION[opts.detail ?? 'medium'])),
+  );
   const shifts: V3[] = [
     [0, 0, 0],
     [0.37, 0.21, 0.29],
@@ -93,7 +96,8 @@ export function meshSdf(shape: Sdf, opts: SdfMeshOptions = {}): PolyMesh {
       for (let it = 0; it < passes; it++) smoothColorsCsr(adj, col);
     }
     if (wantAo) {
-      const strength = typeof aoOpt === 'number' ? aoOpt : typeof aoOpt === 'object' ? (aoOpt.strength ?? 1) : 1;
+      const strength =
+        typeof aoOpt === 'number' ? aoOpt : typeof aoOpt === 'object' ? (aoOpt.strength ?? 1) : 1;
       const b = shape.bounds;
       const size = Math.max(b.max[0] - b.min[0], b.max[1] - b.min[1], b.max[2] - b.min[2]);
       const radius = (typeof aoOpt === 'object' ? aoOpt.radius : undefined) ?? Math.max(size * 0.1, cell * 3);
@@ -407,11 +411,16 @@ function surfaceNets(shape: Sdf, res: number, paddingOpt: number | undefined, sh
                   const o = CORNER[EDGE_CORNERS[e]![0]]!;
                   edgeList.push(crossing(i + o[0], j + o[1], k + o[2], EDGE_AXIS[e]!));
                 }
-                placeVertex(edgeList, cp, cg, f, cell, [
-                  origin[0] + i * cell,
-                  origin[1] + j * cell,
-                  origin[2] + k * cell,
-                ], vp, feat);
+                placeVertex(
+                  edgeList,
+                  cp,
+                  cg,
+                  f,
+                  cell,
+                  [origin[0] + i * cell, origin[1] + j * cell, origin[2] + k * cell],
+                  vp,
+                  feat,
+                );
               }
             }
       }
@@ -557,8 +566,7 @@ function placeVertex(
   a00 += lam;
   a11 += lam;
   a22 += lam;
-  const det =
-    a00 * (a11 * a22 - a12 * a12) - a01 * (a01 * a22 - a12 * a02) + a02 * (a01 * a12 - a11 * a02);
+  const det = a00 * (a11 * a22 - a12 * a12) - a01 * (a01 * a22 - a12 * a02) + a02 * (a01 * a12 - a11 * a02);
   let x = mx;
   let y = my;
   let z = mz;

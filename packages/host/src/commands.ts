@@ -9,16 +9,16 @@ import {
   type ImageRef,
   toolDefinitions,
 } from '@aige/core';
-import * as modeling from '@aige/modeling';
 import type { ParamDef } from '@aige/modeling';
+import * as modeling from '@aige/modeling';
 import type { ViewKind, ViewSpec } from '@aige/render';
 import { builtinBehaviours } from '@aige/runtime';
 import { z } from 'zod';
 import { CONVENTIONS, componentsDoc, DOC_TOPICS, MODELING, OVERVIEW, SCRIPTING, toolsDoc } from './docs.ts';
-import type { ProjectHost } from './host.ts';
-import { compileUserModule, runModule } from './sandbox.ts';
 import { exportWebCommand } from './export.ts';
+import type { ProjectHost } from './host.ts';
 import { gameRunHeadless } from './play.ts';
+import { compileUserModule, runModule } from './sandbox.ts';
 import { scriptingCommands } from './scripting.ts';
 
 export interface HostServices {
@@ -46,9 +46,15 @@ let templateCache: Promise<TemplateInfo[]> | null = null;
 export function listTemplates(): Promise<TemplateInfo[]> {
   templateCache ??= (async () => {
     const out: TemplateInfo[] = [];
-    for (const file of readdirSync(TEMPLATE_DIR).filter((f) => f.endsWith('.model.ts')).sort()) {
+    for (const file of readdirSync(TEMPLATE_DIR)
+      .filter((f) => f.endsWith('.model.ts'))
+      .sort()) {
       const entry = join(TEMPLATE_DIR, file);
-      const compiled = await compileUserModule({ entry, root: TEMPLATE_DIR, virtuals: { 'aige/model': '__aigeModel' } });
+      const compiled = await compileUserModule({
+        entry,
+        root: TEMPLATE_DIR,
+        virtuals: { 'aige/model': '__aigeModel' },
+      });
       const { exports } = runModule(compiled, { filename: file, globals: { __aigeModel: modeling } });
       const recipe = exports.default;
       out.push({
@@ -77,7 +83,10 @@ function templateNames(): string[] {
 
 function paramSummary(params: Record<string, ParamDef>): string {
   return Object.entries(params)
-    .map(([k, d]) => `${k}=${JSON.stringify(d.default)}${d.type === 'choice' ? ` (${d.options.join('|')})` : ''}`)
+    .map(
+      ([k, d]) =>
+        `${k}=${JSON.stringify(d.default)}${d.type === 'choice' ? ` (${d.options.join('|')})` : ''}`,
+    )
     .join(', ');
 }
 
@@ -92,7 +101,8 @@ const ViewsInput = z
   .max(6)
   .optional()
   .describe("Views to render, e.g. ['camera','iso'] or ['front','right']");
-const toViews = (v?: readonly string[]): ViewSpec[] | undefined => v?.map((kind) => ({ kind: kind as ViewKind }));
+const toViews = (v?: readonly string[]): ViewSpec[] | undefined =>
+  v?.map((kind) => ({ kind: kind as ViewKind }));
 const ModelRef = z
   .string()
   .min(1)
@@ -146,9 +156,14 @@ export const fileList = defineCommand({
   kind: 'query',
   tier: 'extended',
   description: 'List project files (recursively). Example: {"dir":"scripts"}',
-  input: z.object({ dir: z.string().default(''), pattern: z.string().optional().describe('Regex filter') }).strict(),
+  input: z
+    .object({ dir: z.string().default(''), pattern: z.string().optional().describe('Regex filter') })
+    .strict(),
   async run(ctx, input) {
-    const files = await host(ctx).fs.list(input.dir, input.pattern ? { pattern: new RegExp(input.pattern) } : {});
+    const files = await host(ctx).fs.list(
+      input.dir,
+      input.pattern ? { pattern: new RegExp(input.pattern) } : {},
+    );
     return { files: files.slice(0, 500), total: files.length };
   },
 });
@@ -164,14 +179,18 @@ export const fileRead = defineCommand({
       path: z.string().min(1),
       offset: z.number().int().min(1).default(1).describe('First line (1-based)'),
       limit: z.number().int().min(1).max(5000).default(800),
+      raw: z.boolean().default(false).describe('Return the whole file without line numbers'),
     })
     .strict(),
   async run(ctx, input) {
     const text = await ctx.readFile(input.path);
     if (text === null) {
       const files = await host(ctx).fs.list('');
-      throw new AigeError('NOT_FOUND', `File '${input.path}' not found.`, { hint: didYouMean(input.path, files) });
+      throw new AigeError('NOT_FOUND', `File '${input.path}' not found.`, {
+        hint: didYouMean(input.path, files),
+      });
     }
+    if (input.raw) return { path: input.path, content: text };
     const lines = text.split('\n');
     const slice = lines.slice(input.offset - 1, input.offset - 1 + input.limit);
     return {
@@ -211,8 +230,10 @@ export const fileDelete = defineCommand({
   description: 'Delete a project file (undoable). Example: {"path":"models/old.model.ts"}',
   input: z.object({ path: z.string().min(1) }).strict(),
   async run(ctx, input) {
-    if (MANAGED_JSON.test(input.path)) throw new AigeError('INVALID_INPUT', `Use the scene/material/prefab tools to delete '${input.path}'.`);
-    if ((await ctx.readFile(input.path)) === null) throw new AigeError('NOT_FOUND', `File '${input.path}' not found.`);
+    if (MANAGED_JSON.test(input.path))
+      throw new AigeError('INVALID_INPUT', `Use the scene/material/prefab tools to delete '${input.path}'.`);
+    if ((await ctx.readFile(input.path)) === null)
+      throw new AigeError('NOT_FOUND', `File '${input.path}' not found.`);
     await ctx.deleteFile(input.path);
     return { deleted: input.path };
   },
@@ -276,7 +297,11 @@ Example: {"template":"coin","name":"silver-coin","params":{"color":"#c0c0c0","ra
     const t = templates.find((x) => x.name === input.template);
     if (!t) {
       throw new AigeError('NOT_FOUND', `Unknown template '${input.template}'.`, {
-        hint: didYouMean(input.template, templates.map((x) => x.name)) ?? `Templates: ${templates.map((x) => x.name).join(', ')}`,
+        hint:
+          didYouMean(
+            input.template,
+            templates.map((x) => x.name),
+          ) ?? `Templates: ${templates.map((x) => x.name).join(', ')}`,
       });
     }
     for (const k of Object.keys(input.params)) {
@@ -362,12 +387,13 @@ export const modelInfo = defineCommand({
   group: 'modeling',
   kind: 'query',
   tier: 'extended',
-  description: 'Build a model (cached) and report its size, bounds, triangles, parameters, sockets, collider hint and mesh issues. Example: {"model":"coin","params":{"radius":0.6}}',
+  description:
+    'Build a model (cached) and report its size, bounds, triangles, parameters, sockets, collider hint and mesh issues. Example: {"model":"coin","params":{"radius":0.6}}',
   input: z.object({ model: ModelRef, params: Params }).strict(),
   async run(ctx, input) {
     const built = await host(ctx).assets.build(modelPath(input.model), input.params);
     const { key: _k, ...info } = built.info;
-    return { ...info, paramDefs: undefined, params: paramSummary(built.info.paramDefs) };
+    return { ...info, paramsSummary: paramSummary(built.info.paramDefs) };
   },
 });
 
@@ -379,15 +405,28 @@ export const modelPreview = defineCommand({
   description:
     'Render a model in a studio scene from several angles (default: iso, front, right, top) with a grid and dimensions, and return the image. Example: {"model":"coin","params":{"color":"#ff0000"},"views":["front","iso"]}',
   input: z
-    .object({ model: ModelRef, params: Params, views: ViewsInput, size: z.number().int().min(256).max(2048).default(1024) })
+    .object({
+      model: ModelRef,
+      params: Params,
+      views: ViewsInput,
+      size: z.number().int().min(128).max(2048).default(1024),
+      save: z.boolean().default(true).describe('Also save the PNG under .aige/screenshots'),
+    })
     .strict(),
   async run(ctx, input) {
     const views = toViews(input.views);
     const { image, info } = await host(ctx).render.modelPreview(modelPath(input.model), input.params, {
       size: input.size,
+      save: input.save,
       ...(views ? { views } : {}),
     });
-    return { model: info.path, size: info.bounds.size, triangles: info.triangles, issues: info.issues, images: [image] };
+    return {
+      model: info.path,
+      size: info.bounds.size,
+      triangles: info.triangles,
+      issues: info.issues,
+      images: [image],
+    };
   },
 });
 
@@ -396,12 +435,18 @@ export const modelExportGlb = defineCommand({
   group: 'modeling',
   kind: 'action',
   tier: 'extended',
-  description: 'Export a model as a .glb file inside the project (for other tools like Blender). Example: {"model":"crate","path":"exports/crate.glb"}',
+  description:
+    'Export a model as a .glb file inside the project (for other tools like Blender). Example: {"model":"crate","path":"exports/crate.glb"}',
   input: z.object({ model: ModelRef, params: Params, path: z.string().optional() }).strict(),
   async run(ctx, input) {
     const mp = modelPath(input.model);
     const built = await host(ctx).assets.build(mp, input.params);
-    const out = input.path ?? `exports/${mp.split('/').pop()!.replace(/\.model\.ts$/, '')}.glb`;
+    const out =
+      input.path ??
+      `exports/${mp
+        .split('/')
+        .pop()!
+        .replace(/\.model\.ts$/, '')}.glb`;
     await host(ctx).fs.write(out, built.glb);
     return { path: out, bytes: built.glb.byteLength, triangles: built.info.triangles };
   },
@@ -418,8 +463,14 @@ export const textureGenerate = defineCommand({
     .object({
       name: z.string().regex(NAME_RE, 'Use letters, digits, - and _'),
       kind: z.enum(['checker', 'noise', 'grid', 'bricks', 'stripes', 'dots', 'wood', 'marble']),
-      colorA: z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#ffffff'),
-      colorB: z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#808080'),
+      colorA: z
+        .string()
+        .regex(/^#[0-9a-fA-F]{6}$/)
+        .default('#ffffff'),
+      colorB: z
+        .string()
+        .regex(/^#[0-9a-fA-F]{6}$/)
+        .default('#808080'),
       scale: z.number().positive().max(64).default(4).describe('Pattern repetitions across the texture'),
       size: z.number().int().min(16).max(1024).default(256),
       seed: z.number().int().default(7),
@@ -429,7 +480,11 @@ export const textureGenerate = defineCommand({
     const img = modeling.proceduralTexture(input);
     const path = `textures/${input.name}.png`;
     await host(ctx).fs.write(path, modeling.encodePng(img));
-    return { path, size: [img.width, img.height], usage: `{"map":"${path}","mapRepeat":[4,4]} in material_create` };
+    return {
+      path,
+      size: [img.width, img.height],
+      usage: `{"map":"${path}","mapRepeat":[4,4]} in material_create`,
+    };
   },
 });
 
@@ -443,7 +498,7 @@ export const renderScreenshot = defineCommand({
   kind: 'action',
   tier: 'core',
   description:
-    "Render the scene and return an image. Default views are the game camera + an isometric overview, with entity id/name labels so you can match what you see to entities. Look at it critically: floating objects, wrong scale, missing models (magenta boxes), bad lighting. Example: {\"views\":[\"camera\",\"top\"],\"focus\":[\"Player\"]}",
+    'Render the scene and return an image. Default views are the game camera + an isometric overview, with entity id/name labels so you can match what you see to entities. Look at it critically: floating objects, wrong scale, missing models (magenta boxes), bad lighting. Example: {"views":["camera","top"],"focus":["Player"]}',
   input: z
     .object({
       scene: z.string().optional(),
@@ -496,14 +551,16 @@ export const sceneValidate = defineCommand({
     const cams = scene.entities.filter((e) => e.active && e.components.some((c) => c.type === 'Camera'));
     if (cams.length === 0) errors.push('No active Camera entity: the game has no viewpoint.');
     const lights = scene.entities.filter((e) => e.components.some((c) => c.type === 'Light'));
-    if (lights.length === 0 && scene.settings.environment === 'none') warnings.push('No lights and environment "none": the scene will be dark.');
+    if (lights.length === 0 && scene.settings.environment === 'none')
+      warnings.push('No lights and environment "none": the scene will be dark.');
     const uiIds = new Map<string, string>();
     const files = new Set(await h.fs.list(''));
     const modelsToBuild = new Map<string, { params: Record<string, unknown>; who: string }>();
     let hasPlayerController = false;
     for (const e of scene.entities) {
       const types = e.components.map((c) => c.type);
-      if (types.includes('RigidBody') && !types.includes('Collider')) warnings.push(`${label(e)} has a RigidBody but no Collider.`);
+      if (types.includes('RigidBody') && !types.includes('Collider'))
+        warnings.push(`${label(e)} has a RigidBody but no Collider.`);
       if (types.includes('RigidBody') && types.includes('CharacterController'))
         warnings.push(`${label(e)} has both RigidBody and CharacterController; remove the RigidBody.`);
       for (const c of e.components) {
@@ -511,22 +568,39 @@ export const sceneValidate = defineCommand({
           if (c.model) {
             const mp = c.model as string;
             if (!files.has(mp)) errors.push(`${label(e)}: model file '${mp}' does not exist.`);
-            else modelsToBuild.set(`${mp}|${JSON.stringify(c.params ?? {})}`, { params: (c.params as Record<string, unknown>) ?? {}, who: label(e) });
-          } else if (!c.primitive) warnings.push(`${label(e)}: MeshRenderer has neither model nor primitive (renders a white box).`);
-          if (c.material && !state.materials[c.material as string]) errors.push(`${label(e)}: material '${c.material}' does not exist.`);
+            else
+              modelsToBuild.set(`${mp}|${JSON.stringify(c.params ?? {})}`, {
+                params: (c.params as Record<string, unknown>) ?? {},
+                who: label(e),
+              });
+          } else if (!c.primitive)
+            warnings.push(`${label(e)}: MeshRenderer has neither model nor primitive (renders a white box).`);
+          if (c.material && !state.materials[c.material as string])
+            errors.push(`${label(e)}: material '${c.material}' does not exist.`);
         }
         if (c.type === 'Script') {
           const s = c.script as string;
           if (s.startsWith('builtin:')) {
             const n = s.slice(8);
             if (!BUILTIN_SCRIPTS.includes(n))
-              errors.push(`${label(e)}: unknown built-in script '${s}'. ${didYouMean(n, BUILTIN_SCRIPTS) ?? `Built-ins: ${BUILTIN_SCRIPTS.join(', ')}`}`);
+              errors.push(
+                `${label(e)}: unknown built-in script '${s}'. ${didYouMean(n, BUILTIN_SCRIPTS) ?? `Built-ins: ${BUILTIN_SCRIPTS.join(', ')}`}`,
+              );
             if (n === 'PlayerController') {
               hasPlayerController = true;
-              if (!types.includes('CharacterController')) warnings.push(`${label(e)}: PlayerController works best with a CharacterController component.`);
-              if (!e.tags.includes('Player')) warnings.push(`${label(e)}: tag the player entity 'Player' (FollowCamera, Collectible and Goal look for it).`);
+              if (!types.includes('CharacterController'))
+                warnings.push(
+                  `${label(e)}: PlayerController works best with a CharacterController component.`,
+                );
+              if (!e.tags.includes('Player'))
+                warnings.push(
+                  `${label(e)}: tag the player entity 'Player' (FollowCamera, Collectible and Goal look for it).`,
+                );
             }
-            if ((n === 'Collectible' || n === 'Goal' || n === 'Hazard') && !e.components.some((x) => x.type === 'Collider' && x.isTrigger))
+            if (
+              (n === 'Collectible' || n === 'Goal' || n === 'Hazard') &&
+              !e.components.some((x) => x.type === 'Collider' && x.isTrigger)
+            )
               warnings.push(`${label(e)}: ${n} needs a Collider with isTrigger: true.`);
           } else if (!files.has(s)) errors.push(`${label(e)}: script file '${s}' does not exist.`);
         }
@@ -538,7 +612,9 @@ export const sceneValidate = defineCommand({
       }
       const movable = types.includes('RigidBody') || types.includes('CharacterController');
       if (movable && e.transform.position[1] < scene.settings.killY)
-        warnings.push(`${label(e)} starts below the kill height (${scene.settings.killY}) and will be respawned/destroyed immediately.`);
+        warnings.push(
+          `${label(e)} starts below the kill height (${scene.settings.killY}) and will be respawned/destroyed immediately.`,
+        );
     }
     if (!hasPlayerController && scene.entities.some((e) => e.tags.includes('Player')))
       warnings.push("An entity is tagged 'Player' but has no PlayerController or custom movement script.");

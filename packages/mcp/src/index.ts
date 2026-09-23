@@ -1,4 +1,10 @@
-import { type CommandSource, compactJson, type ImageRef, type ToolDefinition, type ToolResult } from '@aige/core';
+import {
+  type CommandSource,
+  compactJson,
+  type ImageRef,
+  type ToolDefinition,
+  type ToolResult,
+} from '@aige/core';
 import { type CallToolResult, fromJsonSchema, McpServer } from '@modelcontextprotocol/server';
 
 /** What the MCP server needs from the engine (a local Workspace or a remote editor connection). */
@@ -23,7 +29,11 @@ const MAX_TEXT = 60_000;
 
 /** Our engine validates inputs itself (with better error messages), so skip SDK-side validation. */
 const passthroughValidator = {
-  getValidator: (() => (input: unknown) => ({ valid: true as const, data: input, errorMessage: undefined })) as never,
+  getValidator: (() => (input: unknown) => ({
+    valid: true as const,
+    data: input,
+    errorMessage: undefined,
+  })) as never,
 };
 
 /** Splits images out of a tool result so they can be returned as MCP image content. */
@@ -46,7 +56,8 @@ export function toCallToolResult(r: ToolResult): CallToolResult {
   const { json, images } = extractImages(r.result);
   // compactJson rounds floats (0.09200000000000004 -> 0.092): fewer tokens, easier to read
   let text = compactJson(json ?? { ok: true });
-  if (text.length > MAX_TEXT) text = `${text.slice(0, MAX_TEXT)}… [truncated ${text.length - MAX_TEXT} chars; ask for less detail]`;
+  if (text.length > MAX_TEXT)
+    text = `${text.slice(0, MAX_TEXT)}… [truncated ${text.length - MAX_TEXT} chars; ask for less detail]`;
   return {
     content: [
       { type: 'text', text },

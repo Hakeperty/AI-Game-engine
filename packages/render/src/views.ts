@@ -1,4 +1,4 @@
-import { Box3, type Camera, PerspectiveCamera, Sphere, Vector3 } from 'three';
+import { type Box3, type Camera, PerspectiveCamera, Sphere, Vector3 } from 'three';
 
 export type ViewKind = 'iso' | 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom' | 'camera' | 'custom';
 
@@ -34,7 +34,12 @@ export const VIEW_LABELS: Record<ViewKind, string> = {
 };
 
 /** A perspective camera that frames `bounds` from a preset direction. */
-export function framingCamera(kind: Exclude<ViewKind, 'camera' | 'custom'>, bounds: Box3, aspect: number, fov = 35): PerspectiveCamera {
+export function framingCamera(
+  kind: Exclude<ViewKind, 'camera' | 'custom'>,
+  bounds: Box3,
+  aspect: number,
+  fov = 35,
+): PerspectiveCamera {
   const cam = new PerspectiveCamera(fov, aspect, 0.01, 10000);
   const sphere = bounds.isEmpty() ? new Sphere(new Vector3(), 1) : bounds.getBoundingSphere(new Sphere());
   const radius = Math.max(sphere.radius, 0.05);
@@ -67,7 +72,16 @@ export function layoutFor(count: number): { cols: number; rows: number } {
   return { cols: 3, rows: Math.ceil(count / 3) };
 }
 
-export function projectToScreen(p: Vector3, camera: Camera, w: number, h: number): { x: number; y: number; visible: boolean } {
+export function projectToScreen(
+  p: Vector3,
+  camera: Camera,
+  w: number,
+  h: number,
+): { x: number; y: number; visible: boolean } {
   const v = p.clone().project(camera);
-  return { x: ((v.x + 1) / 2) * w, y: ((1 - v.y) / 2) * h, visible: v.z > -1 && v.z < 1 && Math.abs(v.x) <= 1.05 && Math.abs(v.y) <= 1.05 };
+  return {
+    x: ((v.x + 1) / 2) * w,
+    y: ((1 - v.y) / 2) * h,
+    visible: v.z > -1 && v.z < 1 && Math.abs(v.x) <= 1.05 && Math.abs(v.y) <= 1.05,
+  };
 }

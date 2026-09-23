@@ -4,13 +4,13 @@ import {
   icosphere,
   mixColor,
   model,
+  type PolyMesh,
   p,
   plants,
-  type PolyMesh,
   Random,
+  type TerrainOptions,
   terrain,
   terrainHeight,
-  type TerrainOptions,
 } from 'aige/model';
 
 /**
@@ -90,8 +90,10 @@ export default defineModel({
     }
     const parts: Record<string, PolyMesh> = { land };
     if (woods.length) parts.trunks = woods[0]!.merge(...woods.slice(1)).material({ roughness: 0.9 });
-    if (props.length) parts.foliage = props[0]!.merge(...props.slice(1)).material({ roughness: 0.85, flatShading: true });
-    if (stones.length) parts.rocks = stones[0]!.merge(...stones.slice(1)).material({ roughness: 0.95, flatShading: true });
+    if (props.length)
+      parts.foliage = props[0]!.merge(...props.slice(1)).material({ roughness: 0.85, flatShading: true });
+    if (stones.length)
+      parts.rocks = stones[0]!.merge(...stones.slice(1)).material({ roughness: 0.95, flatShading: true });
     if (water) {
       parts.water = box({ size: [size * 1.02, 0.02 * s, size * 1.02], center: [0, -0.012 * s, 0] }).material({
         color: waterColor,

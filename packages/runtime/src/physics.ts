@@ -1,10 +1,10 @@
 import type { ComponentData } from '@aige/core';
 import RAPIER, {
-  type Collider as RCollider,
   type ColliderDesc,
   type EventQueue,
   type KinematicCharacterController,
   type RigidBody as RBody,
+  type Collider as RCollider,
   type World as RWorld,
 } from '@dimforge/rapier3d-compat';
 import { Matrix4, type Object3D, Quaternion, Vector3 } from 'three';

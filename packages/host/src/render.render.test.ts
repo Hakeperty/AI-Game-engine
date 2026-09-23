@@ -47,8 +47,16 @@ describe('headless rendering', () => {
   }, 60_000);
 
   it('renders the scene with camera and iso views', async () => {
-    await ok('entity_create', { name: 'Crate', position: [0, 0, 0], components: [{ type: 'MeshRenderer', model: 'models/crate.model.ts' }] });
-    await ok('entity_create', { name: 'Ball', position: [2, 0.5, 0], components: [{ type: 'MeshRenderer', primitive: 'sphere', color: '#e53935' }] });
+    await ok('entity_create', {
+      name: 'Crate',
+      position: [0, 0, 0],
+      components: [{ type: 'MeshRenderer', model: 'models/crate.model.ts' }],
+    });
+    await ok('entity_create', {
+      name: 'Ball',
+      position: [2, 0.5, 0],
+      components: [{ type: 'MeshRenderer', primitive: 'sphere', color: '#e53935' }],
+    });
     const res = await ok('render_screenshot', { width: 800, height: 400 });
     const v = variance(res.images[0].data);
     expect(v.w).toBe(800);

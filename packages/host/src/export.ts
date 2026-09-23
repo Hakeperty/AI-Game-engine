@@ -70,11 +70,21 @@ export interface ExportResult {
 }
 
 /** Builds a standalone static web build of the project into `out` (project-relative). */
-export async function exportWeb(host: ProjectHost, opts: { out?: string; title?: string; smokeTest?: boolean } = {}): Promise<ExportResult> {
+export async function exportWeb(
+  host: ProjectHost,
+  opts: { out?: string; title?: string; smokeTest?: boolean } = {},
+): Promise<ExportResult> {
   const state = host.state;
   const out = (opts.out ?? 'dist').replaceAll('\\', '/').replace(/\/$/, '');
-  if (out.startsWith('..') || out === '' || out === '.' || /^(models|scripts|scenes|materials|prefabs|textures)$/.test(out)) {
-    throw new AigeError('INVALID_INPUT', `Refusing to export into '${out}'.`, { hint: "Use a dedicated folder like 'dist'." });
+  if (
+    out.startsWith('..') ||
+    out === '' ||
+    out === '.' ||
+    /^(models|scripts|scenes|materials|prefabs|textures)$/.test(out)
+  ) {
+    throw new AigeError('INVALID_INPUT', `Refusing to export into '${out}'.`, {
+      hint: "Use a dedicated folder like 'dist'.",
+    });
   }
   const title = opts.title ?? (state.project.window.title || state.project.name);
 
@@ -111,15 +121,24 @@ export async function exportWeb(host: ProjectHost, opts: { out?: string; title?:
 
   // Scripts referenced anywhere.
   const scriptPaths = new Set<string>();
-  for (const e of [...Object.values(state.scenes).flatMap((s) => s.entities), ...Object.values(state.prefabs).flatMap((p) => p.entities)]) {
+  for (const e of [
+    ...Object.values(state.scenes).flatMap((s) => s.entities),
+    ...Object.values(state.prefabs).flatMap((p) => p.entities),
+  ]) {
     for (const c of e.components) {
-      if (c.type === 'Script' && typeof c.script === 'string' && !c.script.startsWith('builtin:')) scriptPaths.add(c.script);
+      if (c.type === 'Script' && typeof c.script === 'string' && !c.script.startsWith('builtin:'))
+        scriptPaths.add(c.script);
     }
   }
   const scripts: Record<string, string> = {};
   for (const path of scriptPaths) {
-    const mod = await compileUserModule({ entry: host.fs.abs(path), root: host.root, virtuals: { aige: RUNTIME_GLOBAL } });
-    scripts[path] = `${mod.code}\n//# sourceMappingURL=data:application/json;base64,${Buffer.from(mod.map).toString('base64')}`;
+    const mod = await compileUserModule({
+      entry: host.fs.abs(path),
+      root: host.root,
+      virtuals: { aige: RUNTIME_GLOBAL },
+    });
+    scripts[path] =
+      `${mod.code}\n//# sourceMappingURL=data:application/json;base64,${Buffer.from(mod.map).toString('base64')}`;
   }
 
   const textures = await host.render.collectTextures(state);
@@ -146,7 +165,12 @@ export async function exportWeb(host: ProjectHost, opts: { out?: string; title?:
   await write('index.html', indexHtml(title));
   await write('game-data.js', `window.__AIGE_GAME__ = ${JSON.stringify(data)};\n`);
   await write('player.js', await playerScript());
-  const result: ExportResult = { path: `${out}/index.html`, files, models: Object.keys(models).length, scripts: Object.keys(scripts).length };
+  const result: ExportResult = {
+    path: `${out}/index.html`,
+    files,
+    models: Object.keys(models).length,
+    scripts: Object.keys(scripts).length,
+  };
   if (opts.smokeTest !== false) result.smoke = await smokeTest(host, `${out}/index.html`);
   return result;
 }
@@ -162,7 +186,13 @@ async function smokeTest(host: ProjectHost, indexPath: string): Promise<NonNulla
     });
     await page.setViewportSize({ width: 960, height: 540 });
     await page.goto(pathToFileURL(host.fs.abs(indexPath)).href);
-    await page.waitForFunction(() => (window as any).__aigePlayer?.world != null || ((window as any).__aigePlayer?.errors?.length ?? 0) > 0, undefined, { timeout: 30_000 });
+    await page.waitForFunction(
+      () =>
+        (window as any).__aigePlayer?.world != null ||
+        ((window as any).__aigePlayer?.errors?.length ?? 0) > 0,
+      undefined,
+      { timeout: 30_000 },
+    );
     await page.mouse.click(480, 270);
     await page.waitForTimeout(2500);
     const status = (await page.evaluate(() => {
@@ -176,7 +206,14 @@ async function smokeTest(host: ProjectHost, indexPath: string): Promise<NonNulla
       frames: status.frames,
       errors: [...status.errors, ...errors].slice(0, 20),
       gpu: label,
-      image: { mimeType: 'image/png', data: png.toString('base64'), label: 'exported game after 2.5 s', path: shotPath, width: 960, height: 540 },
+      image: {
+        mimeType: 'image/png',
+        data: png.toString('base64'),
+        label: 'exported game after 2.5 s',
+        path: shotPath,
+        width: 960,
+        height: 540,
+      },
     };
   } finally {
     await browser.close().catch(() => undefined);
@@ -199,13 +236,24 @@ export const exportWebCommand = defineCommand({
     .strict(),
   async run(ctx, input) {
     const host = (ctx.services as { host: ProjectHost }).host;
-    const res = await exportWeb(host, { out: input.out, ...(input.title ? { title: input.title } : {}), smokeTest: input.smokeTest });
+    const res = await exportWeb(host, {
+      out: input.out,
+      ...(input.title ? { title: input.title } : {}),
+      smokeTest: input.smokeTest,
+    });
     const { smoke, ...rest } = res;
     return {
       ...rest,
       absolutePath: host.fs.abs(res.path),
       ...(smoke
-        ? { smoke: { frames: smoke.frames, errors: smoke.errors, ok: smoke.errors.length === 0 && smoke.frames > 10, renderer: smoke.gpu } }
+        ? {
+            smoke: {
+              frames: smoke.frames,
+              errors: smoke.errors,
+              ok: smoke.errors.length === 0 && smoke.frames > 10,
+              renderer: smoke.gpu,
+            },
+          }
         : {}),
       ...(smoke?.image ? { images: [smoke.image] } : {}),
     };

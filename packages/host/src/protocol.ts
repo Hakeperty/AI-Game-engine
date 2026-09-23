@@ -14,7 +14,13 @@ export type ClientMessage =
   | { id: number; type: 'state' }
   | { id: number; type: 'model'; path: string; params?: Record<string, unknown> }
   | { id: number; type: 'subscribe' }
-  | { id: number; type: 'transaction'; label: string; calls: { name: string; input?: unknown }[]; source?: CommandSource };
+  | {
+      id: number;
+      type: 'transaction';
+      label: string;
+      calls: { name: string; input?: unknown }[];
+      source?: CommandSource;
+    };
 
 export type ServerMessage =
   | { type: 'reply'; id: number; ok: true; result: unknown }
@@ -72,12 +78,17 @@ export class HostEndpoint {
 
   async handle(msg: ClientMessage): Promise<void> {
     const reply = (result: unknown) => this.send({ type: 'reply', id: msg.id, ok: true, result });
-    const fail = (err: unknown) => this.send({ type: 'reply', id: msg.id, ok: false, error: toErrorInfo(err) });
+    const fail = (err: unknown) =>
+      this.send({ type: 'reply', id: msg.id, ok: false, error: toErrorInfo(err) });
     try {
       switch (msg.type) {
         case 'call': {
           const r: ToolResult = await this.ws.call(msg.name, msg.input ?? {}, msg.source ?? 'ui');
-          this.send(r.ok ? { type: 'reply', id: msg.id, ok: true, result: r.result } : { type: 'reply', id: msg.id, ok: false, error: r.error });
+          this.send(
+            r.ok
+              ? { type: 'reply', id: msg.id, ok: true, result: r.result }
+              : { type: 'reply', id: msg.id, ok: false, error: r.error },
+          );
           return;
         }
         case 'tools': {
@@ -105,7 +116,8 @@ export class HostEndpoint {
           if (!host) throw new Error('No project is open.');
           const results: ToolResult[] = [];
           await host.bus.transaction(msg.label, msg.source ?? 'ui', async () => {
-            for (const c of msg.calls) results.push(await host.call(c.name, c.input ?? {}, msg.source ?? 'ui'));
+            for (const c of msg.calls)
+              results.push(await host.call(c.name, c.input ?? {}, msg.source ?? 'ui'));
           });
           reply(results);
           return;

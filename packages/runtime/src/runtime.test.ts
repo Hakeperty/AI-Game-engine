@@ -1,3 +1,4 @@
+import vm from 'node:vm';
 import {
   createProjectDoc,
   createSceneDoc,
@@ -6,7 +7,6 @@ import {
   parseComponent,
   type SceneDoc,
 } from '@aige/core';
-import vm from 'node:vm';
 import { Behaviour, Game, Input, Random, type RuntimeEntity, Scene } from 'aige';
 import { describe, expect, it } from 'vitest';
 import {

@@ -7,5 +7,8 @@ try {
   const result = await executePlay(workerData as PlayPayload);
   parentPort!.postMessage({ ok: true, result });
 } catch (err) {
-  parentPort!.postMessage({ ok: false, error: { message: err instanceof Error ? err.message : String(err) } });
+  parentPort!.postMessage({
+    ok: false,
+    error: { message: err instanceof Error ? err.message : String(err) },
+  });
 }

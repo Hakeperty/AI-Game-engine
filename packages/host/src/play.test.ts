@@ -10,7 +10,11 @@ afterEach(async () => {
 });
 
 async function coinLevel() {
-  const host = await ProjectHost.create(mkdtempSync(join(tmpdir(), 'aige-play-')), { name: 'play' }, { render: null });
+  const host = await ProjectHost.create(
+    mkdtempSync(join(tmpdir(), 'aige-play-')),
+    { name: 'play' },
+    { render: null },
+  );
   hosts.push(host);
   const call = async (name: string, input: unknown) => {
     const r = await host.call(name, input, 'test');
@@ -46,7 +50,16 @@ async function coinLevel() {
         },
       },
       { tool: 'entity_duplicate', input: { entity: '$1.id', count: 2, offset: [0, 0, -2] } },
-      { tool: 'entity_create', input: { name: 'Score', components: [{ type: 'UIText', id: 'score', text: 'Score: 0' }, { type: 'Script', script: 'builtin:HudText', props: { id: 'score', format: 'Score: {score}' } }] } },
+      {
+        tool: 'entity_create',
+        input: {
+          name: 'Score',
+          components: [
+            { type: 'UIText', id: 'score', text: 'Score: 0' },
+            { type: 'Script', script: 'builtin:HudText', props: { id: 'score', format: 'Score: {score}' } },
+          ],
+        },
+      },
     ],
   });
   return { host, call };
@@ -71,9 +84,13 @@ describe('game_run_headless', () => {
     await call('script_write', {
       name: 'broken',
       typecheck: false,
-      source: "import { Behaviour } from 'aige';\nexport default class Broken extends Behaviour {\n  update() {\n    (this as any).entity.nope.explode();\n  }\n}\n",
+      source:
+        "import { Behaviour } from 'aige';\nexport default class Broken extends Behaviour {\n  update() {\n    (this as any).entity.nope.explode();\n  }\n}\n",
     });
-    await call('component_add', { entity: 'Coin', component: { type: 'Script', script: 'scripts/broken.ts' } });
+    await call('component_add', {
+      entity: 'Coin',
+      component: { type: 'Script', script: 'scripts/broken.ts' },
+    });
     const res = await call('game_run_headless', { seconds: 1 });
     expect(res.errors.length).toBeGreaterThan(0);
     expect(res.errors[0]).toContain('scripts/broken.ts');
@@ -83,9 +100,17 @@ describe('game_run_headless', () => {
   it('exports a standalone web build', async () => {
     const { host, call } = await coinLevel();
     await call('model_from_template', { template: 'coin', preview: false });
-    await call('component_update', { entity: 'Coin', type: 'MeshRenderer', props: { model: 'models/coin.model.ts' } });
+    await call('component_update', {
+      entity: 'Coin',
+      type: 'MeshRenderer',
+      props: { model: 'models/coin.model.ts' },
+    });
     const res = await call('export_web', { smokeTest: false, title: 'Test Game' });
-    expect(res.files.map((f: { name: string }) => f.name).sort()).toEqual(['game-data.js', 'index.html', 'player.js']);
+    expect(res.files.map((f: { name: string }) => f.name).sort()).toEqual([
+      'game-data.js',
+      'index.html',
+      'player.js',
+    ]);
     const data = (await host.fs.read('dist/game-data.js'))!;
     const game = JSON.parse(data.replace(/^window\.__AIGE_GAME__ = /, '').replace(/;\s*$/, ''));
     expect(game.title).toBe('Test Game');
@@ -99,7 +124,8 @@ describe('game_run_headless', () => {
     await call('script_write', {
       name: 'hang',
       typecheck: false,
-      source: "import { Behaviour } from 'aige';\nexport default class Hang extends Behaviour {\n  update() { while (true) {} }\n}\n",
+      source:
+        "import { Behaviour } from 'aige';\nexport default class Hang extends Behaviour {\n  update() { while (true) {} }\n}\n",
     });
     await call('component_add', { entity: 'Coin', component: { type: 'Script', script: 'scripts/hang.ts' } });
     const { preparePlay, runPlayTest } = await import('./play.ts');

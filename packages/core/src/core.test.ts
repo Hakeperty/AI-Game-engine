@@ -130,6 +130,19 @@ describe('components', () => {
     await expect(
       bus.execute('component_update', { entity: 'Lamp', type: 'Light', props: { brightness: 2 } }),
     ).rejects.toThrow(/Invalid Light properties/);
+    // null clears optional props and resets defaulted ones
+    await bus.execute('entity_create', {
+      name: 'Box',
+      components: [{ type: 'MeshRenderer', primitive: 'box', color: 'red', castShadow: false }],
+    });
+    await bus.execute('component_update', {
+      entity: 'Box',
+      type: 'MeshRenderer',
+      props: { color: null, castShadow: null },
+    });
+    const box = resolveEntity(scene(bus), 'Box').components[0]!;
+    expect('color' in box).toBe(false);
+    expect(box.castShadow).toBe(true);
   });
 });
 

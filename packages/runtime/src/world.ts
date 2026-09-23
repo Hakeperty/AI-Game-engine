@@ -14,7 +14,7 @@ import { type Behaviour, type BehaviourClass, constructBehaviour } from './behav
 import { builtinBehaviours } from './builtins.ts';
 import { enterWorld, exitWorld } from './context.ts';
 import { RuntimeEntity } from './entity.ts';
-import { InputState, type InputSource, NullInput } from './input.ts';
+import { type InputSource, InputState, NullInput } from './input.ts';
 import {
   cloneJson,
   cloneProps,
@@ -45,9 +45,9 @@ import {
   type LogEntry,
   type ModelInfo,
   type RotationLike,
-  SFX_PRESETS,
   type SceneLoadEvent,
   type ScriptError,
+  SFX_PRESETS,
   type SfxPreset,
   type UIAnchor,
   type Vec3Like,

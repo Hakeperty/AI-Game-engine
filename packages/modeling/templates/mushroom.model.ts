@@ -1,4 +1,4 @@
-import { defineModel, mixColor, model, p, sdf, type Sdf, smoothstep } from 'aige/model';
+import { defineModel, mixColor, model, p, type Sdf, sdf, smoothstep } from 'aige/model';
 
 /**
  * Storybook mushroom: curved stem with a bulb, domed cap with a rolled rim, gill ridges underneath and optional
@@ -6,7 +6,8 @@ import { defineModel, mixColor, model, p, sdf, type Sdf, smoothstep } from 'aige
  */
 export default defineModel({
   name: 'mushroom',
-  description: 'Toadstool / forest mushroom (or a small cluster) with spotted domed cap and gills. Base on y = 0.',
+  description:
+    'Toadstool / forest mushroom (or a small cluster) with spotted domed cap and gills. Base on y = 0.',
   params: {
     height: p.number(0.6, { min: 0.05, max: 10 }),
     cap: p.color('#c41e1a'),
@@ -38,7 +39,9 @@ export default defineModel({
       const gills = (x: number, y: number, z: number) => {
         const r = Math.hypot(x - lean, z);
         const ring = smoothstep(stemR * 1.5, stemR * 2.2, r) * (1 - smoothstep(capR * 0.72, capR * 0.86, r));
-        return 0.005 * Math.cos(44 * Math.atan2(z, x - lean)) * ring * (1 - smoothstep(top - 0.02, top + 0.03, y));
+        return (
+          0.005 * Math.cos(44 * Math.atan2(z, x - lean)) * ring * (1 - smoothstep(top - 0.02, top + 0.03, y))
+        );
       };
       let dome: Sdf = sdf
         .ellipsoid([capR, capH, capR], [lean, top + 0.02, 0])
@@ -50,7 +53,10 @@ export default defineModel({
       if (spots && style !== 'porcini')
         dome = dome.colorSpots(spotColor, { scale: 11, size: 0.3, seed: sd, softness: 0.04 });
       if (style === 'porcini')
-        dome = dome.gradient('y', mixColor(cap, '#3a2210', 0.2), mixColor(cap, '#f0c080', 0.15), [top, top + capH]);
+        dome = dome.gradient('y', mixColor(cap, '#3a2210', 0.2), mixColor(cap, '#f0c080', 0.15), [
+          top,
+          top + capH,
+        ]);
       const m = stalk.smoothUnion(dome, 0.03);
       return m.rotate([0, yaw, 0]).scale(h);
     };
@@ -68,7 +74,10 @@ export default defineModel({
     const all = sdf.unionAll(shapes).cutBelow(0, 0.01);
     const b = all.bounds;
     const s = height / Math.max(0.1, b.max[1]);
-    const mesh = all.mesh({ resolution: count > 1 ? 96 : 84, decimate: 14000, ao: 0.6 }).scale(s).material({ roughness: 0.6 });
+    const mesh = all
+      .mesh({ resolution: count > 1 ? 96 : 84, decimate: 14000, ao: 0.6 })
+      .scale(s)
+      .material({ roughness: 0.6 });
     return model({ mushroom: mesh }).setCollider({
       shape: 'cylinder',
       radius: 0.3 * s,

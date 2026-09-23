@@ -579,7 +579,7 @@ export const componentUpdate = defineCommand({
   kind: 'mutation',
   tier: 'core',
   description:
-    'Change properties of a component on an entity; other properties keep their values. `index` picks among multiple components of the same type (e.g. several Scripts). Example: {"entity":"Sun","type":"Light","props":{"intensity":3,"color":"#ffeedd"}}',
+    'Change properties of a component on an entity; other properties keep their values. Set a property to null to clear it (or reset it to its default). `index` picks among multiple components of the same type (e.g. several Scripts). Example: {"entity":"Sun","type":"Light","props":{"intensity":3,"color":"#ffeedd"}}',
   input: z
     .object({
       entity: EntityRef,
@@ -595,8 +595,11 @@ export const componentUpdate = defineCommand({
     const i = findComponentIndex(target, input.type, input.index);
     const patch = parseComponentPatch(input.type, input.props);
     ctx.update((d) => {
-      const e = findDraftEntity(sceneDraft(d, input.scene), target.id);
-      Object.assign(e.components[i]!, patch);
+      const comp = findDraftEntity(sceneDraft(d, input.scene), target.id).components[i]!;
+      for (const [k, v] of Object.entries(patch)) {
+        if (v === undefined) delete comp[k];
+        else comp[k] = v;
+      }
     });
     const after = resolveEntity(getScene(ctx.state, input.scene), target.id);
     return { entity: target.id, component: after.components[i] };

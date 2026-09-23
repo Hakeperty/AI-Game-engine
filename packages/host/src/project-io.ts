@@ -47,10 +47,18 @@ export async function isProject(fs: ProjectFs): Promise<boolean> {
 export async function loadProject(fs: ProjectFs): Promise<ProjectState> {
   const text = await fs.read('project.json');
   if (text === null) {
-    throw new AigeError('NOT_FOUND', `No project.json in ${fs.root}.`, { hint: 'Create a project with project_create or `aige new`.' });
+    throw new AigeError('NOT_FOUND', `No project.json in ${fs.root}.`, {
+      hint: 'Create a project with project_create or `aige new`.',
+    });
   }
   const project = parseDoc(ProjectDoc, text, 'project.json');
-  const state: ProjectState = { project, scenes: {}, materials: {}, prefabs: {}, activeScene: project.startScene };
+  const state: ProjectState = {
+    project,
+    scenes: {},
+    materials: {},
+    prefabs: {},
+    activeScene: project.startScene,
+  };
   for (const path of await fs.list('', { pattern: /\.scene\.json$/ })) {
     state.scenes[path] = parseDoc(SceneDoc, (await fs.read(path))!, path);
   }
@@ -81,7 +89,12 @@ export async function loadProject(fs: ProjectFs): Promise<ProjectState> {
 }
 
 /** Writes one document of the state (by kind + key) in canonical JSON. */
-export async function writeDoc(fs: ProjectFs, state: ProjectState, kind: 'project' | 'scenes' | 'materials' | 'prefabs', key?: string): Promise<void> {
+export async function writeDoc(
+  fs: ProjectFs,
+  state: ProjectState,
+  kind: 'project' | 'scenes' | 'materials' | 'prefabs',
+  key?: string,
+): Promise<void> {
   if (kind === 'project') {
     await fs.write('project.json', canonicalJson(state.project));
     return;

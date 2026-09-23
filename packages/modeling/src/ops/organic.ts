@@ -204,7 +204,13 @@ function selectionWeights(mesh: PolyMesh, t: Topo, sel?: FaceSelector): Float64A
   return w;
 }
 
-function laplacianStep(t: Topo, pos: Float64Array, factor: number, weights: Float64Array, fixBoundary: boolean) {
+function laplacianStep(
+  t: Topo,
+  pos: Float64Array,
+  factor: number,
+  weights: Float64Array,
+  fixBoundary: boolean,
+) {
   const next = new Float64Array(pos);
   for (let c = 0; c < t.n; c++) {
     const w = weights[c]!;
@@ -283,7 +289,8 @@ export function smoothMesh(mesh: PolyMesh, opts: SmoothOptions = {}): PolyMesh {
     laplacianStep(t, pos, lambda, weights, fix);
     laplacianStep(t, pos, mu, weights, fix);
   }
-  if (t.closed && opts.preserveVolume !== false && Math.abs(v0) > 1e-12) restoreVolume(mesh, t, pos, v0, weights);
+  if (t.closed && opts.preserveVolume !== false && Math.abs(v0) > 1e-12)
+    restoreVolume(mesh, t, pos, v0, weights);
   return writeBack(mesh, t, pos);
 }
 
@@ -291,7 +298,10 @@ export function smoothMesh(mesh: PolyMesh, opts: SmoothOptions = {}): PolyMesh {
  * Evens out vertex spacing by sliding vertices along the surface (tangential smoothing). The shape barely changes.
  * Good after sculpting or on stretched areas.
  */
-export function relax(mesh: PolyMesh, opts: { iterations?: number; strength?: number; sel?: FaceSelector } = {}): PolyMesh {
+export function relax(
+  mesh: PolyMesh,
+  opts: { iterations?: number; strength?: number; sel?: FaceSelector } = {},
+): PolyMesh {
   if (mesh.f.length === 0) return mesh.clone();
   const t = topology(mesh);
   const pos = canonPositions(mesh, t);
@@ -408,7 +418,8 @@ export function brush(mesh: PolyMesh, opts: BrushOptions): PolyMesh {
   }
   if (!any) return mesh.clone();
   const mode = opts.mode ?? 'inflate';
-  const strength = opts.strength ?? (mode === 'inflate' || mode === 'noise' ? r * 0.2 : mode === 'grab' ? 1 : 0.5);
+  const strength =
+    opts.strength ?? (mode === 'inflate' || mode === 'noise' ? r * 0.2 : mode === 'grab' ? 1 : 0.5);
   if (mode === 'smooth') {
     const weights = new Float64Array(t.n);
     for (let c = 0; c < t.n; c++) weights[c] = w[c]! * clamp(strength, 0, 1);
@@ -852,7 +863,10 @@ function repairPass(mesh: PolyMesh, altPairing: boolean): PolyMesh | null {
       items.push({
         f: fi,
         dir: list[i + 1]!,
-        ang: Math.atan2(d[0] * ref2[0] + d[1] * ref2[1] + d[2] * ref2[2], d[0] * ref[0] + d[1] * ref[1] + d[2] * ref[2]),
+        ang: Math.atan2(
+          d[0] * ref2[0] + d[1] * ref2[1] + d[2] * ref2[2],
+          d[0] * ref[0] + d[1] * ref[1] + d[2] * ref[2],
+        ),
       });
     }
     items.sort((x, y) => x.ang - y.ang);
@@ -944,7 +958,11 @@ function repairPass(mesh: PolyMesh, altPairing: boolean): PolyMesh | null {
         cnt++;
       }
       const k = 0.02 / Math.max(1, cnt);
-      out.p.push([p[0] + (c[0] - p[0] * cnt) * k, p[1] + (c[1] - p[1] * cnt) * k, p[2] + (c[2] - p[2] * cnt) * k]);
+      out.p.push([
+        p[0] + (c[0] - p[0] * cnt) * k,
+        p[1] + (c[1] - p[1] * cnt) * k,
+        p[2] + (c[2] - p[2] * cnt) * k,
+      ]);
       for (const f of faces) {
         if (group.get(f) !== gi) continue;
         const face = out.f[f]!;
@@ -1088,8 +1106,16 @@ function simplifyOnce(tri: PolyMesh, targetTris: number, opts: DecimateOptions):
     const src = tri.f[meta[ids[0]!]!]!;
     out.f.push({
       v,
-      uv: hasUv && src.uv ? ids.map((id) => [attrs[id * stride + (hasC ? 3 : 0)]!, attrs[id * stride + (hasC ? 4 : 1)]!] as V2) : null,
-      c: hasC && src.c ? ids.map((id) => [attrs[id * stride]!, attrs[id * stride + 1]!, attrs[id * stride + 2]!] as RGB) : null,
+      uv:
+        hasUv && src.uv
+          ? ids.map(
+              (id) => [attrs[id * stride + (hasC ? 3 : 0)]!, attrs[id * stride + (hasC ? 4 : 1)]!] as V2,
+            )
+          : null,
+      c:
+        hasC && src.c
+          ? ids.map((id) => [attrs[id * stride]!, attrs[id * stride + 1]!, attrs[id * stride + 2]!] as RGB)
+          : null,
       g: src.g,
       m: src.m,
       sm: src.sm,
@@ -1099,5 +1125,5 @@ function simplifyOnce(tri: PolyMesh, targetTris: number, opts: DecimateOptions):
   return countNonManifoldEdges(compacted) > 0 ? repairManifold(compacted) : compacted;
 }
 
-export { topology as _topology, vertexNormals };
 export type { Topo };
+export { topology as _topology, vertexNormals };

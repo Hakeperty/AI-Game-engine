@@ -68,11 +68,18 @@ async function main(): Promise<void> {
   window.__aigePlayer = status;
 
   const container = document.getElementById('game') ?? document.body;
-  const renderer = new WebGLRenderer({ antialias: data.project.render.antialias, powerPreference: 'high-performance' });
+  const renderer = new WebGLRenderer({
+    antialias: data.project.render.antialias,
+    powerPreference: 'high-performance',
+  });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.type = PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
-  const resize = () => renderer.setSize(container.clientWidth || window.innerWidth, container.clientHeight || window.innerHeight);
+  const resize = () =>
+    renderer.setSize(
+      container.clientWidth || window.innerWidth,
+      container.clientHeight || window.innerHeight,
+    );
   window.addEventListener('resize', resize);
   resize();
 
@@ -135,7 +142,9 @@ async function main(): Promise<void> {
       seed: (Math.random() * 1e9) | 0,
     });
     status.world = world;
-    world.on('error', (e: { message: string; script?: string }) => status.errors.push(`${e.script ?? ''}: ${e.message}`));
+    world.on('error', (e: { message: string; script?: string }) =>
+      status.errors.push(`${e.script ?? ''}: ${e.message}`),
+    );
     await rebuildVisuals();
   };
 
@@ -171,7 +180,10 @@ async function main(): Promise<void> {
         for (const e of changes.spawned) {
           const doc = world.toEntityDoc(e);
           const k = keyFor(doc);
-          await sr.addEntity(doc, { ...buildOpts({ ...world.scene, entities: [] }), meshKeys: k ? { [doc.id]: k } : {} });
+          await sr.addEntity(doc, {
+            ...buildOpts({ ...world.scene, entities: [] }),
+            meshKeys: k ? { [doc.id]: k } : {},
+          });
         }
         for (const id of changes.destroyed) sr.removeEntity(id);
         for (const id of changes.components) {
@@ -180,7 +192,10 @@ async function main(): Promise<void> {
           sr.removeEntity(id);
           const doc = world.toEntityDoc(ent);
           const k = keyFor(doc);
-          await sr.addEntity(doc, { ...buildOpts({ ...world.scene, entities: [] }), meshKeys: k ? { [doc.id]: k } : {} });
+          await sr.addEntity(doc, {
+            ...buildOpts({ ...world.scene, entities: [] }),
+            meshKeys: k ? { [doc.id]: k } : {},
+          });
         }
       }
       for (const [id, obj] of sr.objects) {
@@ -210,8 +225,9 @@ async function main(): Promise<void> {
 
 main().catch((err) => {
   const pre = document.createElement('pre');
-  pre.style.cssText = 'color:#ff8080;background:#200;padding:16px;position:fixed;inset:auto 0 0 0;margin:0;white-space:pre-wrap';
-  pre.textContent = `AIGE player error: ${err instanceof Error ? err.stack ?? err.message : String(err)}`;
+  pre.style.cssText =
+    'color:#ff8080;background:#200;padding:16px;position:fixed;inset:auto 0 0 0;margin:0;white-space:pre-wrap';
+  pre.textContent = `AIGE player error: ${err instanceof Error ? (err.stack ?? err.message) : String(err)}`;
   document.body.appendChild(pre);
   window.__aigePlayer?.errors.push(String(err));
 });

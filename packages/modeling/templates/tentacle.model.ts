@@ -1,4 +1,4 @@
-import { defineModel, mixColor, model, p, sdf, type Sdf, type V3 } from 'aige/model';
+import { defineModel, mixColor, model, p, type Sdf, sdf, type V3 } from 'aige/model';
 
 /**
  * Curling tentacle rising from the ground: tapered spline with a spiral tip, rows of suction cups on the inner
@@ -6,7 +6,8 @@ import { defineModel, mixColor, model, p, sdf, type Sdf, type V3 } from 'aige/mo
  */
 export default defineModel({
   name: 'tentacle',
-  description: 'Octopus/kraken tentacle rising from the ground and curling at the tip, with suction cups. Base on y = 0.',
+  description:
+    'Octopus/kraken tentacle rising from the ground and curling at the tip, with suction cups. Base on y = 0.',
   params: {
     height: p.number(1.5, { min: 0.1, max: 20 }),
     curl: p.number(1, { min: 0, max: 2, description: 'How much the tip spirals' }),
@@ -55,13 +56,22 @@ export default defineModel({
     let skin: Sdf = sdf
       .smoothUnionAll([arm, flare], 0.12)
       .gradient('y', dark, mixColor(color, '#ff9ad0', 0.15), [0, 1.2]);
-    if (spots) skin = skin.colorSpots(mixColor(color, '#2a0a35', 0.55), { scale: 7, size: 0.28, seed, softness: 0.05 });
+    if (spots)
+      skin = skin.colorSpots(mixColor(color, '#2a0a35', 0.55), {
+        scale: 7,
+        size: 0.28,
+        seed,
+        softness: 0.05,
+      });
     const shape = skin
       .smoothUnion(sdf.unionAll(cups).color(suckers), 0.012)
       .smoothSubtract(sdf.unionAll(holes).color(mixColor(suckers, '#6a2040', 0.5)), 0.01)
       .cutBelow(0, 0.02);
     const s = height / Math.max(0.1, shape.bounds.max[1]);
-    const mesh = shape.mesh({ resolution: 120, decimate: 18000, ao: 0.6 }).scale(s).material({ roughness: 0.4 });
+    const mesh = shape
+      .mesh({ resolution: 120, decimate: 18000, ao: 0.6 })
+      .scale(s)
+      .material({ roughness: 0.4 });
     const tip = pts[N]!;
     return model({ tentacle: mesh })
       .socket('tip', [tip[0] * s, tip[1] * s, tip[2] * s])

@@ -64,16 +64,32 @@ export function parseComponent(input: unknown): ComponentData {
   return { type, ...(res.data as Record<string, unknown>) };
 }
 
-/** Validates a partial update to an existing component's props. */
+/**
+ * Validates a partial update to an existing component's props.
+ * A `null` value clears an optional property (or resets one that has a default); cleared keys come
+ * back as `undefined` and must be deleted by the caller.
+ */
 export function parseComponentPatch(type: string, patch: Record<string, unknown>): Record<string, unknown> {
   const def = getComponentDef(type);
-  const res = patchOf(def.schema).strict().safeParse(patch);
+  const nulls = Object.keys(patch).filter((k) => patch[k] === null);
+  const rest = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== null));
+  const res = patchOf(def.schema).strict().safeParse(rest);
   if (!res.success) {
     throw new AigeError('INVALID_INPUT', `Invalid ${type} properties: ${formatIssues(res.error)}`, {
       hint: `Valid properties: ${Object.keys(def.schema.shape).join(', ')}`,
     });
   }
-  return definedOnly(res.data as Record<string, unknown>);
+  const out = definedOnly(res.data as Record<string, unknown>);
+  for (const key of nulls) {
+    const field = (def.schema.shape as Record<string, z.ZodType>)[key];
+    if (!field) {
+      throw new AigeError('INVALID_INPUT', `Invalid ${type} properties: unknown property '${key}'.`, {
+        hint: `Valid properties: ${Object.keys(def.schema.shape).join(', ')}`,
+      });
+    }
+    out[key] = field instanceof z.ZodOptional ? undefined : field.parse(undefined);
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------------------------------------

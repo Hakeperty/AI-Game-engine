@@ -82,7 +82,9 @@ export function withDefaults<P extends Record<string, ParamDef>>(
     }
     const def = params[key];
     if (!def) {
-      throw new Error(`Unknown parameter '${key}'. Parameters: ${Object.keys(params).join(', ') || '(none)'}, seed.`);
+      throw new Error(
+        `Unknown parameter '${key}'. Parameters: ${Object.keys(params).join(', ') || '(none)'}, seed.`,
+      );
     }
     params[key] = { ...def, default: value } as ParamDef;
   }

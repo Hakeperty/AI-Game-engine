@@ -143,7 +143,11 @@ export class SceneRenderer {
     return obj;
   }
 
-  private async createComponentObject(e: Entity, c: ComponentData, opts: SceneBuildOptions): Promise<Object3D | null> {
+  private async createComponentObject(
+    e: Entity,
+    c: ComponentData,
+    opts: SceneBuildOptions,
+  ): Promise<Object3D | null> {
     switch (c.type) {
       case 'MeshRenderer': {
         let visual: Object3D | null = null;
@@ -171,7 +175,10 @@ export class SceneRenderer {
           const kind = (c.primitive as string | undefined) ?? (c.model ? 'box' : 'box');
           const material = matDoc
             ? this.materialFromDoc(matDoc, c.color as string | undefined)
-            : this.materialFromDoc(undefined, (c.color as string | undefined) ?? (c.model ? '#ff00ff' : '#ffffff'));
+            : this.materialFromDoc(
+                undefined,
+                (c.color as string | undefined) ?? (c.model ? '#ff00ff' : '#ffffff'),
+              );
           visual = new Mesh(primitiveGeometry(kind), material);
         }
         visual.userData.meshRenderer = true;
@@ -188,7 +195,12 @@ export class SceneRenderer {
       case 'Light':
         return createLight(c);
       case 'Camera': {
-        const cam = new PerspectiveCamera((c.fov as number) ?? 60, 16 / 9, (c.near as number) ?? 0.1, (c.far as number) ?? 500);
+        const cam = new PerspectiveCamera(
+          (c.fov as number) ?? 60,
+          16 / 9,
+          (c.near as number) ?? 0.1,
+          (c.far as number) ?? 500,
+        );
         cam.userData.primary = c.primary !== false;
         cam.name = 'camera';
         return cam;
@@ -282,7 +294,9 @@ export class SceneRenderer {
   /** World bounds of all visible meshes (optionally only for some entity ids). */
   renderableBounds(ids?: string[]): Box3 {
     const box = new Box3();
-    const roots = ids ? ids.map((id) => this.objects.get(id)).filter((o): o is Object3D => !!o) : [this.scene];
+    const roots = ids
+      ? ids.map((id) => this.objects.get(id)).filter((o): o is Object3D => !!o)
+      : [this.scene];
     this.scene.updateMatrixWorld(true);
     for (const r of roots) {
       r.traverse((o) => {
@@ -318,7 +332,12 @@ function isVisible(o: Object3D): boolean {
 export function applyTransform(obj: Object3D, e: Pick<Entity, 'transform'>): void {
   const t = e.transform;
   obj.position.set(t.position[0], t.position[1], t.position[2]);
-  obj.rotation.set(t.rotation[0] * MathUtils.DEG2RAD, t.rotation[1] * MathUtils.DEG2RAD, t.rotation[2] * MathUtils.DEG2RAD, 'XYZ');
+  obj.rotation.set(
+    t.rotation[0] * MathUtils.DEG2RAD,
+    t.rotation[1] * MathUtils.DEG2RAD,
+    t.rotation[2] * MathUtils.DEG2RAD,
+    'XYZ',
+  );
   obj.scale.set(t.scale[0], t.scale[1], t.scale[2]);
 }
 
@@ -341,7 +360,14 @@ function createLight(c: ComponentData): Object3D | null {
       return l;
     }
     case 'spot': {
-      const l = new SpotLight(color, intensity * POINT_INTENSITY_SCALE, (c.range as number) ?? 0, ((c.angle as number) ?? 30) * MathUtils.DEG2RAD, 0.3, 2);
+      const l = new SpotLight(
+        color,
+        intensity * POINT_INTENSITY_SCALE,
+        (c.range as number) ?? 0,
+        ((c.angle as number) ?? 30) * MathUtils.DEG2RAD,
+        0.3,
+        2,
+      );
       l.castShadow = !!c.castShadow;
       l.target.position.set(0, 0, -1);
       l.add(l.target);

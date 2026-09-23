@@ -8,9 +8,7 @@
       "name": "Main Camera",
       "parent": null,
       "active": true,
-      "tags": [
-        "MainCamera"
-      ],
+      "tags": ["MainCamera"],
       "transform": {
         "position": [0, 6, 12],
         "rotation": [-22, 0, 0],
@@ -64,9 +62,7 @@
       "name": "Ground",
       "parent": null,
       "active": true,
-      "tags": [
-        "Ground"
-      ],
+      "tags": ["Ground"],
       "transform": {
         "position": [0, -0.5, 0],
         "rotation": [0, 0, 0],
@@ -99,9 +95,7 @@
       "name": "Player",
       "parent": null,
       "active": true,
-      "tags": [
-        "Player"
-      ],
+      "tags": ["Player"],
       "transform": {
         "position": [0, 0, 0],
         "rotation": [0, 0, 0],
@@ -136,9 +130,7 @@
       "name": "Coin",
       "parent": null,
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -4],
         "rotation": [0, 0, 0],
@@ -176,9 +168,7 @@
       "name": "Coin (2)",
       "parent": null,
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -8],
         "rotation": [0, 0, 0],
@@ -216,9 +206,7 @@
       "name": "Coin (3)",
       "parent": null,
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -12],
         "rotation": [0, 0, 0],
@@ -256,9 +244,7 @@
       "name": "Coin (4)",
       "parent": null,
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -16],
         "rotation": [0, 0, 0],
@@ -296,9 +282,7 @@
       "name": "Coin (5)",
       "parent": null,
       "active": true,
-      "tags": [
-        "Coin"
-      ],
+      "tags": ["Coin"],
       "transform": {
         "position": [0, 1, -20],
         "rotation": [0, 0, 0],

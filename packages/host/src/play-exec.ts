@@ -12,7 +12,10 @@ export async function executePlay(payload: PlayPayload): Promise<HeadlessResult>
       const { exports } = runModule(mod, { filename: path, globals: { [RUNTIME_GLOBAL]: api } });
       const cls = exports.default ?? exports;
       if (typeof cls !== 'function') {
-        loadErrors.push({ script: path, message: `${path} must \`export default class ... extends Behaviour\`.` });
+        loadErrors.push({
+          script: path,
+          message: `${path} must \`export default class ... extends Behaviour\`.`,
+        });
         continue;
       }
       scripts[path] = cls as BehaviourClass;
@@ -33,7 +36,13 @@ export async function executePlay(payload: PlayPayload): Promise<HeadlessResult>
     seed: payload.seed,
     formatError: (error: unknown, script: string) => {
       const mod = payload.scripts[script];
-      if (!mod) return { message: error instanceof Error ? error.message : String((error as { message?: string })?.message ?? error) };
+      if (!mod)
+        return {
+          message:
+            error instanceof Error
+              ? error.message
+              : String((error as { message?: string })?.message ?? error),
+        };
       const e = toScriptError(error, mod, script);
       const stack = (e.details as { stack?: string[] } | undefined)?.stack;
       return { message: e.message, ...(stack?.length ? { stack: stack.join('\n') } : {}) };
@@ -42,7 +51,15 @@ export async function executePlay(payload: PlayPayload): Promise<HeadlessResult>
   try {
     const result = runHeadless(world, payload.options);
     for (const le of loadErrors) {
-      result.errors.unshift({ message: le.message, script: le.script, entity: '', hook: 'load', stack: '', t: 0, count: 1 } as never);
+      result.errors.unshift({
+        message: le.message,
+        script: le.script,
+        entity: '',
+        hook: 'load',
+        stack: '',
+        t: 0,
+        count: 1,
+      } as never);
     }
     return JSON.parse(JSON.stringify(result)) as HeadlessResult;
   } finally {

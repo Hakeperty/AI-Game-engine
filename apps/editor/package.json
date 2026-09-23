@@ -1,0 +1,41 @@
+{
+  "name": "@aige/editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AIGE editor: Electron + React. Viewport, hierarchy, inspector, assets, console, AI chat, modeling workspace.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/main.cjs",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "start": "electron .",
+    "test:e2e": "node test/smoke.e2e.ts",
+    "test:e2e:features": "node test/features.e2e.ts"
+  },
+  "dependencies": {
+    "@aige/agent": "0.1.0",
+    "@aige/core": "0.1.0",
+    "@aige/host": "0.1.0",
+    "@aige/modeling": "0.1.0",
+    "@aige/render": "0.1.0",
+    "@aige/runtime": "0.1.0",
+    "@monaco-editor/react": "^4.7.0",
+    "dockview": "^8.3.1",
+    "immer": "^11.1.18",
+    "monaco-editor": "^0.56.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "^0.186.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "electron": "^44.4.3",
+    "esbuild": "^0.28.2",
+    "vite": "^8.3.0"
+  }
+}

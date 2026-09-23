@@ -7,6 +7,20 @@ export { hull, initModeling, intersect, modelingReady, subtract, union } from '.
 export { exportGlb, importGlb } from './export/gltf.ts';
 export { type MeshData, type MeshPartData, type MeshPrimitive, toMeshData } from './export/meshdata.ts';
 export {
+  type Branch,
+  type BranchOptions,
+  type EyeOptions,
+  eye,
+  type LeafOptions,
+  plants,
+  type TerrainNoise,
+  type TerrainOptions,
+  type TerrainPalette,
+  type TreeOptions,
+  terrain,
+  terrainHeight,
+} from './generators.ts';
+export {
   decodePng,
   encodePng,
   fromBase64,
@@ -25,20 +39,6 @@ export {
 } from './material.ts';
 export * from './math.ts';
 export { type ColliderHint, Model, type ModelPart, model, type Socket, toModel } from './model.ts';
-export {
-  type Branch,
-  type BranchOptions,
-  type EyeOptions,
-  eye,
-  type LeafOptions,
-  plants,
-  type TerrainNoise,
-  type TerrainOptions,
-  type TerrainPalette,
-  type TreeOptions,
-  terrain,
-  terrainHeight,
-} from './generators.ts';
 export { Noise } from './noise.ts';
 export * from './ops/deform.ts';
 export {

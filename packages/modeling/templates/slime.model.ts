@@ -1,4 +1,4 @@
-import { defineModel, eye, mixColor, model, p, sdf, type Sdf, type V3 } from 'aige/model';
+import { defineModel, eye, mixColor, model, p, type Sdf, sdf, type V3 } from 'aige/model';
 
 /**
  * Glossy slime monster: a squashy drop with a flat, rounded base, little puddle drips, shiny eyes and a smile
@@ -6,7 +6,8 @@ import { defineModel, eye, mixColor, model, p, sdf, type Sdf, type V3 } from 'ai
  */
 export default defineModel({
   name: 'slime',
-  description: 'Glossy cartoon slime (drop or round blob) with puddle drips, eyes and a carved mouth. Faces +Z, sits on y = 0.',
+  description:
+    'Glossy cartoon slime (drop or round blob) with puddle drips, eyes and a carved mouth. Faces +Z, sits on y = 0.',
   params: {
     height: p.number(0.8, { min: 0.1, max: 10 }),
     color: p.color('#2fb34f'),
@@ -45,7 +46,10 @@ export default defineModel({
     const mouth = sdf.chain(mouthPts, mood === 'surprised' ? 0.055 : 0.03).color('#123d24');
     goo = goo.smoothSubtract(mouth, 0.015);
     const s = height / 0.86;
-    const body = goo.mesh({ resolution: 80, decimate: 14000, ao: 0.4 }).scale(s).material({ roughness: 0.12, metalness: 0 });
+    const body = goo
+      .mesh({ resolution: 80, decimate: 14000, ao: 0.4 })
+      .scale(s)
+      .material({ roughness: 0.12, metalness: 0 });
     const eyeY = 0.5;
     const eyes = [-1, 1].map((side) =>
       eye({ radius: 0.085, irisSize: 0, pupilSize: 0.62, pupil: '#101410', segments: 18 })

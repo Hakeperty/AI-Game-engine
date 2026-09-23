@@ -230,7 +230,10 @@ export class Sdf {
    * Round spots of `color` over the current color (Worley noise): ladybugs, mushrooms, giraffes, fawns.
    * scale = spots per meter, size = spot size 0..1, softness = edge blur 0..0.5.
    */
-  colorSpots(color: ColorInput, opts: { scale?: number; size?: number; seed?: number; softness?: number } = {}): Sdf {
+  colorSpots(
+    color: ColorInput,
+    opts: { scale?: number; size?: number; seed?: number; softness?: number } = {},
+  ): Sdf {
     const c = toRgb(color);
     const scale = opts.scale ?? 6;
     const size = opts.size ?? 0.35;
@@ -648,7 +651,9 @@ export class Sdf {
     return mk(
       (x, y, z) => f(x, y, z) + amount * n.fbm(x * scale, y * scale, z * scale, octaves),
       expand(this.bounds, Math.abs(amount) * 1.2),
-      dc ? (x, y, z, out) => dc(x, y, z, out) + amount * n.fbm(x * scale, y * scale, z * scale, octaves) : null,
+      dc
+        ? (x, y, z, out) => dc(x, y, z, out) + amount * n.fbm(x * scale, y * scale, z * scale, octaves)
+        : null,
       this.lip + Math.abs(amount) * scale * 3,
     );
   }
@@ -708,7 +713,8 @@ export class Sdf {
     const v = (ai + 2) % 3;
     const b = this.bounds;
     let R = 0;
-    for (const cu of [b.min[u]!, b.max[u]!]) for (const cv of [b.min[v]!, b.max[v]!]) R = Math.max(R, Math.hypot(cu, cv));
+    for (const cu of [b.min[u]!, b.max[u]!])
+      for (const cv of [b.min[v]!, b.max[v]!]) R = Math.max(R, Math.hypot(cu, cv));
     const bounds: Box3 = { min: [0, 0, 0], max: [0, 0, 0] };
     bounds.min[ai] = b.min[ai]!;
     bounds.max[ai] = b.max[ai]!;
@@ -925,7 +931,10 @@ function segDist(d: Float64Array, o: number, px: number, py: number, pz: number)
     const bx = mode === 1 ? 0 : d[o + 3]!;
     const by = mode === 1 ? 0 : d[o + 4]!;
     const bz = mode === 1 ? 0 : d[o + 5]!;
-    return Math.hypot(px - d[o]! - bx, py - d[o + 1]! - by, pz - d[o + 2]! - bz) - (mode === 1 ? d[o + 10]! : d[o + 11]!);
+    return (
+      Math.hypot(px - d[o]! - bx, py - d[o + 1]! - by, pz - d[o + 2]! - bz) -
+      (mode === 1 ? d[o + 10]! : d[o + 11]!)
+    );
   }
   const pax = px - d[o]!;
   const pay = py - d[o + 1]!;
@@ -1006,7 +1015,9 @@ function chainSdf(pts: V3[], rs: number[], k: number): Sdf {
 function cubicInterp(p0: number, p1: number, p2: number, p3: number, t: number): number {
   const t2 = t * t;
   const t3 = t2 * t;
-  return 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+  return (
+    0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3)
+  );
 }
 
 function arcFractions(pts: V3[]): number[] {

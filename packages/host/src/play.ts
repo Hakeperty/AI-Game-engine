@@ -1,11 +1,11 @@
 import { Worker } from 'node:worker_threads';
 import {
   AigeError,
+  getScene,
   type PrefabDoc,
   type ProjectDoc,
-  type SceneDoc,
-  getScene,
   resolveScenePath,
+  type SceneDoc,
 } from '@aige/core';
 import type { HeadlessOptions, HeadlessResult } from '@aige/runtime';
 import type { ProjectHost } from './host.ts';
@@ -35,7 +35,10 @@ export interface PlayPayload {
 }
 
 /** Collects scene data, compiles scripts and builds model infos for a play-test. */
-export async function preparePlay(host: ProjectHost, opts: { scene?: string; options: HeadlessOptions; seed?: number }): Promise<{ payload: PlayPayload; warnings: string[] }> {
+export async function preparePlay(
+  host: ProjectHost,
+  opts: { scene?: string; options: HeadlessOptions; seed?: number },
+): Promise<{ payload: PlayPayload; warnings: string[] }> {
   const state = host.state;
   const scenePath = resolveScenePath(state, opts.scene);
   const scene = getScene(state, scenePath);
@@ -48,7 +51,8 @@ export async function preparePlay(host: ProjectHost, opts: { scene?: string; opt
   const modelRefs = new Map<string, Record<string, unknown>>();
   for (const e of allEntities) {
     for (const c of e.components) {
-      if (c.type === 'Script' && typeof c.script === 'string' && !c.script.startsWith('builtin:')) scriptPaths.add(c.script);
+      if (c.type === 'Script' && typeof c.script === 'string' && !c.script.startsWith('builtin:'))
+        scriptPaths.add(c.script);
       if (c.type === 'MeshRenderer' && typeof c.model === 'string') modelRefs.set(c.model, {});
     }
   }
@@ -58,9 +62,16 @@ export async function preparePlay(host: ProjectHost, opts: { scene?: string; opt
       warnings.push(`Script '${path}' does not exist.`);
       continue;
     }
-    scripts[path] = await compileUserModule({ entry: host.fs.abs(path), root: host.root, virtuals: { aige: RUNTIME_GLOBAL } });
+    scripts[path] = await compileUserModule({
+      entry: host.fs.abs(path),
+      root: host.root,
+      virtuals: { aige: RUNTIME_GLOBAL },
+    });
   }
-  const lite = (info: { bounds: ModelInfoLite['bounds']; collider: unknown }): ModelInfoLite => ({ bounds: info.bounds, collider: info.collider });
+  const lite = (info: { bounds: ModelInfoLite['bounds']; collider: unknown }): ModelInfoLite => ({
+    bounds: info.bounds,
+    collider: info.collider,
+  });
   const modelsByPath: Record<string, ModelInfoLite> = {};
   for (const path of modelRefs.keys()) {
     try {
@@ -105,7 +116,10 @@ export async function preparePlay(host: ProjectHost, opts: { scene?: string; opt
  * Runs a play-test in a worker thread so a runaway script (infinite loop in update) can be killed.
  * Falls back to running in-process where workers can't load TypeScript (e.g. bundled apps).
  */
-export async function runPlayTest(payload: PlayPayload, opts: { timeoutMs?: number; inProcess?: boolean } = {}): Promise<HeadlessResult> {
+export async function runPlayTest(
+  payload: PlayPayload,
+  opts: { timeoutMs?: number; inProcess?: boolean } = {},
+): Promise<HeadlessResult> {
   const timeoutMs = opts.timeoutMs ?? Math.max(20_000, payload.options.seconds * 1500 + 15_000);
   if (opts.inProcess || process.env.AIGE_INPROCESS_PLAY === '1') {
     const { executePlay } = await import('./play-exec.ts');
@@ -122,17 +136,26 @@ export async function runPlayTest(payload: PlayPayload, opts: { timeoutMs?: numb
     const timer = setTimeout(() => {
       void worker.terminate();
       reject(
-        new AigeError('TIMEOUT', `The game did not finish ${payload.options.seconds}s of simulation within ${Math.round(timeoutMs / 1000)}s.`, {
-          hint: 'A script probably has an infinite loop (e.g. a while loop in update). Check recently written scripts.',
-        }),
+        new AigeError(
+          'TIMEOUT',
+          `The game did not finish ${payload.options.seconds}s of simulation within ${Math.round(timeoutMs / 1000)}s.`,
+          {
+            hint: 'A script probably has an infinite loop (e.g. a while loop in update). Check recently written scripts.',
+          },
+        ),
       );
     }, timeoutMs);
-    worker.once('message', (msg: { ok: true; result: HeadlessResult } | { ok: false; error: { message: string; code?: string } }) => {
-      clearTimeout(timer);
-      void worker.terminate();
-      if (msg.ok) resolve(msg.result);
-      else reject(new AigeError('SCRIPT_ERROR', `Play-test failed: ${msg.error.message}`));
-    });
+    worker.once(
+      'message',
+      (
+        msg: { ok: true; result: HeadlessResult } | { ok: false; error: { message: string; code?: string } },
+      ) => {
+        clearTimeout(timer);
+        void worker.terminate();
+        if (msg.ok) resolve(msg.result);
+        else reject(new AigeError('SCRIPT_ERROR', `Play-test failed: ${msg.error.message}`));
+      },
+    );
     worker.once('error', (err) => {
       clearTimeout(timer);
       reject(new AigeError('INTERNAL', `Play-test worker crashed: ${err.message}`));
@@ -176,10 +199,23 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
       scene: z.string().optional(),
       seconds: z.number().positive().max(120).default(10),
       inputs: z.array(InputEvent).max(500).default([]),
-      probes: z.array(z.string()).max(10).optional().describe("Entities to track (default: the entity tagged 'Player')"),
-      screenshotsAt: z.array(z.number().min(0)).max(4).default([]).describe('Times (s) to capture game-camera screenshots'),
+      probes: z
+        .array(z.string())
+        .max(10)
+        .optional()
+        .describe("Entities to track (default: the entity tagged 'Player')"),
+      screenshotsAt: z
+        .array(z.number().min(0))
+        .max(4)
+        .default([])
+        .describe('Times (s) to capture game-camera screenshots'),
       stopOnGameOver: z.boolean().default(true),
-      sampleRate: z.number().min(1).max(20).default(2).describe('Probe samples per second (raise to 10 to time jumps precisely)'),
+      sampleRate: z
+        .number()
+        .min(1)
+        .max(20)
+        .default(2)
+        .describe('Probe samples per second (raise to 10 to time jumps precisely)'),
       seed: z.number().int().default(1),
     })
     .strict(),
@@ -188,7 +224,10 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
     const scene = getScene(ctx.state, input.scene);
     const probes =
       input.probes ??
-      scene.entities.filter((e) => e.tags.includes('Player')).map((e) => e.id).slice(0, 1);
+      scene.entities
+        .filter((e) => e.tags.includes('Player'))
+        .map((e) => e.id)
+        .slice(0, 1);
     const { payload, warnings } = await preparePlay(host, {
       ...(input.scene ? { scene: input.scene } : {}),
       seed: input.seed,
@@ -206,7 +245,14 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
     const images = [];
     for (const cap of result.captures) {
       try {
-        const { image } = await host.render.screenshot({ sceneDoc: cap.scene, views: [{ kind: 'camera', label: `t = ${cap.t.toFixed(1)}s` }], width: 800, height: 450, labels: false, name: `play-${cap.t.toFixed(1)}s` });
+        const { image } = await host.render.screenshot({
+          sceneDoc: cap.scene,
+          views: [{ kind: 'camera', label: `t = ${cap.t.toFixed(1)}s` }],
+          width: 800,
+          height: 450,
+          labels: false,
+          name: `play-${cap.t.toFixed(1)}s`,
+        });
         images.push(image);
       } catch (err) {
         warnings.push(`Screenshot at ${cap.t}s failed: ${(err as Error).message}`);
@@ -217,7 +263,10 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
     const probeTracks = Object.fromEntries(
       Object.entries(result.probes).map(([ref, samples]) => [
         ref,
-        samples.map((s) => `${s.t.toFixed(2)}s:${s.position.map((n) => n.toFixed(2)).join(',')}${s.grounded === false ? ' air' : ''}${s.destroyed ? ' destroyed' : ''}`),
+        samples.map(
+          (s) =>
+            `${s.t.toFixed(2)}s:${s.position.map((n) => n.toFixed(2)).join(',')}${s.grounded === false ? ' air' : ''}${s.destroyed ? ' destroyed' : ''}`,
+        ),
       ]),
     );
     return {
@@ -225,8 +274,21 @@ Example: {"seconds":8,"inputs":[{"at":0,"axis":"move_y","value":1},{"at":1.5,"ac
       over: result.final.over,
       gameState: result.final.gameState,
       hud: Object.fromEntries(Object.entries(result.final.hud).map(([id, h]) => [id, h.text])),
-      errors: result.errors.slice(0, 10).map((e) => `${e.script}${e.entity ? ` on ${e.entity}` : ''}${e.hook ? ` (${e.hook})` : ''}: ${e.message}${e.count > 1 ? ` ×${e.count}` : ''}${e.stack ? `\n    ${e.stack.split('\n')[0]}` : ''}`),
-      events: { counts: eventCounts, first: result.events.slice(0, 15).map((e) => `${e.t.toFixed(2)}s ${e.name}${e.data !== undefined && e.data !== null ? ` ${JSON.stringify(e.data).slice(0, 80)}` : ''}`) },
+      errors: result.errors
+        .slice(0, 10)
+        .map(
+          (e) =>
+            `${e.script}${e.entity ? ` on ${e.entity}` : ''}${e.hook ? ` (${e.hook})` : ''}: ${e.message}${e.count > 1 ? ` ×${e.count}` : ''}${e.stack ? `\n    ${e.stack.split('\n')[0]}` : ''}`,
+        ),
+      events: {
+        counts: eventCounts,
+        first: result.events
+          .slice(0, 15)
+          .map(
+            (e) =>
+              `${e.t.toFixed(2)}s ${e.name}${e.data !== undefined && e.data !== null ? ` ${JSON.stringify(e.data).slice(0, 80)}` : ''}`,
+          ),
+      },
       logs: result.logs.slice(-25),
       probes: probeTracks,
       entities: result.final.entities,

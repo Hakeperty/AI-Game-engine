@@ -1,4 +1,4 @@
-import { defineModel, lathe, mixColor, model, p, type PolyMesh, sdf, type Sdf, smoothstep } from 'aige/model';
+import { defineModel, lathe, mixColor, model, type PolyMesh, p, type Sdf, sdf, smoothstep } from 'aige/model';
 
 /**
  * Saguaro-style cactus: ribbed trunk with bent arms, darker rib valleys, tiny spine dots and an optional flower
@@ -76,7 +76,9 @@ export default defineModel({
       const petals: Sdf[] = [];
       for (let i = 0; i < 6; i++) {
         const a = (i / 6) * Math.PI * 2;
-        petals.push(sdf.ellipsoid([0.045, 0.02, 0.028], [Math.cos(a) * 0.045, H + 0.005, Math.sin(a) * 0.045]));
+        petals.push(
+          sdf.ellipsoid([0.045, 0.02, 0.028], [Math.cos(a) * 0.045, H + 0.005, Math.sin(a) * 0.045]),
+        );
       }
       const bloom = sdf
         .unionAll(petals)
@@ -112,6 +114,11 @@ export default defineModel({
         .scale(s)
         .material({ roughness: 0.85 });
     }
-    return model(out).setCollider({ shape: 'cylinder', radius: R * s * 1.2, height, offset: [0, height / 2, 0] });
+    return model(out).setCollider({
+      shape: 'cylinder',
+      radius: R * s * 1.2,
+      height,
+      offset: [0, height / 2, 0],
+    });
   },
 });

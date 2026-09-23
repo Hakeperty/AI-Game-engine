@@ -5,12 +5,12 @@ import {
   ConeGeometry,
   CylinderGeometry,
   type Material,
-  Mesh,
+  type Mesh,
   MeshStandardMaterial,
   type Object3D,
   PlaneGeometry,
-  SphereGeometry,
   RepeatWrapping,
+  SphereGeometry,
   SRGBColorSpace,
   Texture,
   TorusGeometry,
@@ -151,12 +151,16 @@ export class TextureCache {
   /** Registers image data; the texture updates when the image finishes decoding. */
   add(path: string, source: string): void {
     const img = new Image();
-    img.src = source.startsWith('data:') || /^[a-z]+:/.test(source) ? source : `data:image/png;base64,${source}`;
+    img.src =
+      source.startsWith('data:') || /^[a-z]+:/.test(source) ? source : `data:image/png;base64,${source}`;
     this.images.set(path, img);
     for (const [key, tex] of this.textures) {
       if (key.startsWith(`${path}|`)) {
         tex.image = img;
-        img.decode().then(() => (tex.needsUpdate = true), () => undefined);
+        img.decode().then(
+          () => (tex.needsUpdate = true),
+          () => undefined,
+        );
       }
     }
   }
@@ -183,7 +187,11 @@ export class TextureCache {
       tex.repeat.set(repeat[0], repeat[1]);
       tex.anisotropy = 8;
       if (img.complete && img.naturalWidth) tex.needsUpdate = true;
-      else img.decode().then(() => (tex!.needsUpdate = true), () => undefined);
+      else
+        img.decode().then(
+          () => (tex!.needsUpdate = true),
+          () => undefined,
+        );
       this.textures.set(key, tex);
     }
     return tex;

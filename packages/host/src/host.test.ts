@@ -26,7 +26,11 @@ async function ok<T = any>(host: ProjectHost, name: string, input: unknown = {})
 describe('ProjectHost', () => {
   it('saves every change to disk and reopens identically', async () => {
     const host = await newHost();
-    await ok(host, 'entity_create', { name: 'Box', position: [1, 2, 3], components: [{ type: 'MeshRenderer', primitive: 'box' }] });
+    await ok(host, 'entity_create', {
+      name: 'Box',
+      position: [1, 2, 3],
+      components: [{ type: 'MeshRenderer', primitive: 'box' }],
+    });
     await ok(host, 'material_create', { name: 'gold', color: '#ffc107', metalness: 1 });
     await ok(host, 'scene_create', { name: 'level2' });
     await host.flush();
@@ -58,7 +62,12 @@ describe('ProjectHost', () => {
 describe('models', () => {
   it('creates a model from a template with new defaults and caches builds', async () => {
     const host = await newHost();
-    const res = await ok(host, 'model_from_template', { template: 'coin', name: 'big-coin', params: { radius: 1 }, preview: false });
+    const res = await ok(host, 'model_from_template', {
+      template: 'coin',
+      name: 'big-coin',
+      params: { radius: 1 },
+      preview: false,
+    });
     expect(res.model).toBe('models/big-coin.model.ts');
     expect(res.size[0]).toBeCloseTo(2, 3);
     const info1 = await ok(host, 'model_info', { model: 'big-coin' });
@@ -74,7 +83,8 @@ describe('models', () => {
     const host = await newHost();
     const r = await host.call('model_create', {
       name: 'broken',
-      source: "import { defineModel, box } from 'aige/model';\nexport default defineModel({ build: () => box( });",
+      source:
+        "import { defineModel, box } from 'aige/model';\nexport default defineModel({ build: () => box( });",
       preview: false,
     });
     expect(r.ok).toBe(false);
@@ -112,7 +122,8 @@ describe('models', () => {
     const host = await newHost();
     const loop = await host.call('model_create', {
       name: 'loop',
-      source: "import { defineModel, box } from 'aige/model';\nexport default defineModel({ build() { while (true) {} return box(); } });",
+      source:
+        "import { defineModel, box } from 'aige/model';\nexport default defineModel({ build() { while (true) {} return box(); } });",
       preview: false,
     });
     expect(!loop.ok && loop.error.code).toBe('TIMEOUT');
@@ -129,7 +140,8 @@ describe('models', () => {
     const host = await newHost();
     await ok(host, 'file_write', {
       path: 'models/parts/leg.ts',
-      content: "import { cylinder } from 'aige/model';\nexport const leg = (h: number) => cylinder({ radius: 0.05, height: h }).translate([0, h / 2, 0]);\n",
+      content:
+        "import { cylinder } from 'aige/model';\nexport const leg = (h: number) => cylinder({ radius: 0.05, height: h }).translate([0, h / 2, 0]);\n",
     });
     const res = await ok(host, 'model_create', {
       name: 'table',
@@ -147,7 +159,10 @@ describe('scene_validate', () => {
     await ok(host, 'entity_delete', { entity: 'Main Camera' });
     await ok(host, 'entity_create', {
       name: 'Player',
-      components: [{ type: 'Script', script: 'builtin:PlayerControler' }, { type: 'MeshRenderer', model: 'models/nope.model.ts' }],
+      components: [
+        { type: 'Script', script: 'builtin:PlayerControler' },
+        { type: 'MeshRenderer', model: 'models/nope.model.ts' },
+      ],
     });
     const r = await ok(host, 'scene_validate');
     expect(r.ok).toBe(false);
@@ -161,7 +176,9 @@ describe('Workspace', () => {
   it('routes tools and requires a project first', async () => {
     const ws = new Workspace({ workspaceDir: mkdtempSync(join(tmpdir(), 'aige-ws-')), render: null });
     const tools = await ws.tools();
-    expect(tools.map((t) => t.name)).toEqual(expect.arrayContaining(['project_create', 'entity_create', 'model_create']));
+    expect(tools.map((t) => t.name)).toEqual(
+      expect.arrayContaining(['project_create', 'entity_create', 'model_create']),
+    );
     const noProject = await ws.call('scene_tree', {});
     expect(!noProject.ok && noProject.error.hint).toMatch(/project_create/);
     const created = await ws.call('project_create', { name: 'demo' });

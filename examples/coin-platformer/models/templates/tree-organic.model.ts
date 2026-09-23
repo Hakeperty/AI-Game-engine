@@ -38,7 +38,8 @@ export default defineModel({
       sides: 9,
     });
     const parts: Record<string, typeof wood> = { wood: wood.material({ roughness: 0.9 }) };
-    if (canopy.f.length) parts.leaves = canopy.material({ roughness: 0.85, flatShading: foliage === 'blobs' });
+    if (canopy.f.length)
+      parts.leaves = canopy.material({ roughness: 0.85, flatShading: foliage === 'blobs' });
     return model(parts).setCollider({
       shape: 'cylinder',
       radius: trunk * 0.09,

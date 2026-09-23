@@ -1,4 +1,4 @@
-import { defineModel, eye, model, p, sdf, type Sdf, type V3 } from 'aige/model';
+import { defineModel, eye, model, p, type Sdf, sdf, type V3 } from 'aige/model';
 
 /**
  * Cute quadruped critter sculpted from SDF chains: round body, big head with snout, tapered legs, fluffy tail,
@@ -31,8 +31,14 @@ export default defineModel({
       .color(fur)
       .colorByNormal(belly, '-y', 0.25, 0.5);
     if (spots) body = body.colorSpots('#5a3a22', { scale: 9, size: 0.3, seed, softness: 0.05 });
-    const head = sdf.sphere(0.19, [0, Y(0.6), 0.25]).color(fur).colorByNormal(belly, '-y', 0.35, 0.5);
-    const cheeks = sdf.ellipsoid([0.17, 0.12, 0.13], [0, Y(0.53), 0.3]).color(fur).colorByNormal(belly, '-y', 0.1, 0.6);
+    const head = sdf
+      .sphere(0.19, [0, Y(0.6), 0.25])
+      .color(fur)
+      .colorByNormal(belly, '-y', 0.35, 0.5);
+    const cheeks = sdf
+      .ellipsoid([0.17, 0.12, 0.13], [0, Y(0.53), 0.3])
+      .color(fur)
+      .colorByNormal(belly, '-y', 0.1, 0.6);
     const snout = sdf.ellipsoid([0.085, 0.065, 0.09], [0, Y(0.535), 0.42]).color(belly);
     const nose = sdf.ellipsoid([0.035, 0.025, 0.022], [0, Y(0.57), 0.505]).color('#2a1d17');
 
@@ -64,7 +70,9 @@ export default defineModel({
           .color(fur),
       );
       for (const z of [0.165, -0.165]) {
-        legs.push(sdf.ellipsoid([0.062, 0.045, 0.078], [side * (z > 0 ? 0.108 : 0.121), 0.04, z]).color(belly));
+        legs.push(
+          sdf.ellipsoid([0.062, 0.045, 0.078], [side * (z > 0 ? 0.108 : 0.121), 0.04, z]).color(belly),
+        );
       }
     }
 
@@ -75,7 +83,16 @@ export default defineModel({
       if (ears === 'round') {
         ear = sdf.ellipsoid([0.065, 0.065, 0.03], [0, 0.04, 0]);
       } else if (ears === 'floppy') {
-        ear = sdf.chain([[0, 0, 0], [0.04, -0.02, 0.01], [0.07, -0.12, 0.02]], [0.045, 0.05, 0.035]).stretch([1, 1, 0.5]);
+        ear = sdf
+          .chain(
+            [
+              [0, 0, 0],
+              [0.04, -0.02, 0.01],
+              [0.07, -0.12, 0.02],
+            ],
+            [0.045, 0.05, 0.035],
+          )
+          .stretch([1, 1, 0.5]);
       } else {
         ear = sdf.roundCone([0, 0, 0], [0, 0.15, 0], 0.068, 0.014).stretch([1, 1, 0.45]);
       }
@@ -99,7 +116,10 @@ export default defineModel({
         [wag * 2, Y(0.58), -0.52],
         [wag * 2.5, Y(0.72), -0.48],
       ];
-      const r = tail === 'fluffy' ? (t: number) => 0.035 + 0.065 * Math.sin(Math.PI * Math.min(1, t * 1.1)) ** 0.8 + 0.01 : (t: number) => 0.04 * (1 - t) + 0.012;
+      const r =
+        tail === 'fluffy'
+          ? (t: number) => 0.035 + 0.065 * Math.sin(Math.PI * Math.min(1, t * 1.1)) ** 0.8 + 0.01
+          : (t: number) => 0.04 * (1 - t) + 0.012;
       tailParts.push(
         sdf
           .chain(pts, r)
@@ -115,7 +135,10 @@ export default defineModel({
       .smoothUnion(sdf.unionAll(earParts), 0.035)
       .cutBelow(0, 0.01);
     const s = height / (Y(0.86) + 0.02);
-    const furMesh = shape.mesh({ resolution: 88, decimate: 16000, ao: 0.55 }).scale(s).material({ roughness: 0.75 });
+    const furMesh = shape
+      .mesh({ resolution: 88, decimate: 16000, ao: 0.55 })
+      .scale(s)
+      .material({ roughness: 0.75 });
 
     const eyes = [-1, 1].map((side) =>
       eye({ radius: 0.052, iris, irisSize: 0.66, pupilSize: 0.38, segments: 18 })
