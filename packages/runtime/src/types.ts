@@ -1,4 +1,5 @@
 import type { Quaternion, Vector3 } from 'three';
+import { STORY_SFX } from './ambience.ts';
 
 /** [x, y, z] tuple. */
 export type V3 = [number, number, number];
@@ -37,7 +38,8 @@ export interface ModelInfo {
   collider: ColliderHint | null;
 }
 
-export const SFX_PRESETS = [
+/** Arcade presets (jsfxr-style synth). */
+export const ARCADE_SFX = [
   'coin',
   'jump',
   'hit',
@@ -48,6 +50,10 @@ export const SFX_PRESETS = [
   'win',
   'lose',
 ] as const;
+export type ArcadeSfx = (typeof ARCADE_SFX)[number];
+
+/** Every synthesized one-shot: arcade presets plus the story presets (thunder, creak, door_open...). */
+export const SFX_PRESETS = [...ARCADE_SFX, ...STORY_SFX] as const;
 export type SfxPreset = (typeof SFX_PRESETS)[number];
 
 export type UIAnchor =
@@ -106,7 +112,7 @@ export interface GameOver {
 
 export interface AudioEvent {
   t: number;
-  kind: 'play' | 'sfx' | 'stop';
+  kind: 'play' | 'sfx' | 'stop' | 'ambience' | 'ambienceStop' | 'param' | 'fade';
   name: string;
   opts: Record<string, unknown>;
 }

@@ -211,6 +211,75 @@ async function main(): Promise<void> {
       process.stdout.write(`Replayed ${n} commands into ${resolve(into)}\n`);
       return;
     }
+    case 'tts': {
+      // Local Qwen3-TTS voice engine: aige tts setup | status | stop
+      const sub = rest[0] ?? 'status';
+      const { tts, ttsPython } = await import('@aige/host');
+      if (sub === 'status') {
+        process.stdout.write(`${JSON.stringify(await tts.status(), null, 2)}\n`);
+        return;
+      }
+      if (sub === 'stop') {
+        const lock = resolve(process.env.USERPROFILE ?? process.env.HOME ?? '', '.aige', 'tts.json');
+        if (existsSync(lock)) {
+          const { pid } = JSON.parse(readFileSync(lock, 'utf8')) as { pid: number };
+          try {
+            process.kill(pid);
+            process.stdout.write(`Stopped voice server (pid ${pid}).\n`);
+          } catch {
+            process.stdout.write('Voice server was not running.\n');
+          }
+        }
+        return;
+      }
+      if (sub === 'setup') {
+        const { spawnSync } = await import('node:child_process');
+        const ttsDir = resolve(import.meta.dirname, '..', '..', '..', 'tools', 'tts');
+        const uv = spawnSync('uv', ['--version'], { encoding: 'utf8' }).status === 0 ? 'uv' : null;
+        if (!uv)
+          fail('uv is required (https://docs.astral.sh/uv/). Install it, then re-run `aige tts setup`.');
+        const run = (args: string[]) => {
+          process.stdout.write(`> uv ${args.join(' ')}\n`);
+          if (spawnSync(uv, args, { stdio: 'inherit', cwd: ttsDir }).status !== 0) fail('Setup step failed.');
+        };
+        if (!existsSync(ttsPython())) run(['venv', '.venv', '--python', '3.12']);
+        run([
+          'pip',
+          'install',
+          '--python',
+          ttsPython(),
+          'torch',
+          'torchaudio',
+          '--index-url',
+          'https://download.pytorch.org/whl/cu128',
+        ]);
+        run([
+          'pip',
+          'install',
+          '--python',
+          ttsPython(),
+          'qwen-tts',
+          'soundfile',
+          'numpy',
+          'transformers',
+          'accelerate',
+        ]);
+        process.stdout.write('Downloading Qwen3-TTS + Whisper models (a few GB)...\n');
+        const dl = spawnSync(
+          ttsPython(),
+          [
+            '-c',
+            'from huggingface_hub import snapshot_download as d\nfor m in ["Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign","Qwen/Qwen3-TTS-12Hz-1.7B-Base","openai/whisper-small.en"]: print(d(m))',
+          ],
+          { stdio: 'inherit' },
+        );
+        if (dl.status !== 0) fail('Model download failed.');
+        process.stdout.write('Voice engine ready. Try: aige tts status\n');
+        return;
+      }
+      fail('aige tts setup | status | stop');
+      return;
+    }
     case 'editor': {
       // Launch the desktop editor (builds it on first run). Optional: --project <dir> to open.
       const editorDir = resolve(import.meta.dirname, '..', '..', 'editor');

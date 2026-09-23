@@ -1,0 +1,10 @@
+{
+  "format": "aige.voice",
+  "version": 1,
+  "name": "milch",
+  "description": "An 18-year-old young man with a soft, slightly husky voice. Quiet and tired, with a dry throat and a little frightened. Natural, unhurried American English.",
+  "language": "English",
+  "refAudio": "voices/milch.ref.wav",
+  "refText": "I woke up and the house was quiet. I can hear the wind outside, and the floor creaks when I walk.",
+  "seed": 1
+}

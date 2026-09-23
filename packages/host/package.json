@@ -19,6 +19,7 @@
     "zod": "^4.6.5",
     "immer": "^11.1.18",
     "@aige/runtime": "0.1.0",
+    "@gltf-transform/core": "^4.5.0",
     "@aige/player": "0.1.0"
   },
   "devDependencies": {

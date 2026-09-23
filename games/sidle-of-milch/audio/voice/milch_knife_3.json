@@ -1,0 +1,17 @@
+{
+  "format": "aige.voiceline",
+  "version": 1,
+  "id": "milch_knife_3",
+  "audio": "audio/voice/milch_knife_3.ogg",
+  "duration": 1.36,
+  "fps": 30,
+  "instruct": "quiet, shaken relief, low voice",
+  "mouth": [
+    0.253, 0.239, 0.451, 0.649, 0.79, 0.864, 0.845, 0.77, 0.713, 0.786, 0.783, 0.758, 0.756, 0.626, 0.674,
+    0.736, 0.668, 0.601, 0.771, 0.895, 0.963, 0.987, 0.996, 0.981, 0.943, 0.92, 0.876, 0.848, 0.826, 0.796,
+    0.764, 0.748, 0.68, 0.575, 0.403, 0.282, 0.197, 0.138, 0.097, 0.068, 0.047
+  ],
+  "speaker": "Milch",
+  "text": "That was close.",
+  "voice": "voices/milch.voice.json"
+}

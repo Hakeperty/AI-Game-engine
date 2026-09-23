@@ -1,0 +1,16 @@
+{
+  "format": "aige.voiceline",
+  "version": 1,
+  "id": "milch_murphy_1",
+  "audio": "audio/voice/milch_murphy_1.ogg",
+  "duration": 0.88,
+  "fps": 30,
+  "instruct": "hopeful and soft, low voice",
+  "mouth": [
+    0.503, 0.8, 0.903, 0.959, 0.986, 0.976, 0.862, 0.769, 0.686, 0.878, 0.957, 0.983, 0.978, 0.935, 0.821,
+    0.709, 0.591, 0.414, 0.29, 0.203, 0.142, 0.099, 0.07, 0.049
+  ],
+  "speaker": "Milch",
+  "text": "Murphy?",
+  "voice": "voices/milch.voice.json"
+}

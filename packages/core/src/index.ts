@@ -4,6 +4,7 @@ import { projectCommands } from './commands/project.ts';
 import { sceneCommands } from './commands/scene.ts';
 import type { ProjectState } from './state.ts';
 
+export * from './animation/index.ts';
 export * from './commands/bus.ts';
 export * from './commands/define.ts';
 export * from './commands/history.ts';
@@ -14,6 +15,7 @@ export * from './json.ts';
 export * from './schema/common.ts';
 export * from './schema/components.ts';
 export * from './schema/documents.ts';
+export * from './schema/environment.ts';
 export * from './state.ts';
 export * from './tools.ts';
 export * from './transform.ts';

@@ -1,7 +1,14 @@
 import { proceduralTexture, type RgbaImage } from '../image.ts';
 import type { MaterialSpec } from '../material.ts';
 import { dot, normalize, srgbToLinear, type V3 } from '../math.ts';
-import { type ColliderHint, Model, type Socket } from '../model.ts';
+import {
+  type ColliderHint,
+  Model,
+  type ModelAnimation,
+  type PartSkin,
+  type Skeleton,
+  type Socket,
+} from '../model.ts';
 import { type PolyMesh, triangulatePolygon } from '../polymesh.ts';
 
 /** GPU-ready triangle data for one material. Colors are linear RGB. */
@@ -13,6 +20,10 @@ export interface MeshPrimitive {
   indices: Uint32Array<ArrayBuffer>;
   material: MaterialSpec;
   texture: RgbaImage | null;
+  /** Skinned parts: 4 joint indices per vertex. */
+  joints?: Uint16Array<ArrayBuffer>;
+  /** Skinned parts: 4 weights per vertex (sum 1). */
+  weights?: Float32Array<ArrayBuffer>;
 }
 
 export interface MeshPartData {
@@ -27,6 +38,9 @@ export interface MeshData {
   bounds: { min: V3; max: V3; size: V3; center: V3 };
   triangleCount: number;
   vertexCount: number;
+  /** Skinned models: joint hierarchy (bind pose, identity rotations). */
+  skeleton?: Skeleton | null;
+  animations?: ModelAnimation[];
 }
 
 export interface MeshDataOptions {
@@ -41,7 +55,7 @@ export function toMeshData(input: Model | PolyMesh, opts: MeshDataOptions = {}):
   let triangleCount = 0;
   let vertexCount = 0;
   for (const part of model.parts) {
-    const prims = meshToPrimitives(part.mesh, opts.smoothAngle ?? 40);
+    const prims = meshToPrimitives(part.mesh, opts.smoothAngle ?? 40, model.skeleton ? part.skin : undefined);
     for (const p of prims) {
       triangleCount += p.indices.length / 3;
       vertexCount += p.positions.length / 3;
@@ -55,10 +69,11 @@ export function toMeshData(input: Model | PolyMesh, opts: MeshDataOptions = {}):
     bounds: model.bounds(),
     triangleCount,
     vertexCount,
+    ...(model.skeleton ? { skeleton: model.skeleton, animations: model.animations } : {}),
   };
 }
 
-function meshToPrimitives(mesh: PolyMesh, smoothAngle: number): MeshPrimitive[] {
+function meshToPrimitives(mesh: PolyMesh, smoothAngle: number, skin?: PartSkin): MeshPrimitive[] {
   const cosT = Math.cos((smoothAngle * Math.PI) / 180);
   const faceN: V3[] = mesh.f.map((_, i) => mesh.faceNormal(i));
   const faceA: number[] = mesh.f.map((_, i) => mesh.faceArea(i));
@@ -82,6 +97,8 @@ function meshToPrimitives(mesh: PolyMesh, smoothAngle: number): MeshPrimitive[] 
     const nor: number[] = [];
     const uvs: number[] = [];
     const cols: number[] = [];
+    const jnt: number[] = [];
+    const wts: number[] = [];
     const idx: number[] = [];
     const cache = new Map<string, number>();
     const corner = (fi: number, k: number): number => {
@@ -112,6 +129,12 @@ function meshToPrimitives(mesh: PolyMesh, smoothAngle: number): MeshPrimitive[] 
         nor.push(n[0], n[1], n[2]);
         if (hasUv) uvs.push(uv[0], 1 - uv[1]);
         if (hasColors) cols.push(srgbToLinear(c[0]), srgbToLinear(c[1]), srgbToLinear(c[2]));
+        if (skin) {
+          for (let k = 0; k < 4; k++) {
+            jnt.push(skin.joints[v * 4 + k] ?? 0);
+            wts.push(skin.weights[v * 4 + k] ?? 0);
+          }
+        }
         cache.set(key, i);
       }
       return i;
@@ -130,6 +153,7 @@ function meshToPrimitives(mesh: PolyMesh, smoothAngle: number): MeshPrimitive[] 
       indices: new Uint32Array(idx),
       material,
       texture: material.texture ? proceduralTexture(material.texture) : null,
+      ...(skin ? { joints: new Uint16Array(jnt), weights: new Float32Array(wts) } : {}),
     });
   }
   return out;

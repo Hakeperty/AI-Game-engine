@@ -14,12 +14,14 @@ import * as modeling from '@aige/modeling';
 import type { ViewKind, ViewSpec } from '@aige/render';
 import { builtinBehaviours } from '@aige/runtime';
 import { z } from 'zod';
+import { assetCommands } from './assets/polyhaven.ts';
 import { CONVENTIONS, componentsDoc, DOC_TOPICS, MODELING, OVERVIEW, SCRIPTING, toolsDoc } from './docs.ts';
 import { exportWebCommand } from './export.ts';
 import type { ProjectHost } from './host.ts';
 import { gameRunHeadless } from './play.ts';
 import { compileUserModule, runModule } from './sandbox.ts';
 import { scriptingCommands } from './scripting.ts';
+import { voiceCommands } from './voice/voice-tools.ts';
 
 export interface HostServices {
   bus: CommandBus<HostServices>;
@@ -697,4 +699,6 @@ export const hostCommands = [
   ...scriptingCommands,
   gameRunHeadless,
   exportWebCommand,
+  ...voiceCommands,
+  ...assetCommands,
 ];

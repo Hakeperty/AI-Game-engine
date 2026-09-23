@@ -36,3 +36,6 @@ export {
   runModule,
   toScriptError,
 } from './sandbox.ts';
+export { decodeWav, mouthCurve, wordErrorRate } from './voice/audio.ts';
+export { tts, ttsInstalled, ttsPython } from './voice/tts-client.ts';
+export { VoiceProfile, voiceCommands } from './voice/voice-tools.ts';

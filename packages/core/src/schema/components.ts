@@ -111,6 +111,12 @@ export const MeshRenderer = defineComponent({
     material: AssetPath.optional().describe(
       "Material asset 'materials/name.material.json' (overrides recipe materials)",
     ),
+    materials: z
+      .record(z.string(), AssetPath)
+      .optional()
+      .describe(
+        'Per-part material overrides by model part name, e.g. {"logs": "materials/log_wood.material.json"}',
+      ),
     color: Color.optional().describe('Tint color; for primitives this is the base color'),
     castShadow: z.boolean().default(true),
     receiveShadow: z.boolean().default(true),

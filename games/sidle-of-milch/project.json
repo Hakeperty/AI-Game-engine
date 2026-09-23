@@ -1,0 +1,41 @@
+{
+  "format": "aige.project",
+  "version": 1,
+  "name": "sidle-of-milch",
+  "description": "The Sidle of Milch - a third-person story RPG. Chapter 1: The House.",
+  "input": {
+    "actions": {
+      "fire": ["MouseLeft", "KeyJ", "GamepadX"],
+      "interact": ["KeyE", "GamepadB"],
+      "jump": ["Space", "GamepadA"],
+      "pause": ["Escape", "GamepadStart"],
+      "sprint": ["ShiftLeft", "GamepadLB"]
+    },
+    "axes": {
+      "move_x": {
+        "negative": ["KeyA", "ArrowLeft"],
+        "positive": ["KeyD", "ArrowRight"]
+      },
+      "move_y": {
+        "negative": ["KeyS", "ArrowDown"],
+        "positive": ["KeyW", "ArrowUp"]
+      }
+    }
+  },
+  "physics": {
+    "fixedTimestep": 0.01667,
+    "gravity": [0, -20, 0]
+  },
+  "render": {
+    "antialias": true,
+    "exposure": 1,
+    "shadows": true,
+    "toneMapping": "neutral"
+  },
+  "startScene": "scenes/main.scene.json",
+  "window": {
+    "height": 720,
+    "title": "sidle-of-milch",
+    "width": 1280
+  }
+}

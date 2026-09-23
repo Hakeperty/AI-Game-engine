@@ -145,6 +145,11 @@ export class ScriptedInput implements InputSource {
 /** Resolves actions/axes through the project's InputMap and tracks pressed/released edges per frame. */
 export class InputState {
   source: InputSource;
+  /**
+   * While true (cutscenes), actions, axes, keys and mouse movement read as idle. The source keeps
+   * polling, so scripted input timelines stay in sync; `rawKeyDown` still sees the keyboard.
+   */
+  muted = false;
   private readonly map: InputMap;
   private readonly now = new Map<string, boolean>();
   private readonly prev = new Map<string, boolean>();
@@ -178,13 +183,14 @@ export class InputState {
     }
     for (const [code, v] of this.keyNow) {
       this.keyPrev.set(code, v);
-      this.keyNow.set(code, this.source.isKeyDown(code));
+      this.keyNow.set(code, !this.muted && this.source.isKeyDown(code));
     }
-    const md = this.source.mouseDelta?.();
+    const md = this.muted ? null : this.source.mouseDelta?.();
     this.mouse = md ? { x: md.x, y: md.y } : { x: 0, y: 0 };
   }
 
   private computeAction(name: string): boolean {
+    if (this.muted) return false;
     if (this.source.actionDown?.(name)) return true;
     const keys = this.map.actions?.[name];
     if (keys) for (const k of keys) if (this.source.isKeyDown(k)) return true;
@@ -225,10 +231,15 @@ export class InputState {
     return !this.track(action) && !!this.prev.get(action);
   }
 
+  /** Key/button held on the source, ignoring `muted` (used to skip cutscenes). */
+  rawKeyDown(code: string): boolean {
+    return this.source.isKeyDown(code) || this.source.actionDown?.(code) === true;
+  }
+
   key(code: string): boolean {
     let v = this.keyNow.get(code);
     if (v === undefined) {
-      v = this.source.isKeyDown(code);
+      v = !this.muted && this.source.isKeyDown(code);
       this.keyNow.set(code, v);
       this.keyPrev.set(code, false);
     }
@@ -239,6 +250,7 @@ export class InputState {
   }
 
   axis(name: string): number {
+    if (this.muted) return 0;
     const direct = this.source.axisValue?.(name);
     if (typeof direct === 'number' && direct !== 0) return Math.max(-1, Math.min(1, direct));
     const def = this.map.axes?.[name];
@@ -345,6 +357,10 @@ export class DomInput implements InputSource {
       if (b) this.keys.delete(b);
     });
     on(window, 'mousemove', (e: MouseEvent) => {
+      // Mouse-look games only turn while the pointer is locked (or the right button is held), so
+      // moving the cursor over the page does not spin the camera.
+      if (opts.pointerLock && document.pointerLockElement !== this.target && !this.keys.has('MouseRight'))
+        return;
       this.dx += e.movementX ?? 0;
       this.dy += e.movementY ?? 0;
     });

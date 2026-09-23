@@ -1,0 +1,18 @@
+{
+  "format": "aige.voiceline",
+  "version": 1,
+  "id": "milch_scream_2",
+  "audio": "audio/voice/milch_scream_2.ogg",
+  "duration": 3.65,
+  "fps": 30,
+  "instruct": "screaming loudly, breaking down, voice cracking",
+  "mouth": [
+    0.209, 0.428, 0.565, 0.562, 0.553, 0.536, 0.553, 0.575, 0.598, 0.604, 0.601, 0.582, 0.554, 0.449, 0.314,
+    0.22, 0.154, 0.108, 0.163, 0.197, 0.199, 0.28, 0.311, 0.332, 0.359, 0.412, 0.456, 0.577, 0.801, 0.93,
+    0.976, 0.991, 0.954, 0.85, 0.793, 0.742, 0.731, 0.624, 0.569, 0.534, 0.534, 0.581, 0.619, 0.616, 0.574,
+    0.402, 0.281, 0.197
+  ],
+  "speaker": "Milch",
+  "text": "Murphy!",
+  "voice": "voices/milch.voice.json"
+}

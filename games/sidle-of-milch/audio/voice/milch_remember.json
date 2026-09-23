@@ -1,0 +1,16 @@
+{
+  "format": "aige.voiceline",
+  "version": 1,
+  "id": "milch_remember",
+  "audio": "audio/voice/milch_remember.ogg",
+  "duration": 0.96,
+  "fps": 30,
+  "instruct": "sudden quiet realization, worried, low voice",
+  "mouth": [
+    0.308, 0.622, 0.81, 0.891, 0.942, 0.98, 0.993, 0.986, 0.962, 0.852, 0.759, 0.681, 0.651, 0.792, 0.81,
+    0.798, 0.775, 0.734, 0.689, 0.649, 0.601, 0.508, 0.356, 0.249, 0.174, 0.122, 0.085
+  ],
+  "speaker": "Milch",
+  "text": "Murphy...",
+  "voice": "voices/milch.voice.json"
+}

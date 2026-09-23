@@ -116,7 +116,12 @@ export const MaterialDoc = z.object({
     .tuple([z.number(), z.number()])
     .default([1, 1])
     .describe('Texture tiling [u, v]; raise it on big surfaces (a 40 m ground wants ~[20, 20])'),
-  normalMap: AssetPath.optional(),
+  normalMap: AssetPath.optional().describe('Tangent-space normal map (OpenGL convention, green up)'),
+  normalScale: z.number().default(1).describe('Normal map strength'),
+  ormMap: AssetPath.optional().describe(
+    'Packed occlusion (R) / roughness (G) / metalness (B) texture, glTF convention (Poly Haven "arm" maps). Roughness and metalness multiply the values above.',
+  ),
+  aoIntensity: z.number().min(0).default(1),
   vertexColors: z.boolean().default(false),
   flatShading: z.boolean().default(false),
   doubleSided: z.boolean().default(false),
@@ -151,6 +156,9 @@ export const CameraKey = z.object({
   /** Hard cut to this shot instead of blending from the previous key. */
   cut: z.boolean().default(false),
   shake: z.number().min(0).max(1).default(0),
+  /** Depth of field: focus distance in meters (0 = off). */
+  focus: z.number().min(0).default(0).describe('Depth-of-field focus distance in meters (0 = no DoF)'),
+  aperture: z.number().min(0).max(1).default(0.5).describe('Depth-of-field blur strength when focus > 0'),
 });
 
 export const CutsceneTrack = z.discriminatedUnion('type', [
@@ -224,8 +232,23 @@ export const CutsceneTrack = z.discriminatedUnion('type', [
           'shake',
           'letterbox',
           'heartbeat',
+          'heartRate',
+          'exposure',
+          'fog',
+          'bloom',
+          'contrast',
+          'saturation',
+          'temperature',
+          'tint',
+          'grain',
         ]),
-        to: z.number().min(0).max(1).describe('Target strength (fade 1 = black)'),
+        to: z
+          .number()
+          .min(-1)
+          .max(240)
+          .describe(
+            'Target value. 0..1 strengths (fade 1 = black); exposure/fog/contrast/saturation are multipliers (1 = unchanged); temperature/tint -1..1; heartRate in bpm',
+          ),
         duration: z.number().min(0).default(0.5),
         color: Color.optional(),
       }),
