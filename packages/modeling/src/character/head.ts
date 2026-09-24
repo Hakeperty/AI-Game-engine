@@ -84,6 +84,12 @@ function ell(r: V3, c: V3, rot?: V3): Sdf {
 
 const sym = (make: (side: 1 | -1) => Sdf): Sdf[] => [make(1), make(-1)];
 
+/** Eyelid margins (head space, relative to the eye center): upper/lower height and curvature (1/m). */
+const LID_UP = 0.0017;
+const LID_UP_K = 18;
+const LID_LO = 0.0046;
+const LID_LO_K = 14;
+
 /** Braincase, forehead and occipital masses (head space); hair is built on the same shapes. */
 export function skullParts(L: FaceLayout, o: HeadOptions, grow = 0): Sdf[] {
   const child = 1 - o.maturity;
@@ -190,13 +196,7 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
     0.0065,
   );
   head = head.smoothUnion(nose, 0.0065);
-  // nostrils
-  for (const s of [1, -1]) {
-    head = head.smoothSubtract(
-      ell([0.0026, 0.0016, 0.0034], [s * 0.0064 * noseScale, nt[1] - 0.0098, nt[2] - 0.0098], [18, 0, 0]),
-      0.002,
-    );
-  }
+  // nostrils are painted (see faceColor): carved pockets catch odd highlights at game resolution
 
   // --- lips
   const my = L.mouthY;
@@ -205,16 +205,16 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
   const lips = sdf.smoothUnionAll(
     [
       // upper lip with a cupid's bow
-      ell([0.0175, 0.0046 * lipFull, 0.0056], [0, my + 0.0045, lz - 0.0042]),
-      ...sym((s) => ell([0.0085, 0.0042 * lipFull, 0.005], [s * 0.0052, my + 0.0062, lz - 0.0045])),
+      ell([0.0175, 0.0039 * lipFull, 0.0052], [0, my + 0.0038, lz - 0.0056]),
+      ...sym((s) => ell([0.0085, 0.0034 * lipFull, 0.0046], [s * 0.0052, my + 0.0052, lz - 0.0058])),
       // lower lip
-      ell([0.0155, 0.0058 * lipFull, 0.006], [0, my - 0.0054, lz - 0.006]),
+      ell([0.0158, 0.005 * lipFull, 0.0056], [0, my - 0.0047, lz - 0.0068]),
     ],
     0.003,
   );
-  head = head.smoothUnion(lips, 0.004);
+  head = head.smoothUnion(lips, 0.006);
   // mouth line and corners
-  head = head.smoothSubtract(ell([0.0205, 0.0011, 0.012], [0, my, lz + 0.002]), 0.0012);
+  head = head.smoothSubtract(ell([0.02, 0.0008, 0.012], [0, my, lz + 0.001]), 0.001);
   for (const s of [1, -1])
     head = head.smoothSubtract(sdf.sphere(0.0022, [s * 0.0205, my, lz - 0.008]), 0.002);
   // philtrum and chin-lip fold
@@ -222,16 +222,27 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
     sdf.capsule([0, my + 0.011, lz + 0.0005], [0, nt[1] - 0.012, lz + 0.0005], 0.0021),
     0.002,
   );
-  head = head.smoothSubtract(ell([0.015, 0.0035, 0.006], [0, my - 0.016, lz - 0.007]), 0.003);
+  head = head.smoothSubtract(ell([0.015, 0.0032, 0.005], [0, my - 0.0155, lz - 0.0085]), 0.005);
 
   // --- eyelids (partial shells around the eyeball) and the eyeball seat
   for (const s of [1, -1]) {
     const c: V3 = [s * L.eyeL[0], eyeY, ez];
     // lids are ~3.5 mm thick; the upper one covers the top of the iris (relaxed, slightly tired look)
     const shell = sdf.sphere(er + 0.0035, c);
-    const upper = shell.intersect(sdf.box([0.05, 0.03, 0.04], [c[0], eyeY + 0.0024 + 0.015, c[2] + 0.004]));
-    const lower = shell.intersect(sdf.box([0.05, 0.03, 0.04], [c[0], eyeY - 0.005 - 0.015, c[2] + 0.004]));
-    head = head.smoothUnion(upper.union(lower).rotate([0, 0, s * -4], c), 0.0025);
+    // almond-shaped opening: the lid margins are curves that meet at the eye corners (canthi), so the
+    // eyeball never shows at the sides
+    const cx = c[0];
+    const opening = new SdfClass(
+      (x, y, z) => {
+        const dx = x - cx;
+        const up = eyeY + LID_UP - LID_UP_K * dx * dx;
+        const lo = eyeY - LID_LO + LID_LO_K * dx * dx;
+        return z < c[2] - 0.004 ? 1 : Math.max(y - up, lo - y);
+      },
+      { min: [cx - 0.03, eyeY - 0.03, c[2] - 0.03], max: [cx + 0.03, eyeY + 0.03, c[2] + 0.03] },
+    );
+    const lids = shell.subtract(opening);
+    head = head.smoothUnion(lids.rotate([0, 0, s * -4], c), 0.0025);
     // upper-lid crease
     head = head.smoothSubtract(
       sdf.capsule(
@@ -283,12 +294,22 @@ export function faceColor(
       const k = clamp(t, 0, 1);
       c = [c[0] + (col[0] - c[0]) * k, c[1] + (col[1] - c[1]) * k, c[2] + (col[2] - c[2]) * k];
     };
+    // nostrils
+    for (const sx of [1, -1]) {
+      const dn2 = Math.hypot(
+        (x - sx * 0.0064) / 0.0034,
+        (y - (L.noseTip[1] - 0.0098)) / 0.0022,
+        (z - (L.noseTip[2] - 0.0098)) / 0.0045,
+      );
+      blend([skin[0] * 0.35, skin[1] * 0.22, skin[2] * 0.22], 0.9 * (1 - smoothstep(0.5, 1.1, dn2)));
+    }
     // cheeks
+
     const dc = Math.hypot((ax - 0.046) / 0.024, (y - 0.078) / 0.022, (z - 0.066) / 0.03);
-    blend(red, 0.45 * (1 - smoothstep(0.4, 1.2, dc)));
+    blend(red, 0.28 * (1 - smoothstep(0.4, 1.2, dc)));
     // nose tip / alae
     const dn = Math.hypot(x / 0.016, (y - L.noseTip[1]) / 0.012, (z - L.noseTip[2]) / 0.016);
-    blend(red, 0.5 * (1 - smoothstep(0.3, 1.1, dn)));
+    blend(red, 0.32 * (1 - smoothstep(0.3, 1.1, dn)));
     // ears
     const de = Math.hypot((ax - L.earL[0]) / 0.018, (y - L.earL[1]) / 0.034, (z - L.earL[2]) / 0.024);
     blend(red, 0.45 * (1 - smoothstep(0.5, 1.1, de)));
@@ -318,8 +339,8 @@ export function faceColor(
     const bx = ax - 0.011;
     if (bx > -0.004 && bx < 0.05 && z > 0.05) {
       const u = clamp(bx / 0.044, 0, 1);
-      const arch = L.browY + 0.0015 + 0.005 * Math.sin(Math.PI * Math.min(1, u * 1.25)) - 0.004 * u * u;
-      const thick = 0.0042 * (1 - 0.55 * u) + 0.0016;
+      const arch = L.browY - 0.0008 + 0.0042 * Math.sin(Math.PI * Math.min(1, u * 1.25)) - 0.004 * u * u;
+      const thick = 0.0056 * (1 - 0.5 * u) + 0.002;
       const t = 1 - smoothstep(thick * 0.6, thick, Math.abs(y - arch));
       const ends = smoothstep(-0.004, 0.003, bx) * (1 - smoothstep(0.042, 0.05, bx));
       blend(brow, 0.9 * t * ends);
@@ -331,8 +352,8 @@ export function faceColor(
       const dz = z - e[2];
       const r = Math.hypot(dx, dy, dz);
       if (r < er + 0.0045 && dz > 0) {
-        const upperM = Math.abs(dy - 0.0024 + dx * dx * 22);
-        const lowerM = Math.abs(dy + 0.005 - dx * dx * 18);
+        const upperM = Math.abs(dy - LID_UP + dx * dx * LID_UP_K);
+        const lowerM = Math.abs(dy + LID_LO - dx * dx * LID_LO_K);
         const edge = Math.abs(dx) < er * 0.95 ? 1 : 0;
         blend(brow, edge * 0.7 * (1 - smoothstep(0.0004, 0.0013, upperM)));
         blend(
@@ -376,7 +397,7 @@ function eyeball(r: number, iris: RGB): PolyMesh {
   const pupilA = 10.5 * DEG;
   const pts: V3[] = [];
   const cols: RGB[] = [];
-  const sclera: RGB = [0.8, 0.76, 0.71];
+  const sclera: RGB = [0.72, 0.68, 0.64];
   const irisDark: RGB = [iris[0] * 0.55, iris[1] * 0.55, iris[2] * 0.55];
   for (let i = 0; i < thetas.length; i++) {
     const th = thetas[i]!;

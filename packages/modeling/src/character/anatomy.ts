@@ -109,8 +109,10 @@ export function computeAnatomy(params: BodyParams): Anatomy {
 
   const crown = H;
   const chin = H - hh;
-  const neck = chin - 0.37 * hh;
-  const shoulder = neck - 0.017 * s;
+  // base of the neck; the neck joint sits a little higher so the visible neck stays short and sturdy
+  const neckBase = chin - 0.37 * hh;
+  const neck = chin - 0.31 * hh;
+  const shoulder = neckBase - 0.017 * s;
   const hipJoint = H * mix(0.505, 0.52, maturity);
   const hipsY = hipJoint + 0.035 * s;
   const knee = H * mix(0.284, 0.281, maturity);
@@ -125,7 +127,7 @@ export function computeAnatomy(params: BodyParams): Anatomy {
   const hipHalf = H * mix(0.0506, 0.0575, fem) * (0.95 + 0.1 * build);
   const upperArm = H * mix(0.161, 0.166, maturity);
   const forearm = H * mix(0.139, 0.143, maturity);
-  const hand = H * mix(0.105, 0.108, maturity);
+  const hand = H * mix(0.095, 0.098, maturity);
   const handPalm = hand * 0.508;
   const finger1 = hand * 0.249;
   const foot = H * mix(0.153, 0.15, maturity) * mix(1, 0.94, fem);
@@ -208,7 +210,7 @@ export function computeAnatomy(params: BodyParams): Anatomy {
       waistD: 0.094 * g * (1 + (build - 0.5) * 0.45 * soft),
       pelvisW: 0.152 * g * mix(1, 1.1, fem),
       pelvisD: 0.104 * g * mix(1, 1.04, fem),
-      neckR: 0.057 * g * mix(1, 0.86, fem) * mix(0.9, 1, maturity),
+      neckR: 0.064 * g * mix(1, 0.84, fem) * mix(0.88, 1, maturity),
       upperArmR: 0.047 * lg * mix(1, 0.9, fem) * (0.95 + 0.1 * muscle),
       forearmR: 0.041 * lg * mix(1, 0.9, fem),
       wristR: 0.027 * s * mix(1, 0.9, fem) * mix(0.95, 1, maturity),

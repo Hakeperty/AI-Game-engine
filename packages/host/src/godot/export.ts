@@ -197,7 +197,7 @@ export async function exportGodot(
           (mr.materials as Record<string, string> | undefined)?.[part] ?? (mr.material as string | undefined);
         if (docPath && state.materials[docPath])
           pm.push({
-            part: godotPartName(part, surfaces.root),
+            part: (surfaces.skinned.has(part) ? 'Skeleton3D/' : '') + godotPartName(part, surfaces.root),
             surfaces: count,
             material: materialResPath(docPath),
           });
@@ -356,7 +356,7 @@ async function glbParts(glb: Uint8Array): Promise<{ root?: string; noShadowParts
         ?.listPrimitives()
         .some((p) => p.getMaterial()?.getAlphaMode() === 'BLEND'),
     )
-    .map((n) => godotPartName(n.getName(), root.getName()));
+    .map((n) => godotPartPath(n, root.getName()));
   return parts.length ? { root: root.getName(), noShadowParts: parts } : {};
 }
 
@@ -370,17 +370,31 @@ function materialResPath(docPath: string): string {
 }
 
 /** Surface (primitive) count per part node, and the GLB's root node name. */
-async function glbSurfaces(glb: Uint8Array): Promise<Map<string, number> & { root?: string }> {
+async function glbSurfaces(
+  glb: Uint8Array,
+): Promise<Map<string, number> & { root?: string; skinned: Set<string> }> {
   const doc = await new WebIO().registerExtensions([KHRTextureTransform]).readBinary(glb);
   const root = (doc.getRoot().getDefaultScene() ?? doc.getRoot().listScenes()[0])?.listChildren()[0];
-  const out = new Map<string, number>() as Map<string, number> & { root?: string };
+  const out = Object.assign(new Map<string, number>(), { skinned: new Set<string>() }) as Map<
+    string,
+    number
+  > & {
+    root?: string;
+    skinned: Set<string>;
+  };
   if (!root) return out;
   out.root = root.getName();
   for (const n of root.listChildren()) {
     const mesh = n.getMesh();
     if (mesh) out.set(n.getName(), mesh.listPrimitives().length);
+    if (mesh && n.getSkin()) out.skinned.add(n.getName());
   }
   return out;
+}
+
+/** A part's node path under the GLB root after import: skinned meshes live under the imported Skeleton3D. */
+function godotPartPath(n: { getName(): string; getSkin(): unknown }, root: string): string {
+  return (n.getSkin() ? 'Skeleton3D/' : '') + godotPartName(n.getName(), root);
 }
 
 /** The node name Godot gives a part after import (names are made unique across the file: 'slab' in 'slab' → 'slab2'). */

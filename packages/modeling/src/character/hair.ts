@@ -69,7 +69,13 @@ export function hairSdf(style: HairStyle, L: FaceLayout, o: HeadOptions, color: 
     }
     return limit - y + noise.noise3(x * 50, y * 50, z * 50) * 0.004;
   };
-  const parts: Sdf[] = [skull.round(base).intersect(new Sdf(hairline, BOUNDS))];
+  // the hair layer thins out toward the hairline instead of ending in a hard helmet edge
+  const layer = skull.displaceBy(
+    (p) => base * (0.12 + 0.88 * smoothstep(0, 0.016, -hairline(p[0], p[1], p[2]))),
+    base,
+    1.6,
+  );
+  const parts: Sdf[] = [layer.intersect(new Sdf(hairline, BOUNDS))];
 
   // --- locks
   const messy = style === 'messy' ? 1 : 0;
@@ -202,7 +208,18 @@ export function hairSdf(style: HairStyle, L: FaceLayout, o: HeadOptions, color: 
   }
   if (style === 'bun') parts.push(sdf.ellipsoid([0.03, 0.028, 0.028], [0, 0.18, -0.108]));
   let shell = sdf.smoothUnionAll(parts, 0.0055);
-  shell = shell.displaceBy(([x, y, z]) => 0.0008 * noise.noise3(x * 70, y * 70, z * 70), 0.001, 1.6);
+  // strand grooves combed away from the crown whorl, broken up by noise
+  shell = shell.displaceBy(
+    ([x, y, z]) => {
+      const az = Math.atan2(x - whorl[0], z - whorl[2]);
+      return (
+        0.0011 * Math.sin(az * 46 + noise.noise3(x * 28, y * 28, z * 28) * 2.2) +
+        0.0008 * noise.noise3(x * 70, y * 70, z * 70)
+      );
+    },
+    0.002,
+    2.2,
+  );
   const hi: RGB = [color[0] * 1.25 + 0.025, color[1] * 1.22 + 0.02, color[2] * 1.18 + 0.016];
   const root: RGB = [color[0] * 0.8, color[1] * 0.8, color[2] * 0.8];
   return shell.colorBy(([x, y, z]) => {

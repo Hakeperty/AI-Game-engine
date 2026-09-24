@@ -108,7 +108,7 @@ export const HUMANOID_PRESETS: Record<Exclude<HumanoidPreset, 'none'>, Partial<R
     build: 0.22,
     muscle: 0.35,
     headShape: 'oval',
-    skin: '#c99d86',
+    skin: '#dcbaa6',
     eyes: '#56636b',
     hair: 'messy',
     hairColor: '#221b17',
@@ -129,7 +129,7 @@ export const HUMANOID_PRESETS: Record<Exclude<HumanoidPreset, 'none'>, Partial<R
     build: 0.4,
     muscle: 0.25,
     headShape: 'round',
-    skin: '#cfa288',
+    skin: '#e0bea9',
     eyes: '#5e4430',
     hair: 'short',
     hairColor: '#4d3625',
@@ -150,7 +150,7 @@ export const HUMANOID_PRESETS: Record<Exclude<HumanoidPreset, 'none'>, Partial<R
     build: 0.42,
     muscle: 0.3,
     headShape: 'oval',
-    skin: '#c79a81',
+    skin: '#dab5a0',
     eyes: '#4d5a47',
     hair: 'shoulder',
     hairColor: '#3a2b21',
@@ -309,7 +309,7 @@ export function humanoid(options: HumanoidOptions = {}): Model {
     ]);
   const skinRgb = hexToRgb(o.skin);
   const hairRgb = hexToRgb(o.hairColor);
-  const browRgb: RGB = mixColor(hairRgb, [0.12, 0.09, 0.07], 0.25);
+  const browRgb: RGB = mixColor(hairRgb, [0.1, 0.075, 0.06], 0.4);
   const lipsRgb: RGB = mixColor(skinRgb, [0.62, 0.34, 0.33], 0.42);
   const face = faceColor(L, hopts, {
     skin: skinRgb,
@@ -322,11 +322,69 @@ export function humanoid(options: HumanoidOptions = {}): Model {
   const head = fw.warp(headSdf(hopts, L)).scale(frame.scale).translate(frame.origin);
   const { body, cloth } = bodySdfs(an);
   const fc: RGB = [1, 1, 1];
+  // hands: redder knuckles and fingertips, pale nails on the backs of the fingertips
+  const kh = an.dims.handScale;
+  const fingerTips = ([1, -1] as const).flatMap((side) =>
+    fingerChains(kh).map((f) => ({
+      a: handToModel(an, side, f.pts[2]!),
+      b: handToModel(an, side, f.pts[3]!),
+      r: f.radii[3]!,
+      side,
+    })),
+  );
+  const segT = (p: V3, a: V3, b: V3) => {
+    const d: V3 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+    const l2 = d[0] * d[0] + d[1] * d[1] + d[2] * d[2] || 1;
+    const t = Math.max(
+      0,
+      Math.min(1, ((p[0] - a[0]) * d[0] + (p[1] - a[1]) * d[1] + (p[2] - a[2]) * d[2]) / l2),
+    );
+    const q: V3 = [a[0] + d[0] * t, a[1] + d[1] * t, a[2] + d[2] * t];
+    return { t, q, dist: Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]) };
+  };
+  const armUp: V3 = [
+    Math.sin((HUMANOID_ARM_ANGLE * Math.PI) / 180),
+    Math.cos((HUMANOID_ARM_ANGLE * Math.PI) / 180),
+    0,
+  ];
+  const nailAt = (p: V3): number => {
+    if (Math.abs(p[0]) < an.j.hand_l[0] + 0.03 * s) return 0;
+    for (const f of fingerTips) {
+      const { t, q, dist } = segT(p, f.a, f.b);
+      if (dist > f.r * 1.6 || t < 0.35) continue;
+      // back of the finger: the side facing the hand's "up" (dorsal) direction
+      const up = (p[0] - q[0]) * f.side * armUp[0] + (p[1] - q[1]) * armUp[1];
+      if (up < f.r * 0.25) continue;
+      return smoothstep(0.35, 0.55, t) * smoothstep(f.r * 0.25, f.r * 0.6, up);
+    }
+    return 0;
+  };
+  const handDetail = (p: V3): number => {
+    if (Math.abs(p[0]) < an.j.hand_l[0] - 0.02 * s) return 0;
+    let best = 0;
+    for (const f of fingerTips) {
+      const { t, dist } = segT(p, f.a, f.b);
+      if (dist < f.r * 1.8) best = Math.max(best, smoothstep(0.4, 1, t));
+    }
+    return best;
+  };
   const skinSdf = body.smoothUnion(head, 0.009 * s).colorBy((p) => {
     const hp = toHead(p);
-    // subtle mottling
-    const n = 1 + 0.035 * noise.fbm(p[0] * 18, p[1] * 18, p[2] * 18, 2);
-    let c: RGB = [skinRgb[0] * n, skinRgb[1] * n, skinRgb[2] * n];
+    // skin is never one flat color: fine mottling, larger warm/cool patches and redder extremities
+    const n =
+      1 +
+      0.035 * noise.fbm(p[0] * 18, p[1] * 18, p[2] * 18, 2) +
+      0.018 * noise.noise3(p[0] * 160, p[1] * 160, p[2] * 160);
+    const warm = 0.5 + 0.5 * noise.fbm(p[0] * 5 + 3, p[1] * 5, p[2] * 5, 2);
+    let c: RGB = [
+      skinRgb[0] * n * (1 + 0.03 * warm),
+      skinRgb[1] * n * (1 - 0.02 * warm),
+      skinRgb[2] * n * (1 - 0.03 * warm),
+    ];
+    const hand = handDetail(p);
+    if (hand > 0) c = [c[0] * (1 + 0.06 * hand), c[1] * (1 - 0.04 * hand), c[2] * (1 - 0.03 * hand)];
+    const nail = nailAt(p);
+    if (nail > 0) c = mixColor(c, [0.9, 0.76, 0.74], nail * 0.75);
     if (hp[1] > -0.06) {
       face(hp, fc);
       const t = smoothstep(-0.06, -0.02, hp[1]);
@@ -334,11 +392,11 @@ export function humanoid(options: HumanoidOptions = {}): Model {
       // the mouth line reads as an opening when the jaw drops
       // the mouth slit reads as the dark inside of the mouth when the jaw drops
       if (
-        Math.abs(hp[1] - L.mouthY) < (hp[2] < L.lipZ - 0.002 ? 0.0022 : 0.0008) &&
+        Math.abs(hp[1] - L.mouthY) < (hp[2] < L.lipZ - 0.002 ? 0.0014 : 0.0007) &&
         hp[2] > L.lipZ - 0.014 &&
         Math.abs(hp[0]) < 0.018
       )
-        c = [c[0] * 0.55, c[1] * 0.42, c[2] * 0.42];
+        c = [c[0] * 0.62, c[1] * 0.46, c[2] * 0.46];
     }
     return c;
   });
@@ -354,8 +412,10 @@ export function humanoid(options: HumanoidOptions = {}): Model {
   const skinMat = { name: 'skin', color: '#ffffff', roughness: 0.52, metalness: 0 };
   const jawOverride = (p: V3): [string, number][] | null => {
     const hp = toHead(p);
-    if (hp[1] > L.mouthY + 0.004 || hp[1] < -0.05) return null;
-    const below = smoothstep(L.mouthY + 0.0015, L.mouthY - 0.004, hp[1]);
+    if (hp[1] > L.mouthY + 0.016 || hp[1] < -0.05) return null;
+    // the lips part sharply between the mouth corners; beyond them the cheeks stretch over a broad band
+    const lateral = smoothstep(0.015, 0.027, Math.abs(hp[0]));
+    const below = smoothstep(L.mouthY + 0.0015 + 0.012 * lateral, L.mouthY - 0.004 - 0.026 * lateral, hp[1]);
     const front = smoothstep(-0.028, 0.012, hp[2]);
     const neckFade = smoothstep(-0.045, -0.004, hp[1]);
     const w = below * front * neckFade * (Math.abs(hp[0]) > 0.062 ? 0.6 : 1);

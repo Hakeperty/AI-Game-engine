@@ -243,16 +243,23 @@ function plantFeet(T: number, poseAt: (t: number) => BodyPose): PlantedPose {
   const N = 90;
   const dt = T / N;
   const sample = (t: number) => forwardKinematics(REF, evaluateBodyPose(poseAt(t)));
+  const probes: V3[] = [
+    [0, -0.078, -0.05],
+    [0, -0.078, 0.16],
+  ];
+  const frames = Array.from({ length: N }, (_, i) => sample(i * dt));
   const legs = (['l', 'r'] as const).map((side) => {
     const bone = `foot_${side}`;
-    const ank: V3[] = [];
+    // per frame: the probe touching the floor (heel or ball), and every probe's z
     const low: number[] = [];
-    for (let i = 0; i < N; i++) {
-      const fk = sample(i * dt);
-      low.push(
-        Math.min(pointOnBone(fk, bone, [0, -0.078, -0.05])[1], pointOnBone(fk, bone, [0, -0.078, 0.16])[1]),
-      );
-      ank.push(fk.get(bone)!.pos);
+    const which: number[] = [];
+    const pz: number[][] = [];
+    for (const fk of frames) {
+      const pts = probes.map((o) => pointOnBone(fk, bone, o));
+      const k = pts[0]![1] <= pts[1]![1] ? 0 : 1;
+      low.push(pts[k]![1]);
+      which.push(k);
+      pz.push(pts.map((q) => q[2]));
     }
     const floor = Math.min(...low);
     // stance = the longest run of frames with the foot on the floor
@@ -268,11 +275,23 @@ function plantFeet(T: number, poseAt: (t: number) => BodyPose): PlantedPose {
         len = l;
       }
     }
-    let vz = 0;
-    for (let k = 1; k < len; k++) vz += (ank[(start + k - 1) % N]![2] - ank[(start + k) % N]![2]) / dt;
-    return { ank, start, len, vz: vz / Math.max(1, len - 1) };
+    // velocity of the contact point (the same probe in consecutive frames, so heel-to-ball rolls don't jump)
+    const vel: number[] = [0];
+    for (let k = 1; k < len; k++) {
+      const i = (start + k) % N;
+      const prev = (start + k - 1) % N;
+      vel.push((pz[i]![which[i]!]! - pz[prev]![which[i]!]!) / dt);
+    }
+    return { start, len, vel };
   });
-  const speed = (legs[0]!.vz + legs[1]!.vz) / 2;
+  const all = legs.flatMap((L) => L.vel.slice(1));
+  const speed = -all.reduce((a, v) => a + v, 0) / Math.max(1, all.length);
+  // correction (m, along z) that makes the contact point travel back at exactly `speed` through the stance
+  const corr = legs.map((L) => {
+    const c = [0];
+    for (let k = 1; k < L.len; k++) c.push(c[k - 1]! + (-speed - L.vel[k]!) * dt);
+    return c;
+  });
   const fn = ((t: number) => {
     const p = poseAt(t);
     const u = (((t / T) % 1) + 1) % 1;
@@ -284,10 +303,12 @@ function plantFeet(T: number, poseAt: (t: number) => BodyPose): PlantedPose {
       if (k > L.len - 1) return;
       fk ??= sample(t);
       const cur = fk.get(`foot_${side}`)!.pos;
-      const targetZ = L.ank[L.start]![2] - speed * k * dt;
-      const w = smooth01((Math.min(k, L.len - 1 - k) * dt) / (0.06 * T));
+      const k0 = Math.floor(k);
+      const c = corr[li]!;
+      const dz = c[k0]! + ((c[Math.min(k0 + 1, L.len - 1)] ?? c[k0]!) - c[k0]!) * (k - k0);
+      const w = smooth01((Math.min(k, L.len - 1 - k) * dt) / (0.05 * T));
       const key = side === 'l' ? 'legL' : 'legR';
-      p[key] = { ...(p[key] ?? {}), ik: [cur[0], cur[1], targetZ], ikw: w, flat: 0 };
+      p[key] = { ...(p[key] ?? {}), ik: [cur[0], cur[1], cur[2] + dz], ikw: w, flat: 0 };
     });
     return p;
   }) as PlantedPose;
@@ -1316,7 +1337,7 @@ function scaredBreathing(): AnimClip {
     chest: [-2, 0, 0],
     neck: [2, 0, 0],
     head: [0, 0, 0],
-    jaw: 4,
+    jaw: 0,
     armL: {
       shrug: 9,
       reach: 5,

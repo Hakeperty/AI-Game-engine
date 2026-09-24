@@ -38,7 +38,7 @@ namespace Aige
                 var go = new GameObject("Particles");
                 go.transform.SetParent(transform, false);
                 _ps = go.AddComponent<UnityEngine.ParticleSystem>();
-                _ps.Stop(true, UnityEngine.ParticleSystem.ParticleSystemStopBehavior.StopEmittingAndClear);
+                _ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
             var ps = _ps;
             var main = ps.main;
@@ -174,7 +174,7 @@ namespace Aige
             Emitting = on;
             if (_ps == null) return;
             if (on) _ps.Play(true);
-            else _ps.Stop(true, UnityEngine.ParticleSystem.ParticleSystemStopBehavior.StopEmitting);
+            else _ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
     }
 }

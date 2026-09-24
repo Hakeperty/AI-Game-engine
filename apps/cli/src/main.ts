@@ -28,6 +28,7 @@ Usage:
   aige replay --project <dir> --into <newDir>
   aige doctor
   aige godot setup|status|export|open [-p <dir>]
+  aige unity export|open|status [-p <dir>]
   aige tts setup|status|stop
 
 Register with Claude Code:
@@ -259,6 +260,19 @@ async function main(): Promise<void> {
         return;
       }
       fail(`Unknown: aige godot ${sub} (use setup, status, export or open)`);
+      return;
+    }
+    case 'unity': {
+      // Unity 6 (URP) export: aige unity export | open | status
+      const sub = rest[0] ?? 'status';
+      if (!['export', 'open', 'status'].includes(sub))
+        fail(`Unknown: aige unity ${sub} (use export, open or status)`);
+      const host = await ProjectHost.open(projectDir(), { render: null });
+      try {
+        printResult(await host.call(`unity_${sub}`, {}, 'cli'), values.out);
+      } finally {
+        await host.close();
+      }
       return;
     }
     case 'tts': {

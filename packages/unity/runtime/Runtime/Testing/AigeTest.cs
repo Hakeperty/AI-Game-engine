@@ -148,6 +148,8 @@ namespace Aige
             };
             Application.logMessageReceived += (msg, stack, type) =>
             {
+                // Editor-only noise (search indexing, package tooling) does not fail a play-test.
+                if (stack.Contains("UnityEditor.") && !stack.Contains("Aige") && !stack.Contains("Assets/")) return;
                 if (type == LogType.Exception) _errors.Add($"{msg}\n{stack}".Trim());
                 else if (type == LogType.Error && !msg.StartsWith("[aige]")) _errors.Add(msg);
             };
@@ -195,7 +197,7 @@ namespace Aige
                     {
                         ["t"] = Mathf.Round(_time * 100f) / 100f,
                         ["position"] = Coords.ToAige(go.transform.position),
-                        ["yaw"] = Mathf.Round(-go.transform.eulerAngles.y * 10f) / 10f,
+                        ["yaw"] = Mathf.Round(Mathf.DeltaAngle(0f, -go.transform.eulerAngles.y) * 10f) / 10f,
                     });
                 }
             }

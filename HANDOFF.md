@@ -10,7 +10,7 @@ This file is a snapshot of where the AIGE engine stands, written so you (or any 
 
 - **AIGE** is an AI-native "Unity + Blender in one", written in TypeScript. It does procedural modeling, scenes, voice acting, cutscene documents and MCP tools.
 - **Games run on Godot 4.7 .NET, with game code in C#.** AIGE is the authoring layer and exports each game as a Godot C# project: a native exe with SDFGI global illumination, volumetric fog and so on. The older TypeScript/Three.js runtime remains for fast previews.
-- **Unity 6 export** (URP) is in progress in `packages/unity`.
+- **Unity 6 export** (URP) works too: `unity_export` writes a Unity project next to the game and imports it in batch mode (see `packages/unity/README.md`).
 
 ## 2. What the engine has
 
@@ -26,6 +26,7 @@ This file is a snapshot of where the AIGE engine stands, written so you (or any 
 | **Godot exporter** | AIGE scene → `.tscn` (bodies, colliders incl. trimesh, lights, audio, components, decals), shared `.tres` materials, environment `.tres` (switchable at runtime), project.godot, csproj, export presets (`dist/`). Copies the C# runtime, runs `dotnet build` and a Godot import. | `packages/godot/` (contract: `packages/godot/README.md`), `packages/host/src/godot/*` |
 | **Godot tools** | `godot_export`, `godot_play_test` (headless scripted play-tests with an event report), `godot_screenshot` (fixed camera views), `csharp_write`, `godot_open`. CLI: `aige godot setup/status/export/open`. | `packages/host/src/godot/tools.ts`, `packages/godot/tools/capture.gd` |
 | **C# runtime for Godot** | Story (flags, inventory, objectives, waypoints), Hud (subtitles, prompts, letterbox, fades, screen-FX shader), Voice (lip-sync), Sfx, Cutscenes, AigeTest harness, EnvironmentFx, builtin third-person PlayerController and ThirdPersonCamera. | `packages/godot/runtime/` (API: `packages/godot/runtime/API.md`), test project `packages/godot/runtime-test/` |
+| **Unity 6 exporter** | AIGE scene → Unity URP project: glTFast models with shared URP Lit materials (ORM repacked), an editor importer that builds `.unity` scenes and environments, and a C# runtime mirroring the Godot one (Story, Hud, Voice, Sfx, Cutscenes, components, PlayerController, ThirdPersonCamera, AigeTest). Verified with Unity 6000.5.7f1 in batch mode. | `packages/unity/`, `packages/host/src/unity/`; tools `unity_export`, `unity_screenshot`, `unity_play_test`, `unity_open`, `unity_status`; CLI `aige unity export/open/status` |
 | **ArcFlare** | `aige agent --provider arcflare` uses your local ArcFlare/llama.cpp model (port from `~/.arcflare/server.json`, or `--base-url` / `ARCFLARE_URL`). `.mcp.json` registers `aige mcp`, so ArcFlare's agent and Claude Code get all AIGE tools. | `apps/cli/src/main.ts`, `.mcp.json` |
 
 ## 3. Setup
@@ -45,6 +46,6 @@ git clone <your game repo> games/<name>             # then follow the game's HAN
 
 ## 4. Unfinished work
 
-- **Unity 6 export** (`packages/unity`): the TypeScript exporter and tests are in; the C# URP runtime and editor importer (`packages/unity/runtime/`) are partly written and not yet verified in Unity batch mode.
-- **Character quality pass** (`packages/modeling/src/character/`): face and mouth shape, clothing folds, animation weight and foot sliding.
+- **Unity:** lighting is darker than in Godot, because URP has no SDFGI, SSIL, volumetric fog or auto exposure (tune the constants in `AigeLights`). A standalone player build and the runtime environment cross-fade are untested, and play-test captures miss the uGUI overlay.
+- **Characters** (`packages/modeling/src/character/`): proportions, hoodie folds, hair, face and foot-planted walk/run/crouch are improved, and skinned parts now get scanned fabric materials in Godot. Still open: there is no skin texture or normal map (the face reads procedural up close), hair is solid locks rather than alpha cards, and box-UV seams show on fabrics.
 - **Key exposure:** the SSH private key for the server was pasted in chat; consider rotating it.

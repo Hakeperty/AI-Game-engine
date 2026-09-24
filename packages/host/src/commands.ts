@@ -23,6 +23,7 @@ import type { ProjectHost } from './host.ts';
 import { gameRunHeadless } from './play.ts';
 import { compileUserModule, runModule } from './sandbox.ts';
 import { scriptingCommands } from './scripting.ts';
+import { unityCommands } from './unity/tools.ts';
 import { voiceCommands } from './voice/voice-tools.ts';
 
 export interface HostServices {
@@ -704,5 +705,6 @@ export const hostCommands = [
   ...voiceCommands,
   ...assetCommands,
   ...godotCommands,
+  ...unityCommands,
   ...characterCommands,
 ];

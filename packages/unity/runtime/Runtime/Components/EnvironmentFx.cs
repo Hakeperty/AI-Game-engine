@@ -21,6 +21,9 @@ namespace Aige
         public float Ambient = 1f;
         public float SkyEnergy = 1f;
         public Color AmbientColor = new Color(0.13f, 0.14f, 0.17f);
+        /// <summary>Trilight ambient sampled from the sky (the importer averages the HDRI); used when <see cref="Trilight"/>.</summary>
+        public bool Trilight;
+        public Color AmbientSky = Color.gray, AmbientEquator = Color.gray, AmbientGround = Color.black;
         public string ToneMapping = "aces";
         public float Exposure = 1f;
         public float Contrast = 1.05f;
@@ -77,7 +80,15 @@ namespace Aige
         public void ApplyRenderSettings(float fogMul = 1f)
         {
             RenderSettings.skybox = Skybox;
-            if (Skybox != null)
+            if (Trilight)
+            {
+                RenderSettings.ambientMode = AmbientMode.Trilight;
+                var k = Ambient * AigeLights.AmbientScale;
+                RenderSettings.ambientSkyColor = AmbientSky * k;
+                RenderSettings.ambientEquatorColor = AmbientEquator * k;
+                RenderSettings.ambientGroundColor = AmbientGround * k;
+            }
+            else if (Skybox != null)
             {
                 RenderSettings.ambientMode = AmbientMode.Skybox;
                 RenderSettings.ambientIntensity = Ambient;
@@ -207,7 +218,14 @@ namespace Aige
                 RenderSettings.fogColor = Color.Lerp(from.FogColor, to.FogColor, x);
                 RenderSettings.fogDensity = Mathf.Lerp(from.FogDensity, to.FogDensity, x) * _mFog;
                 RenderSettings.fog = RenderSettings.fogDensity > 0f;
-                RenderSettings.ambientIntensity = Mathf.Lerp(from.Ambient, to.Ambient, x);
+                if (from.Trilight && to.Trilight)
+                {
+                    float ka = from.Ambient * AigeLights.AmbientScale, kb = to.Ambient * AigeLights.AmbientScale;
+                    RenderSettings.ambientSkyColor = Color.Lerp(from.AmbientSky * ka, to.AmbientSky * kb, x);
+                    RenderSettings.ambientEquatorColor = Color.Lerp(from.AmbientEquator * ka, to.AmbientEquator * kb, x);
+                    RenderSettings.ambientGroundColor = Color.Lerp(from.AmbientGround * ka, to.AmbientGround * kb, x);
+                }
+                else RenderSettings.ambientIntensity = Mathf.Lerp(from.Ambient, to.Ambient, x);
                 Hud.SetBaseLook(Mathf.Lerp(from.Vignette, to.Vignette, x), Mathf.Lerp(from.Grain, to.Grain, x),
                     Mathf.Lerp(from.Temperature, to.Temperature, x), Mathf.Lerp(from.Tint, to.Tint, x));
                 if (!skySwapped && x >= 0.5f)

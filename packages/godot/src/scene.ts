@@ -30,6 +30,7 @@ export interface ModelRef {
   root?: string;
   noShadowParts?: string[];
   /** Shared Godot materials per part (res:// .tres), assigned to each of the part's surfaces. */
+  /** Per-part material overrides; `part` is the node path under the GLB root ('hoodie', 'Skeleton3D/hoodie'). */
   partMaterials?: { part: string; surfaces: number; material: string }[];
 }
 
@@ -366,7 +367,12 @@ export function sceneToTscn(scene: SceneDoc, ctx: SceneExportContext): SceneExpo
             for (let i = 0; i < pm.surfaces; i++) at(pm.part)[`surface_material_override/${i}`] = ext(matId);
           }
           for (const part of model.noShadowParts ?? []) at(part).cast_shadow = 0;
-          for (const [part, props] of parts) w.node({ name: part, parent: `${n.path}/${model.root}`, props });
+          for (const [part, props] of parts) {
+            // a part may sit deeper than the root, e.g. 'Skeleton3D/hoodie' for a skinned character
+            const slash = part.lastIndexOf('/');
+            const under = slash < 0 ? '' : `/${part.slice(0, slash)}`;
+            w.node({ name: part.slice(slash + 1), parent: `${n.path}/${model.root}${under}`, props });
+          }
         }
       } else if (!mr.model || !model) {
         const prim = (mr.primitive as string) ?? 'box';

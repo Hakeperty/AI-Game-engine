@@ -292,7 +292,6 @@ export function dressUp(
     }
     let shape = sdf.smoothUnionAll(parts, 0.03 * s);
     const faded = mixColor(base, o.textured ? [1, 1, 1] : [0.78, 0.78, 0.76], 0.15 + 0.15 * wear);
-    const dark = shade(base, 0.84);
     shape = shape.colorBy(([x, yy, z]) => {
       const [t] = armCoord(x, yy, z);
       const onArm = Math.abs(x) > D.shoulderHalf * 0.9 && t > 0.05 * s;
@@ -603,6 +602,6 @@ export function dressUp(
     });
   }
 
-  if (o.top === 'hoodie' || o.top === 'sweater') neckCut = y.neck - 0.085 * s;
+  if (o.top === 'hoodie' || o.top === 'sweater') neckCut = y.neck - 0.13 * s;
   return { garments, neckCut, armCut, legTop, legBottom, barefoot: shoes === 'barefoot' };
 }

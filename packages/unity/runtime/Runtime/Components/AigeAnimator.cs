@@ -49,6 +49,7 @@ namespace Aige
         readonly List<AnimationClipPlayable> _playables = new List<AnimationClipPlayable>();
         readonly List<float> _weights = new List<float>();
         PlayableGraph _graph;
+        Animation? _legacy;
         AnimationMixerPlayable _mixer;
         Animator? _animator;
         Transform? _jaw;
@@ -88,6 +89,11 @@ namespace Aige
                 if (Clips.Length == 0) Log.WarnOnce("anim-none:" + name, $"'{name}' has no animation clips.");
                 return;
             }
+            if (Clips[0].legacy)
+            {
+                InitLegacy();
+                return;
+            }
             _animator.applyRootMotion = false;
             _animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             _graph = PlayableGraph.Create($"Aige:{name}");
@@ -121,6 +127,40 @@ namespace Aige
             if (ini >= 0 && ini != _idle) Play(initial, 0f);
             else if (_idle >= 0) PlayRaw(_idle, 0f, 1f, true);
         }
+
+        /// <summary>Legacy clips (glTFast 'Legacy' import) play on an Animation component with cross-fades.</summary>
+        void InitLegacy()
+        {
+            _legacy = GetComponentInChildren<Animation>(true);
+            if (_legacy == null)
+            {
+                var mesh = transform.Find("Mesh");
+                var host = mesh != null && mesh.childCount > 0 ? mesh.GetChild(0).gameObject : mesh != null ? mesh.gameObject : gameObject;
+                _legacy = host.AddComponent<Animation>();
+            }
+            _legacy.playAutomatically = false;
+            _legacy.cullingType = AnimationCullingType.AlwaysAnimate;
+            _loops = new bool[Clips.Length];
+            for (var i = 0; i < Clips.Length; i++)
+            {
+                if (_legacy.GetClip(Clips[i].name) == null) _legacy.AddClip(Clips[i], Clips[i].name);
+                var key = Normalize(Clips[i].name);
+                if (!_names.ContainsKey(key)) _names[key] = i;
+            }
+            _idle = Find(IdleNames);
+            _walk = Find(WalkNames);
+            _run = Find(RunNames);
+            _crouchIdle = Find(CrouchIdleNames);
+            _crouchWalk = Find(CrouchWalkNames);
+            foreach (var i in new[] { _idle, _walk, _run, _crouchIdle, _crouchWalk })
+                if (i >= 0) _loops[i] = true;
+            var initial = string.IsNullOrEmpty(Initial) ? "idle" : Initial;
+            var ini = Resolve(initial);
+            if (ini >= 0 && ini != _idle) Play(initial, 0f);
+            else if (_idle >= 0) PlayRaw(_idle, 0f, 1f, true);
+        }
+
+        bool Ready => _graph.IsValid() || _legacy != null;
 
         void OnDestroy()
         {
@@ -165,9 +205,9 @@ namespace Aige
         {
             Init();
             var i = Resolve(clip);
-            if (i < 0 || !_graph.IsValid())
+            if (i < 0 || !Ready)
             {
-                Log.WarnOnce($"anim:{name}:{clip}", !_graph.IsValid() ? $"'{name}' has no animated model; cannot play '{clip}'." : $"'{name}' has no clip '{clip}'.");
+                Log.WarnOnce($"anim:{name}:{clip}", !Ready ? $"'{name}' has no animated model; cannot play '{clip}'." : $"'{name}' has no clip '{clip}'.");
                 return false;
             }
             var loops = loop ?? _loops[i];
@@ -194,6 +234,20 @@ namespace Aige
 
         void PlayRaw(int i, float fade, float speed, bool loop)
         {
+            if (_legacy != null)
+            {
+                var clipName = Clips[i].name;
+                var st = _legacy[clipName];
+                if (st == null) return;
+                st.speed = Speed * speed;
+                st.wrapMode = loop ? WrapMode.Loop : WrapMode.ClampForever;
+                if (i != _target || !loop) st.time = 0f;
+                if (fade <= 0f) _legacy.Play(clipName);
+                else _legacy.CrossFade(clipName, fade);
+                _loops[i] = loop || _loops[i] && (i == _idle || i == _walk || i == _run);
+                _target = i;
+                return;
+            }
             if (i != _target || !loop)
             {
                 _playables[i].SetTime(0);
@@ -210,7 +264,7 @@ namespace Aige
         {
             MeasureSpeed(Time.deltaTime);
             _mouth = Mathf.Lerp(_mouth, Mathf.Clamp01(Mouth), Easing.Damp(30f, Time.deltaTime));
-            if (!_graph.IsValid()) return;
+            if (!Ready) return;
 
             if (_override >= 0)
             {
@@ -219,6 +273,20 @@ namespace Aige
                 if (release) Release();
             }
             else UpdateLocomotion(0.3f);
+
+            if (_legacy != null)
+            {
+                if (_override >= 0 && _override == _target && !_overrideLoops && !_overrideDone)
+                {
+                    var st = _legacy[Clips[_override].name];
+                    if (st != null && st.time >= st.length)
+                    {
+                        _overrideDone = true;
+                        ClipFinished?.Invoke(Clips[_override].name);
+                    }
+                }
+                return;
+            }
 
             // Loop or hold one-shots; cross-fade weights.
             for (var i = 0; i < _playables.Count; i++)
@@ -277,7 +345,7 @@ namespace Aige
 
         void UpdateLocomotion(float fade)
         {
-            if (!_graph.IsValid() || !Locomotion) return;
+            if (!Ready || !Locomotion) return;
             int want;
             var scale = 1f;
             var runFrom = (WalkClipSpeed + RunClipSpeed) * 0.5f;
@@ -303,7 +371,12 @@ namespace Aige
                 _loco = want;
                 PlayRaw(want, fade, 1f, true);
             }
-            _playables[want].SetSpeed(Speed * scale);
+            if (_legacy != null)
+            {
+                var st = _legacy[Clips[want].name];
+                if (st != null) st.speed = Speed * scale;
+            }
+            else _playables[want].SetSpeed(Speed * scale);
         }
     }
 }

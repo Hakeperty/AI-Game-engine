@@ -46,6 +46,7 @@ namespace Aige.Editor
                 SetupProject(project);
                 var mainEnv = FirstEnvironment();
                 SetupRenderPipeline(mainEnv);
+                ReimportModelsForUrp();
                 var sceneFiles = Directory.Exists(DataDir + "/scenes") ? Directory.GetFiles(DataDir + "/scenes", "*.json").OrderBy(f => f).ToArray() : Array.Empty<string>();
                 var built = new List<string>();
                 foreach (var file in sceneFiles)
@@ -221,6 +222,35 @@ namespace Aige.Editor
             AssetDatabase.SaveAssets();
         }
 
+        /// <summary>
+        /// glTFast picks its shaders from the render pipeline active at import time. Models imported before URP
+        /// was set up got Built-in shaders (pink in URP): reimport those.
+        /// </summary>
+        static void ReimportModelsForUrp()
+        {
+            var dir = DataDir + "/models";
+            if (!Directory.Exists(dir)) return;
+            var stale = new List<string>();
+            foreach (var file in Directory.GetFiles(dir, "*.gl*").Where(f => f.EndsWith(".glb") || f.EndsWith(".gltf")))
+            {
+                var path = file.Replace('\\', '/');
+                var mats = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Material>().ToList();
+                if (mats.Any(m => m.shader == null || !m.shader.name.StartsWith("Shader Graphs/"))) stale.Add(path);
+            }
+            if (stale.Count == 0) return;
+            Debug.Log($"[aige] Reimporting {stale.Count} model(s) for URP.");
+            try
+            {
+                AssetDatabase.StartAssetEditing();
+                foreach (var p in stale) AssetDatabase.ImportAsset(p, ImportAssetOptions.ForceUpdate);
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
+            }
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        }
+
         // =====================================================================================
         // Materials (MaterialDoc → URP Lit)
         // =====================================================================================
@@ -241,7 +271,15 @@ namespace Aige.Editor
         {
             if (string.IsNullOrEmpty(path)) return null;
             var t = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-            if (t == null) Warn($"Texture '{path}' not found.");
+            if (t == null && File.Exists(path))
+            {
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                t = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            }
+            if (t == null)
+                Warn(File.Exists(path)
+                    ? $"Texture '{path}' did not load (type {AssetDatabase.GetMainAssetTypeAtPath(path)?.Name ?? "none"})."
+                    : $"Texture '{path}' not found.");
             return t;
         }
 
@@ -297,7 +335,7 @@ namespace Aige.Editor
             mat.SetFloat("_Blend", 0f);
             try
             {
-                UnityEditor.Rendering.Universal.ShaderGUI.BaseShaderGUI.SetMaterialKeywords(mat, UnityEditor.Rendering.Universal.ShaderGUI.LitGUI.SetMaterialKeywords);
+                UnityEditor.BaseShaderGUI.SetMaterialKeywords(mat, UnityEditor.Rendering.Universal.ShaderGUI.LitGUI.SetMaterialKeywords);
             }
             catch (Exception e)
             {
@@ -395,7 +433,7 @@ namespace Aige.Editor
             mat.SetFloat("_Blend", 0f);
             try
             {
-                UnityEditor.Rendering.Universal.ShaderGUI.BaseShaderGUI.SetMaterialKeywords(mat);
+                UnityEditor.BaseShaderGUI.SetMaterialKeywords(mat);
             }
             catch (Exception e)
             {
@@ -763,8 +801,6 @@ namespace Aige.Editor
                 for (var i = 0; i < mats.Length; i++) mats[i] = mat;
                 r.sharedMaterials = mats;
             }
-            foreach (var p in parts.Keys)
-                if (!matched.Contains(p)) Warn($"{go.name}: model has no part '{p}' for its material.");
         }
 
         static void AddCollider(GameObject go, JsonNode c, GameObject? model, bool trigger)
@@ -912,6 +948,7 @@ namespace Aige.Editor
                     skyMat.SetFloat("_ImageType", 0f);
                     skyMat.SetFloat("_Exposure", e.SkyEnergy);
                     skyMat.SetFloat("_Rotation", Mathf.Repeat(env.Num("hdriRotation", 0f), 360f));
+                    SampleSkyAmbient(e, tex as Texture2D);
                 }
             }
             else if (sky != "none")
@@ -934,6 +971,42 @@ namespace Aige.Editor
             AssetDatabase.SaveAssets();
             e.Profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(profilePath);
             return e;
+        }
+
+        /// <summary>
+        /// Trilight ambient from an equirectangular HDRI (average of its top, middle and bottom thirds, scaled by
+        /// skyEnergy), so ambient light matches the sky without baking lighting.
+        /// </summary>
+        static void SampleSkyAmbient(AigeEnvironment e, Texture2D? tex)
+        {
+            if (tex == null || !tex.isReadable)
+            {
+                if (tex != null) Warn($"{e.name}: HDRI '{tex.name}' is not readable; ambient uses the flat color.");
+                return;
+            }
+            var mip = Mathf.Max(0, Mathf.Min(tex.mipmapCount - 1, 5));
+            var w = Mathf.Max(1, tex.width >> mip);
+            var h = Mathf.Max(1, tex.height >> mip);
+            var px = tex.GetPixels(mip);
+            Color Avg(int y0, int y1)
+            {
+                var sum = Color.black;
+                var n = 0;
+                for (var y = y0; y < y1; y++)
+                for (var x = 0; x < w; x++)
+                {
+                    sum += px[y * w + x];
+                    n++;
+                }
+                return n > 0 ? sum / n : Color.black;
+            }
+            // Pixel rows run bottom to top.
+            var k = e.SkyEnergy;
+            e.AmbientGround = Avg(0, h / 3) * k;
+            e.AmbientEquator = Avg(h / 3, 2 * h / 3) * k;
+            e.AmbientSky = Avg(2 * h / 3, h) * k;
+            e.AmbientSky.a = e.AmbientEquator.a = e.AmbientGround.a = 1f;
+            e.Trilight = true;
         }
 
         static Material SkyMaterial(string path, string shaderName)
@@ -1011,7 +1084,7 @@ namespace Aige.Editor
     {
         static Dictionary<string, string>? _roles;
 
-        public override uint GetVersion() => 2;
+        public override uint GetVersion() => 4;
 
         static string? RoleOf(string path)
         {
@@ -1037,6 +1110,10 @@ namespace Aige.Editor
             if (!assetPath.StartsWith(AigeImporter.DataDir + "/")) return;
             var importer = (TextureImporter)assetImporter;
             var role = RoleOf(assetPath);
+            // Minimal .meta files (stable GUIDs) otherwise deserialize with a cube shape.
+            importer.textureShape = TextureImporterShape.Texture2D;
+            importer.textureType = TextureImporterType.Default;
+            importer.sRGBTexture = true;
             importer.maxTextureSize = 2048;
             importer.mipmapEnabled = true;
             if (role == "normal") importer.textureType = TextureImporterType.NormalMap;
@@ -1044,6 +1121,8 @@ namespace Aige.Editor
             else if (role == "hdri")
             {
                 importer.maxTextureSize = 4096;
+                importer.isReadable = true;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
                 importer.wrapModeU = TextureWrapMode.Repeat;
                 importer.wrapModeV = TextureWrapMode.Clamp;
             }

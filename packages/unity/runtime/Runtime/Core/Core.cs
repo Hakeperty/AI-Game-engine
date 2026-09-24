@@ -34,8 +34,10 @@ namespace Aige
     /// </summary>
     public static class AigeLights
     {
-        public static float PointScale = 1.6f;
+        public static float PointScale = 2.4f;
         public static float DirectionalScale = 1f;
+        /// <summary>Sky ambient multiplier (stands in for the bounce light Godot's SDFGI adds).</summary>
+        public static float AmbientScale = 2f;
 
         public static float Intensity(float aige, LightType type) =>
             aige * (type == LightType.Directional ? DirectionalScale : PointScale);
