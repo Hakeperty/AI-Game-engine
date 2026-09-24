@@ -12,6 +12,7 @@ import {
   wordErrorRate,
 } from './audio.ts';
 import { tts } from './tts-client.ts';
+import { voiceVocalize } from './vocal-tool.ts';
 
 type Services = { host: ProjectHost };
 const hostOf = (ctx: { services: unknown }) => (ctx.services as Services).host;
@@ -377,4 +378,4 @@ export const ttsStatus = defineCommand({
   },
 });
 
-export const voiceCommands = [voiceDesign, voiceLine, voiceLines, voiceList, ttsStatus];
+export const voiceCommands = [voiceDesign, voiceLine, voiceLines, voiceVocalize, voiceList, ttsStatus];

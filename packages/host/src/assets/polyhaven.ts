@@ -141,7 +141,12 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
   input: z
     .object({
       kind: z.enum(['texture', 'hdri', 'model']).default('texture'),
-      id: z.string().regex(/^[a-z0-9_]+$/, 'Use the id from asset_search'),
+      id: z
+        .string()
+        .regex(
+          /^[A-Za-z0-9_]+$/,
+          'Use the id from asset_search (some ids are capitalized, e.g. WoodenChair_01)',
+        ),
       resolution: z
         .enum(['1k', '2k', '4k'])
         .default('1k')
@@ -157,7 +162,10 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
         .describe(
           'Texture tiling. Default: real-world scale for meter UVs (1 / texture size in m), which matches uvBox(1) in recipes and the box UVs the Godot export generates',
         ),
-      displacement: z.boolean().default(false).describe('Also download the height map (textures only)'),
+      displacement: z
+        .boolean()
+        .default(true)
+        .describe('Also download the height map, used for parallax depth (textures only)'),
       maxTriangles: z
         .number()
         .int()
@@ -221,6 +229,7 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
         map: saved.color,
         mapRepeat: repeat,
         ...(saved.normal ? { normalMap: saved.normal } : {}),
+        ...(saved.height ? { heightMap: saved.height } : {}),
         ...(saved.orm ? { ormMap: saved.orm, roughness: 1, metalness: 1 } : { roughness: 0.85 }),
       });
       await ctx.writeFile(matPath, canonicalJson(doc));

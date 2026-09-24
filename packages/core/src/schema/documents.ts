@@ -122,9 +122,26 @@ export const MaterialDoc = z.object({
     'Packed occlusion (R) / roughness (G) / metalness (B) texture, glTF convention (Poly Haven "arm" maps). Roughness and metalness multiply the values above.',
   ),
   aoIntensity: z.number().min(0).default(1),
+  heightMap: AssetPath.optional().describe(
+    'Height map, white = high (Poly Haven "disp" maps). Rendered as parallax occlusion, so bark, stone, log grain and plaster get real depth.',
+  ),
+  heightScale: z
+    .number()
+    .min(0)
+    .max(0.3)
+    .default(0.05)
+    .describe(
+      'Parallax depth in texture space: 0.02 fine grain or plaster, 0.05 rough wood, 0.08-0.12 bark or stone',
+    ),
   vertexColors: z.boolean().default(false),
   flatShading: z.boolean().default(false),
   doubleSided: z.boolean().default(false),
+  alphaCutoff: z
+    .number()
+    .min(0)
+    .max(1)
+    .default(0)
+    .describe('Cut out texels whose texture alpha is below this (0 = off): leaves, cobwebs, torn paper'),
 });
 export type MaterialDoc = z.infer<typeof MaterialDoc>;
 

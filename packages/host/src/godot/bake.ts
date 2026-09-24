@@ -65,7 +65,8 @@ export async function applyMaterialOverrides(
       .setEmissiveFactor(
         linear(md.emissive).map((c) => Math.min(1, c * md.emissiveIntensity)) as [number, number, number],
       );
-    if (md.opacity < 1) m.setAlphaMode('BLEND');
+    if (md.alphaCutoff > 0) m.setAlphaMode('MASK').setAlphaCutoff(md.alphaCutoff);
+    else if (md.opacity < 1) m.setAlphaMode('BLEND');
     const [su, sv] = md.mapRepeat ?? [1, 1];
     const repeat = (info: ReturnType<Material['getBaseColorTextureInfo']>) => {
       if (info && (su !== 1 || sv !== 1))

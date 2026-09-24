@@ -310,6 +310,11 @@ namespace Aige.Editor
             var normal = Tex(md.Str("normalMap"));
             mat.SetTexture("_BumpMap", normal);
             mat.SetFloat("_BumpScale", md.Num("normalScale", 1f));
+            // URP Lit parallax (height) mapping; URP's _Parallax range is 0.005-0.08
+            var height = Tex(md.Str("heightMap"));
+            mat.SetTexture("_ParallaxMap", height);
+            mat.SetFloat("_Parallax", Mathf.Clamp(md.Num("heightScale", 0.05f) * 0.6f, 0.005f, 0.08f));
+            if (height != null) mat.EnableKeyword("_PARALLAXMAP");
             var metal = md.Num("metalness", 0f);
             var rough = md.Num("roughness", 0.8f);
             var orm = md.Str("ormMap");
@@ -1101,7 +1106,7 @@ namespace Aige.Editor
             var name = Path.GetFileNameWithoutExtension(path).ToLowerInvariant();
             if (name.EndsWith("_mask")) return "linear";
             if (name.Contains("_nor_") || name.EndsWith("_normal") || name.Contains("_nor_gl")) return "normal";
-            if (name.Contains("_arm_") || name.Contains("_orm")) return "linear";
+            if (name.Contains("_arm_") || name.Contains("_orm") || name.Contains("_disp_")) return "linear";
             return null;
         }
 

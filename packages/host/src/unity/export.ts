@@ -219,6 +219,7 @@ export async function exportUnity(
       ['map', 'color'],
       ['normalMap', 'normal'],
       ['ormMap', 'linear'],
+      ['heightMap', 'linear'],
     ] as const) {
       const t = doc[key];
       if (typeof t === 'string') {

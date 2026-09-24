@@ -170,7 +170,8 @@ export async function writeProjectSupportFiles(fs: ProjectFs): Promise<void> {
   };
   await fs.write('tsconfig.json', `${JSON.stringify(tsconfig, null, 2)}\n`);
   if (!(await fs.exists('.gitignore'))) await fs.write('.gitignore', '.aige/\ndist/\nnode_modules/\n');
-  await fs.write('CLAUDE.md', PROJECT_CLAUDE_MD);
+  // Games keep their own agent notes, so only write the default once.
+  if (!(await fs.exists('CLAUDE.md'))) await fs.write('CLAUDE.md', PROJECT_CLAUDE_MD);
 }
 
 export function projectRootFor(start: string): string | null {

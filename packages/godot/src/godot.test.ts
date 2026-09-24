@@ -164,12 +164,17 @@ describe('project files', () => {
       normalScale: 1,
       ormMap: 'textures/a_arm.jpg',
       aoIntensity: 1,
+      heightMap: 'textures/a_disp.png',
+      heightScale: 0.05,
       vertexColors: false,
       flatShading: false,
       doubleSided: false,
+      alphaCutoff: 0,
     });
     expect(tres).toMatch(/^\[gd_resource type="ORMMaterial3D"/);
     expect(tres).toContain('orm_texture = ExtResource(');
     expect(tres).toContain('uv1_scale = Vector3(0.5, 0.5, 1)');
+    expect(tres).toContain('heightmap_enabled = true');
+    expect(tres).toContain('heightmap_scale = 5');
   });
 });

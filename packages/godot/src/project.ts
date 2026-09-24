@@ -208,7 +208,8 @@ export function materialTres(doc: MaterialDoc): string {
   const orm = tex(doc.ormMap);
   const [ru, rv] = doc.mapRepeat ?? [1, 1];
   const props = {
-    transparency: doc.opacity < 1 ? 1 : undefined,
+    transparency: doc.alphaCutoff > 0 ? 2 : doc.opacity < 1 ? 1 : undefined,
+    alpha_scissor_threshold: doc.alphaCutoff > 0 ? doc.alphaCutoff : undefined,
     cull_mode: doc.doubleSided ? 2 : undefined,
     vertex_color_use_as_albedo: doc.vertexColors ? true : undefined,
     albedo_color: color(doc.color, doc.opacity),
@@ -222,6 +223,13 @@ export function materialTres(doc: MaterialDoc): string {
     normal_enabled: doc.normalMap ? true : undefined,
     normal_scale: doc.normalMap ? doc.normalScale : undefined,
     normal_texture: tex(doc.normalMap),
+    // deep parallax occlusion from the height map (Godot scales heightmap_scale by 0.01)
+    heightmap_enabled: doc.heightMap ? true : undefined,
+    heightmap_texture: tex(doc.heightMap),
+    heightmap_scale: doc.heightMap ? Math.round(doc.heightScale * 1000) / 10 : undefined,
+    heightmap_deep_parallax: doc.heightMap ? true : undefined,
+    heightmap_min_layers: doc.heightMap ? 8 : undefined,
+    heightmap_max_layers: doc.heightMap ? 32 : undefined,
     ao_light_affect: orm ? 0.2 * doc.aoIntensity : undefined,
     uv1_scale: ru !== 1 || rv !== 1 ? vec3([ru, rv, 1]) : undefined,
   };
