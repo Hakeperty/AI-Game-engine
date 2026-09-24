@@ -318,7 +318,6 @@ export function humanoid(options: HumanoidOptions = {}): Model {
     stubble: an.fem < 0.5 && an.maturity > 0.5 ? o.stubble : 0,
   });
   const noise = new Noise(o.seed + 17);
-  const mouthDark: RGB = [0.22, 0.1, 0.09];
 
   const head = fw.warp(headSdf(hopts, L)).scale(frame.scale).translate(frame.origin);
   const { body, cloth } = bodySdfs(an);
@@ -333,8 +332,8 @@ export function humanoid(options: HumanoidOptions = {}): Model {
       const t = smoothstep(-0.06, -0.02, hp[1]);
       c = [c[0] + (fc[0] * n - c[0]) * t, c[1] + (fc[1] * n - c[1]) * t, c[2] + (fc[2] * n - c[2]) * t];
       // the mouth line reads as an opening when the jaw drops
-      if (Math.abs(hp[1] - L.mouthY) < 0.0011 && hp[2] > L.lipZ - 0.012 && Math.abs(hp[0]) < 0.021)
-        c = mouthDark;
+      if (Math.abs(hp[1] - L.mouthY) < 0.0008 && hp[2] > L.lipZ - 0.01 && Math.abs(hp[0]) < 0.017)
+        c = [c[0] * 0.55, c[1] * 0.42, c[2] * 0.42];
     }
     return c;
   });
@@ -368,10 +367,10 @@ export function humanoid(options: HumanoidOptions = {}): Model {
   );
   const headMesh = meshSolid(headRegion, {
     resolution: resFor(headRegion, q.head),
-    ao: { strength: 0.8, radius: 0.012 * s },
+    ao: { strength: 0.5, radius: 0.01 * s },
     smooth: 1,
   }).material(skinMat);
-  model.add(decimated(headMesh, 6500 * q.tri), 'skin_head');
+  model.add(decimated(headMesh, 8500 * q.tri), 'skin_head');
   // arms (from the sleeve end to the fingertips)
   const armMeshes: PolyMesh[] = [];
   for (const side of [1, -1] as const) {
@@ -475,6 +474,8 @@ export function humanoid(options: HumanoidOptions = {}): Model {
     height: an.H,
     offset: [0, an.H / 2, 0],
   });
+  // organic surfaces: smooth normals everywhere (decimated faces meet at steeper angles than 40 degrees)
+  model.smoothAngle = 85;
   model.animations = builtinAnimations(model.skeleton, o.clips);
   if (model.animations.length) model.clipAliases = builtinClipAliases();
   return model;

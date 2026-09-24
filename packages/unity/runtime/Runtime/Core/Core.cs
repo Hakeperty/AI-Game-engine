@@ -165,7 +165,11 @@ namespace Aige
         public event Action? Destroyed;
         void OnDestroy() => Destroyed?.Invoke();
 
-        public static AigeLifetime Of(GameObject go) => go.GetComponent<AigeLifetime>() ?? go.AddComponent<AigeLifetime>();
+        public static AigeLifetime Of(GameObject go)
+        {
+            var l = go.GetComponent<AigeLifetime>();
+            return l != null ? l : go.AddComponent<AigeLifetime>();
+        }
     }
 
     /// <summary>

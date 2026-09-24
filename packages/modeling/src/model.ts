@@ -80,6 +80,8 @@ export class Model {
   animations: ModelAnimation[] = [];
   /** Alternative clip names -> animation name (exported in extras so runtimes can resolve story vocabulary). */
   clipAliases: Record<string, string> = {};
+  /** Default auto-smooth angle (degrees) for export; organic models (characters) use a high value. */
+  smoothAngle: number | null = null;
 
   /** Adds a part. Names must be unique; duplicates get a numeric suffix. */
   add(mesh: PolyMesh, name?: string, skin?: PartSkin): this {

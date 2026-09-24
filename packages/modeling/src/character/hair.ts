@@ -106,7 +106,7 @@ export function hairSdf(style: HairStyle, L: FaceLayout, o: HeadOptions, color: 
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
       pts.push(p);
-      radii.push(Math.max(0.0018, width * 0.5 * (1 - 0.75 * t ** 1.4)));
+      radii.push(Math.max(0.003, width * 0.5 * (1 - 0.7 * t ** 1.4)));
       const nn = norm([(p[0] - c[0]) / r[0] ** 2, (p[1] - c[1]) / r[1] ** 2, (p[2] - c[2]) / r[2] ** 2]);
       const fn = dot(f, nn);
       const tan: V3 = [f[0] - nn[0] * fn, f[1] - nn[1] * fn, f[2] - nn[2] * fn];
@@ -166,20 +166,20 @@ export function hairSdf(style: HairStyle, L: FaceLayout, o: HeadOptions, color: 
   }
   // fringe: locks from the top of the forehead falling forward over the hairline
   if (style === 'messy' || style === 'short') {
-    const nF = style === 'messy' ? 16 : 11;
+    const nF = style === 'messy' ? 11 : 9;
     for (let i = 0; i < nF; i++) {
       const u = (i + rng.range(-0.35, 0.35)) / (nF - 1) - 0.5;
       const { p, n } = skullPoint(u * 1.3, 0.72 + rng.range(-0.08, 0.1));
       const flow: V3 = [u * 0.6 + rng.range(-0.25, 0.25) * (0.5 + messy), -0.55 - rng.range(0, 0.3), 0.8];
-      const len = style === 'messy' ? rng.range(0.05, 0.075) : rng.range(0.032, 0.045);
+      const len = style === 'messy' ? rng.range(0.035, 0.055) : rng.range(0.028, 0.04);
       addLock(
         p,
         n,
         flow,
         len,
-        rng.range(0.013, 0.02),
+        rng.range(0.016, 0.024),
         rng.range(0.006, 0.008),
-        0.05 + messy * rng.range(0.05, 0.15),
+        0.03 + messy * rng.range(0.03, 0.1),
       );
     }
   }

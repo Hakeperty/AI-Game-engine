@@ -96,7 +96,7 @@ export function dressUp(
     const hoodie = top === 'hoodie';
     const base = tint(hexToRgb(o.topColor));
     const loose = hoodie ? 1 : top === 'sweater' ? 0.8 : 0.5;
-    const easeT = (0.008 + 0.008 * loose) * s;
+    const easeT = (0.008 + 0.005 * loose) * s;
     const easeA = (0.006 + 0.006 * loose) * s;
     const sleeveEnd = top === 'tshirt' ? U * 0.46 : U + F - 0.008 * s;
     armCut = top === 'tshirt' ? sleeveEnd - 0.04 * s : U + F - 0.045 * s;
@@ -120,7 +120,8 @@ export function dressUp(
     const sleeves = cloth.arms.map((a) => a.round(easeA));
     let shell = sdf.smoothUnionAll([torsoC, ...sleeves], 0.02 * s);
     const neckR = D.neckR + (hoodie ? 0.014 : 0.008) * s;
-    shell = shell.intersect(
+    // soft (hemmed) edges at the hem, cuffs and neckline
+    shell = shell.smoothIntersect(
       mask(
         (x, yy, z) => {
           const [t] = armCoord(x, yy, z);
@@ -139,6 +140,7 @@ export function dressUp(
         [-1.2 * s, hemY - 0.02, -0.3 * s],
         [1.2 * s, y.neck + 0.08 * s, 0.3 * s],
       ),
+      0.005 * s,
     );
     // folds: sleeves bunch at the cuffs and crease at the elbows; the body drapes in vertical folds from the
     // chest, pulls diagonally from the armpits and compresses above the hem band
@@ -234,19 +236,22 @@ export function dressUp(
         const front = Math.max(0, Math.cos(a));
         rimPts.push([
           Math.sin(a) * (D.neckR + 0.03 * s),
-          hy + 0.01 * s - 0.045 * s * front ** 3 + 0.018 * s * Math.max(0, -Math.cos(a)),
+          hy -
+            0.008 * s * Math.abs(Math.sin(a)) -
+            0.045 * s * front ** 3 +
+            0.022 * s * Math.max(0, -Math.cos(a)),
           -0.02 * s + Math.cos(a) * (D.neckR + 0.028 * s) + 0.012 * s * front,
         ]);
       }
       // thick bunched fabric around the back of the neck, thinner toward the front V
-      const rim = sdf.tube(rimPts, (t) => (0.012 + 0.016 * Math.abs(Math.cos(t * Math.PI)) ** 2) * s);
+      const rim = sdf.tube(rimPts, (t) => (0.01 + 0.016 * Math.max(0, -Math.cos(t * Math.PI * 2)) ** 2) * s);
       // teardrop sack: wide under the rim, narrowing to the hood's tip between the shoulder blades
       const sack = sdf.smoothUnionAll(
         [
           sdf
-            .ellipsoid([0.09 * s, 0.065 * s, 0.03 * s], [0, 0, 0])
+            .ellipsoid([0.09 * s, 0.065 * s, 0.024 * s], [0, 0, 0])
             .rotate([-18, 0, 0])
-            .translate([0, hy - 0.04 * s, -D.chestD - 0.035 * s]),
+            .translate([0, hy - 0.04 * s, -D.chestD - 0.028 * s]),
           sdf
             .ellipsoid([0.05 * s, 0.055 * s, 0.022 * s], [0, 0, 0])
             .rotate([-8, 0, 0])
@@ -285,7 +290,7 @@ export function dressUp(
         .translate([0, y.neck - 0.006 * s, -0.014 * s]);
       parts.push(collar);
     }
-    let shape = sdf.smoothUnionAll(parts, 0.02 * s);
+    let shape = sdf.smoothUnionAll(parts, 0.03 * s);
     const faded = mixColor(base, o.textured ? [1, 1, 1] : [0.78, 0.78, 0.76], 0.15 + 0.15 * wear);
     const dark = shade(base, 0.84);
     shape = shape.colorBy(([x, yy, z]) => {
@@ -341,7 +346,7 @@ export function dressUp(
       }
       garments.push({
         name: 'drawstrings',
-        shape: sdf.unionAll(cords).color(mixColor(base, [0.85, 0.84, 0.8], 0.35)),
+        shape: sdf.unionAll(cords).color(mixColor(hexToRgb(o.topColor), [0.85, 0.84, 0.8], 0.3)),
         material: { name: 'cord', color: '#ffffff', roughness: 0.85 },
         triangles: 600,
         cell: 0.002 * s,
@@ -463,7 +468,7 @@ export function dressUp(
         f += 0.45 * Math.exp(-(((yy - y.knee) / (0.05 * s)) ** 2)) * (z > 0 ? 1 : 0.3);
         f += 0.3 * (z < 0 ? 1 : 0) * Math.exp(-(((yy - (y.hipJoint - 0.04 * s)) / (0.07 * s)) ** 2));
         const whisk = Math.exp(-(((yy - (y.crotch + 0.01 * s)) / (0.03 * s)) ** 2)) * (z > 0 ? 1 : 0);
-        f += 0.22 * whisk * Math.max(0, Math.sin((yy - Math.abs(lx) * 0.5) * 420));
+        if (!o.textured) f += 0.22 * whisk * Math.max(0, Math.sin((yy - Math.abs(lx) * 0.5) * 420));
         // seams: outer leg seam and yoke
         if (Math.abs(Math.abs(x) - (D.hipHalf + D.thighR * 0.9)) < 0.003 * s && yy < y.hipJoint) f -= 0.4;
       }

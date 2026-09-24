@@ -62,12 +62,12 @@ export function faceLayout(o: HeadOptions): FaceLayout {
   const faceZ = 1 - 0.06 * child;
   const wide = o.shape === 'round' ? 1.04 : o.shape === 'long' ? 0.965 : o.shape === 'square' ? 1.02 : 1;
   return {
-    eyeL: [0.0315 * wide, eyeY, 0.0705 * faceZ],
-    eyeR: [-0.0315 * wide, eyeY, 0.0705 * faceZ],
+    eyeL: [0.0315 * wide, eyeY, 0.0685 * faceZ],
+    eyeR: [-0.0315 * wide, eyeY, 0.0685 * faceZ],
     eyeRadius: 0.0118 + 0.0004 * child,
     mouthY: 0.0445 + 0.004 * child,
     lipZ: 0.097 * faceZ,
-    noseTip: [0, 0.076 + 0.004 * child, 0.109 * faceZ - 0.004 * child],
+    noseTip: [0, 0.08 + 0.004 * child, 0.104 * faceZ - 0.004 * child],
     browY: 0.126 - 0.004 * child,
     hairlineY: 0.19 - 0.005 * child,
     earL: [0.072 * wide, 0.098, -0.014],
@@ -105,7 +105,8 @@ export function skullParts(L: FaceLayout, o: HeadOptions, grow = 0): Sdf[] {
 export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
   const child = 1 - o.maturity;
   const fem = o.fem;
-  const masc = (1 - fem) * o.maturity;
+  // adult male features (brow ridge, heavy jaw) develop late: an 18-year-old is only partway there
+  const masc = ((1 - fem) * Math.max(0, o.maturity - 0.4)) / 0.6;
   const shape = o.shape;
   const jawW = shape === 'square' ? 1.1 : shape === 'round' ? 1.06 : shape === 'long' ? 0.95 : 1;
   const faceLen = shape === 'long' ? 1.05 : shape === 'round' ? 0.97 : 1;
@@ -119,11 +120,11 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
   const cheekY = 0.099 - 0.004 * child;
   const jx = 0.046 * jawW - 0.003 * fem + 0.004 * child;
   const face: Sdf[] = [
-    ell([0.058, 0.048 * faceLen, 0.05], [0, 0.084, 0.044 - 0.004 * child]),
+    ell([0.055, 0.048 * faceLen, 0.05], [0, 0.084, 0.044 - 0.004 * child]),
     ell([0.047 * jawW + 0.003 * child, 0.04 * faceLen, 0.05], [0, 0.038, 0.032 - 0.003 * child]),
     ell(
       [0.021 * (shape === 'square' ? 1.2 : 1) - 0.002 * fem, 0.017, 0.018],
-      [0, 0.015, 0.073 * faceLen - 0.005 * child],
+      [0, 0.015, 0.076 * faceLen - 0.005 * child],
     ),
     ...sym((s) =>
       ell([0.017, 0.011 + 0.003 * child, 0.02], [s * 0.047, cheekY, 0.052 + 0.003 * fem], [0, s * 20, 0]),
@@ -137,6 +138,8 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
       ),
     ),
     ...sym((s) => ell([0.011, 0.03, 0.02], [s * (jx - 0.001), 0.062, -0.022])),
+    // youthful cheek fat pads
+    ...sym((s) => ell([0.018, 0.019, 0.017], [s * 0.038, 0.071, 0.064])),
     // mouth mound (teeth arch)
     ell([0.025, 0.023, 0.023], [0, 0.047, 0.071 - 0.003 * child]),
   ];
@@ -160,7 +163,7 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
 
   // eye orbits (soft hollows under the brow, around the eyeball)
   for (const s of [1, -1]) {
-    head = head.smoothSubtract(ell([0.017, 0.011, 0.01], [s * 0.032, eyeY + 0.001, ez + 0.011]), 0.006);
+    head = head.smoothSubtract(ell([0.016, 0.01, 0.009], [s * 0.032, eyeY + 0.001, ez + 0.011]), 0.006);
   }
 
   // --- nose
@@ -190,7 +193,7 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
   // nostrils
   for (const s of [1, -1]) {
     head = head.smoothSubtract(
-      ell([0.0042, 0.0026, 0.0058], [s * 0.0066 * noseScale, nt[1] - 0.0095, nt[2] - 0.009], [18, 0, 0]),
+      ell([0.0033, 0.002, 0.0042], [s * 0.0064 * noseScale, nt[1] - 0.0095, nt[2] - 0.0095], [18, 0, 0]),
       0.0015,
     );
   }
@@ -225,8 +228,8 @@ export function headSdf(o: HeadOptions, L: FaceLayout): Sdf {
   for (const s of [1, -1]) {
     const c: V3 = [s * L.eyeL[0], eyeY, ez];
     const shell = sdf.sphere(er + 0.0024, c);
-    const upper = shell.intersect(sdf.box([0.05, 0.03, 0.04], [c[0], eyeY + 0.0036 + 0.015, c[2] + 0.004]));
-    const lower = shell.intersect(sdf.box([0.05, 0.03, 0.04], [c[0], eyeY - 0.0056 - 0.015, c[2] + 0.004]));
+    const upper = shell.intersect(sdf.box([0.05, 0.03, 0.04], [c[0], eyeY + 0.003 + 0.015, c[2] + 0.004]));
+    const lower = shell.intersect(sdf.box([0.05, 0.03, 0.04], [c[0], eyeY - 0.005 - 0.015, c[2] + 0.004]));
     head = head.smoothUnion(upper.union(lower).rotate([0, 0, s * -4], c), 0.0025);
     // upper-lid crease
     head = head.smoothSubtract(
@@ -327,13 +330,13 @@ export function faceColor(
       const dz = z - e[2];
       const r = Math.hypot(dx, dy, dz);
       if (r < er + 0.0045 && dz > 0) {
-        const upperM = Math.abs(dy - 0.0036 + dx * dx * 22);
-        const lowerM = Math.abs(dy + 0.0056 - dx * dx * 18);
+        const upperM = Math.abs(dy - 0.003 + dx * dx * 22);
+        const lowerM = Math.abs(dy + 0.005 - dx * dx * 18);
         const edge = Math.abs(dx) < er * 0.95 ? 1 : 0;
-        blend(brow, edge * 0.95 * (1 - smoothstep(0.0006, 0.0018, upperM)));
+        blend(brow, edge * 0.7 * (1 - smoothstep(0.0004, 0.0013, upperM)));
         blend(
           [brow[0] * 1.4, brow[1] * 1.3, brow[2] * 1.3],
-          edge * 0.5 * (1 - smoothstep(0.0005, 0.0014, lowerM)),
+          edge * 0.3 * (1 - smoothstep(0.0004, 0.001, lowerM)),
         );
       }
     }
@@ -372,7 +375,7 @@ function eyeball(r: number, iris: RGB): PolyMesh {
   const pupilA = 10.5 * DEG;
   const pts: V3[] = [];
   const cols: RGB[] = [];
-  const sclera: RGB = [0.93, 0.9, 0.86];
+  const sclera: RGB = [0.8, 0.76, 0.71];
   const irisDark: RGB = [iris[0] * 0.55, iris[1] * 0.55, iris[2] * 0.55];
   for (let i = 0; i < thetas.length; i++) {
     const th = thetas[i]!;

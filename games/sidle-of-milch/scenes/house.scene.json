@@ -4623,6 +4623,300 @@
     },
     {
       "id": "e130",
+      "name": "Stain_Ceiling_Kitchen",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.5, 2.6, -2.2],
+        "rotation": [180, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.7, 0.5, 1.7],
+          "texture": "textures/decals/water_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e131",
+      "name": "Stain_Ceiling_Bedroom",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.6, 2.6, -1.2],
+        "rotation": [180, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.3, 0.5, 1.3],
+          "texture": "textures/decals/water_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e132",
+      "name": "Stain_Ceiling_Hall",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0.1, 2.6, 2.6],
+        "rotation": [180, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.2, 0.5, 1.2],
+          "texture": "textures/decals/water_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e133",
+      "name": "Stain_Ceiling_Upstairs",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.4, 5.4, -0.6],
+        "rotation": [180, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.6, 0.5, 1.6],
+          "texture": "textures/decals/water_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e134",
+      "name": "Mold_Bathroom_1",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-4.98, 0.55, 3.55],
+        "rotation": [0, 0, -90],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.9, 0.35, 1.1],
+          "texture": "textures/decals/mold.png"
+        }
+      ]
+    },
+    {
+      "id": "e135",
+      "name": "Mold_Bathroom_2",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-4.98, 2.2, 0.4],
+        "rotation": [0, 0, -90],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.8, 0.35, 0.8],
+          "texture": "textures/decals/mold.png"
+        }
+      ]
+    },
+    {
+      "id": "e136",
+      "name": "Mold_Bathroom_3",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.33, 0.45, 3.2],
+        "rotation": [0, 0, 90],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.9, 0.35, 0.9],
+          "texture": "textures/decals/mold.png"
+        }
+      ]
+    },
+    {
+      "id": "e137",
+      "name": "Mold_Upstairs",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.07, 3.5, -3.3],
+        "rotation": [0, 0, 90],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.2, 0.35, 1],
+          "texture": "textures/decals/mold.png"
+        }
+      ]
+    },
+    {
+      "id": "e138",
+      "name": "Drips_Bedroom_Window",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-4.98, 0.5, -2],
+        "rotation": [0, 0, -90],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.9, 0.35, 1],
+          "texture": "textures/decals/drips.png"
+        }
+      ]
+    },
+    {
+      "id": "e139",
+      "name": "Drips_Kitchen_Window",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [5.06, 0.5, -1.6],
+        "rotation": [0, 0, 90],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.9, 0.35, 1],
+          "texture": "textures/decals/drips.png"
+        }
+      ]
+    },
+    {
+      "id": "e140",
+      "name": "Stain_Floor_Kitchen",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [4.15, 0.05, -2.1],
+        "rotation": [0, 30, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.1, 0.3, 1.1],
+          "texture": "textures/decals/floor_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e141",
+      "name": "Stain_Floor_Hall",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.35, 0.05, 1.1],
+        "rotation": [0, 75, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.9, 0.3, 0.9],
+          "texture": "textures/decals/floor_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e142",
+      "name": "Stain_Floor_Bedroom",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-2.9, 0.05, -1.5],
+        "rotation": [0, 140, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [0.8, 0.3, 0.8],
+          "texture": "textures/decals/floor_stain.png"
+        }
+      ]
+    },
+    {
+      "id": "e143",
+      "name": "Drag_Marks_Upstairs",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.6, 3.05, -0.98],
+        "rotation": [0, 121.8, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Decal",
+          "color": "#ffffff",
+          "opacity": 1,
+          "size": [1.9, 0.3, 0.55],
+          "texture": "textures/decals/drag.png"
+        }
+      ]
+    },
+    {
+      "id": "e144",
       "name": "Milch",
       "parent": "e10",
       "active": true,
@@ -4673,7 +4967,7 @@
       ]
     },
     {
-      "id": "e131",
+      "id": "e145",
       "name": "Camera",
       "parent": "e10",
       "active": true,
@@ -4699,7 +4993,7 @@
       ]
     },
     {
-      "id": "e132",
+      "id": "e146",
       "name": "Trigger_Hall",
       "parent": "e10",
       "active": true,
@@ -4732,7 +5026,7 @@
       ]
     },
     {
-      "id": "e133",
+      "id": "e147",
       "name": "Trigger_Kitchen",
       "parent": "e10",
       "active": true,
@@ -4766,7 +5060,7 @@
       ]
     },
     {
-      "id": "e134",
+      "id": "e148",
       "name": "Trigger_Table",
       "parent": "e10",
       "active": true,
@@ -4800,7 +5094,7 @@
       ]
     },
     {
-      "id": "e135",
+      "id": "e149",
       "name": "Trigger_Bathroom",
       "parent": "e10",
       "active": true,
@@ -4832,7 +5126,7 @@
       ]
     },
     {
-      "id": "e136",
+      "id": "e150",
       "name": "Trigger_Storage",
       "parent": "e10",
       "active": true,
@@ -4864,7 +5158,7 @@
       ]
     },
     {
-      "id": "e137",
+      "id": "e151",
       "name": "Trigger_Upstairs",
       "parent": "e10",
       "active": true,
@@ -4897,7 +5191,7 @@
       ]
     },
     {
-      "id": "e138",
+      "id": "e152",
       "name": "Trigger_Murphys_Room",
       "parent": "e10",
       "active": true,
@@ -4931,7 +5225,7 @@
       ]
     },
     {
-      "id": "e139",
+      "id": "e153",
       "name": "Trigger_Leave",
       "parent": "e10",
       "active": true,
@@ -4964,7 +5258,7 @@
       ]
     },
     {
-      "id": "e140",
+      "id": "e154",
       "name": "Chapter1",
       "parent": "e10",
       "active": true,
@@ -4984,7 +5278,7 @@
       ]
     },
     {
-      "id": "e141",
+      "id": "e155",
       "name": "Environment_Night",
       "parent": "e7",
       "active": true,
@@ -5029,7 +5323,7 @@
       ]
     },
     {
-      "id": "e142",
+      "id": "e156",
       "name": "Moon",
       "parent": "e7",
       "active": true,
@@ -5054,7 +5348,7 @@
       ]
     },
     {
-      "id": "e143",
+      "id": "e157",
       "name": "Lightning",
       "parent": "e7",
       "active": true,
@@ -5079,7 +5373,7 @@
       ]
     },
     {
-      "id": "e144",
+      "id": "e158",
       "name": "Light_Kitchen",
       "parent": "e7",
       "active": true,
@@ -5104,7 +5398,7 @@
       ]
     },
     {
-      "id": "e145",
+      "id": "e159",
       "name": "Light_Hall",
       "parent": "e7",
       "active": true,
@@ -5129,7 +5423,7 @@
       ]
     },
     {
-      "id": "e146",
+      "id": "e160",
       "name": "Fill_Bedroom",
       "parent": "e7",
       "active": true,
@@ -5154,7 +5448,7 @@
       ]
     },
     {
-      "id": "e147",
+      "id": "e161",
       "name": "Fill_Bathroom",
       "parent": "e7",
       "active": true,
@@ -5179,7 +5473,7 @@
       ]
     },
     {
-      "id": "e148",
+      "id": "e162",
       "name": "Fill_Hall",
       "parent": "e7",
       "active": true,
@@ -5204,7 +5498,7 @@
       ]
     },
     {
-      "id": "e149",
+      "id": "e163",
       "name": "Fill_Storage",
       "parent": "e7",
       "active": true,
@@ -5229,7 +5523,7 @@
       ]
     },
     {
-      "id": "e150",
+      "id": "e164",
       "name": "Fill_Upstairs_Hall",
       "parent": "e7",
       "active": true,
@@ -5254,7 +5548,7 @@
       ]
     },
     {
-      "id": "e151",
+      "id": "e165",
       "name": "Fill_Murphy",
       "parent": "e7",
       "active": true,
@@ -5279,7 +5573,7 @@
       ]
     },
     {
-      "id": "e152",
+      "id": "e166",
       "name": "Environment_Morning",
       "parent": "e8",
       "active": false,
@@ -5324,7 +5618,7 @@
       ]
     },
     {
-      "id": "e153",
+      "id": "e167",
       "name": "Sun",
       "parent": "e8",
       "active": false,
@@ -5349,7 +5643,7 @@
       ]
     },
     {
-      "id": "e154",
+      "id": "e168",
       "name": "Storm",
       "parent": "e9",
       "active": true,
@@ -5372,7 +5666,7 @@
       ]
     },
     {
-      "id": "e155",
+      "id": "e169",
       "name": "Rain_Bedroom_Window",
       "parent": "e9",
       "active": true,
@@ -5395,7 +5689,7 @@
       ]
     },
     {
-      "id": "e156",
+      "id": "e170",
       "name": "Rain_Kitchen_Window",
       "parent": "e9",
       "active": true,
@@ -5418,7 +5712,7 @@
       ]
     },
     {
-      "id": "e157",
+      "id": "e171",
       "name": "Fridge_Hum",
       "parent": "e9",
       "active": true,
@@ -5441,7 +5735,7 @@
       ]
     },
     {
-      "id": "e158",
+      "id": "e172",
       "name": "Creaks",
       "parent": "e9",
       "active": true,
@@ -5464,7 +5758,7 @@
       ]
     },
     {
-      "id": "e159",
+      "id": "e173",
       "name": "Birds",
       "parent": "e9",
       "active": false,
@@ -5487,7 +5781,7 @@
       ]
     },
     {
-      "id": "e160",
+      "id": "e174",
       "name": "Dust_Bedroom",
       "parent": "e5",
       "active": true,
@@ -5511,7 +5805,7 @@
       ]
     },
     {
-      "id": "e161",
+      "id": "e175",
       "name": "Dust_Kitchen",
       "parent": "e5",
       "active": true,
@@ -5535,7 +5829,7 @@
       ]
     },
     {
-      "id": "e162",
+      "id": "e176",
       "name": "Dust_Upstairs",
       "parent": "e5",
       "active": true,
@@ -5559,7 +5853,7 @@
       ]
     },
     {
-      "id": "e163",
+      "id": "e177",
       "name": "Ground",
       "parent": "e11",
       "active": true,
@@ -5601,7 +5895,7 @@
       ]
     },
     {
-      "id": "e164",
+      "id": "e178",
       "name": "Field_Wall_W",
       "parent": "e11",
       "active": true,
@@ -5640,7 +5934,7 @@
       ]
     },
     {
-      "id": "e165",
+      "id": "e179",
       "name": "Field_Wall_N",
       "parent": "e11",
       "active": true,
@@ -5679,7 +5973,7 @@
       ]
     },
     {
-      "id": "e166",
+      "id": "e180",
       "name": "Field_Wall_E",
       "parent": "e11",
       "active": true,
@@ -5718,7 +6012,7 @@
       ]
     },
     {
-      "id": "e167",
+      "id": "e181",
       "name": "Field_Wall_S",
       "parent": "e11",
       "active": true,
@@ -5757,7 +6051,7 @@
       ]
     },
     {
-      "id": "e168",
+      "id": "e182",
       "name": "Thorn_Tree_1",
       "parent": "e11",
       "active": true,
@@ -5778,7 +6072,7 @@
       ]
     },
     {
-      "id": "e169",
+      "id": "e183",
       "name": "Thorn_Tree_2",
       "parent": "e11",
       "active": true,
@@ -5799,7 +6093,7 @@
       ]
     },
     {
-      "id": "e170",
+      "id": "e184",
       "name": "Thorn_Tree_3",
       "parent": "e11",
       "active": true,
@@ -5820,7 +6114,7 @@
       ]
     }
   ],
-  "nextId": 171,
+  "nextId": 185,
   "settings": {
     "ambientColor": "#ffffff",
     "ambientIntensity": 0.4,

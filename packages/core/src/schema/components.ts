@@ -361,6 +361,21 @@ export const ParticleSystem = defineComponent({
   example: { preset: 'dust', count: 400, area: [4, 2.6, 4] },
 });
 
+export const Decal = defineComponent({
+  type: 'Decal',
+  category: 'rendering',
+  multiple: true,
+  description:
+    "Projects a texture (with alpha) onto the surfaces inside a box: water stains, mold, grime streaks, blood, footprints, cracks. The box is centered on the entity and projects along the entity's local -Y (so a floor stain needs no rotation; rotate [90,0,0] for a wall facing +Z).",
+  schema: z.object({
+    texture: AssetPath.describe("PNG with transparency, e.g. 'textures/decals/water_stain.png'"),
+    size: Vec3.default([1, 0.4, 1]).describe('Box size [width, projection depth, height] in meters'),
+    color: Color.default('#ffffff').describe('Tint'),
+    opacity: z.number().min(0).max(1).default(1),
+  }),
+  example: { texture: 'textures/decals/water_stain.png', size: [1.2, 0.3, 1.2], opacity: 0.8 },
+});
+
 export const UIText = defineComponent({
   type: 'UIText',
   category: 'ui',

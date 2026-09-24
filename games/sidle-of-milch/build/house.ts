@@ -822,6 +822,33 @@ for (const [i, [x, z, sz]] of (
 ).entries())
   prop('Props', `Dirt_Trail_${i + 1}`, 'dirt', [x, U_Y, z], [0, i * 41, 0], [], { size: sz });
 
+// Decay: water stains, mold, drips, spills and drag marks (Decal components project along local -Y)
+const DECAL = (name: string) => `textures/decals/${name}.png`;
+const decal = (name: string, pos: V3, rot: V3, texture: string, size: V3, _opacity = 1) =>
+  add('Props', {
+    name,
+    position: pos,
+    rotation: rot,
+    components: [{ type: 'Decal', texture: DECAL(texture), size, opacity: 1 }],
+  });
+const UP: V3 = [180, 0, 0]; // project up onto a ceiling
+const WALL_W: V3 = [0, 0, -90]; // project toward -X (a wall facing +X)
+const WALL_E: V3 = [0, 0, 90]; // project toward +X
+decal('Stain_Ceiling_Kitchen', [3.5, 2.6, -2.2], UP, 'water_stain', [1.7, 0.5, 1.7], 0.55);
+decal('Stain_Ceiling_Bedroom', [-3.6, 2.6, -1.2], UP, 'water_stain', [1.3, 0.5, 1.3], 0.5);
+decal('Stain_Ceiling_Hall', [0.1, 2.6, 2.6], UP, 'water_stain', [1.2, 0.5, 1.2], 0.45);
+decal('Stain_Ceiling_Upstairs', [-0.4, U_Y + 2.4, -0.6], UP, 'water_stain', [1.6, 0.5, 1.6], 0.6);
+decal('Mold_Bathroom_1', [-4.98, 0.55, 3.55], WALL_W, 'mold', [0.9, 0.35, 1.1], 0.9);
+decal('Mold_Bathroom_2', [-4.98, 2.2, 0.4], WALL_W, 'mold', [0.8, 0.35, 0.8], 0.8);
+decal('Mold_Bathroom_3', [-1.33, 0.45, 3.2], WALL_E, 'mold', [0.9, 0.35, 0.9], 0.75);
+decal('Mold_Upstairs', [-1.2 + 0.13, U_Y + 0.5, -3.3], WALL_E, 'mold', [1.2, 0.35, 1.0], 0.8);
+decal('Drips_Bedroom_Window', [-4.98, 0.5, -2.0], WALL_W, 'drips', [0.9, 0.35, 1.0], 0.75);
+decal('Drips_Kitchen_Window', [5.06, 0.5, -1.6], WALL_E, 'drips', [0.9, 0.35, 1.0], 0.7);
+decal('Stain_Floor_Kitchen', [4.15, 0.05, -2.1], [0, 30, 0], 'floor_stain', [1.1, 0.3, 1.1], 0.8);
+decal('Stain_Floor_Hall', [-0.35, 0.05, 1.1], [0, 75, 0], 'floor_stain', [0.9, 0.3, 0.9], 0.7);
+decal('Stain_Floor_Bedroom', [-2.9, 0.05, -1.5], [0, 140, 0], 'floor_stain', [0.8, 0.3, 0.8], 0.6);
+decal('Drag_Marks_Upstairs', [-0.6, U_Y + 0.05, -0.98], [0, 121.8, 0], 'drag', [1.9, 0.3, 0.55], 0.85);
+
 // ---------------------------------------------------------------------------------------------------------
 // Characters and camera
 // ---------------------------------------------------------------------------------------------------------

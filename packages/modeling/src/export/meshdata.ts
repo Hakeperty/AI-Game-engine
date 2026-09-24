@@ -56,7 +56,11 @@ export function toMeshData(input: Model | PolyMesh, opts: MeshDataOptions = {}):
   let triangleCount = 0;
   let vertexCount = 0;
   for (const part of model.parts) {
-    const prims = meshToPrimitives(part.mesh, opts.smoothAngle ?? 40, model.skeleton ? part.skin : undefined);
+    const prims = meshToPrimitives(
+      part.mesh,
+      opts.smoothAngle ?? model.smoothAngle ?? 40,
+      model.skeleton ? part.skin : undefined,
+    );
     for (const p of prims) {
       triangleCount += p.indices.length / 3;
       vertexCount += p.positions.length / 3;

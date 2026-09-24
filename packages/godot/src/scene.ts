@@ -443,6 +443,25 @@ export function sceneToTscn(scene: SceneDoc, ctx: SceneExportContext): SceneExpo
       }
     }
 
+    // Decals (grime, stains, mold) project along the node's -Y, like AIGE's
+    for (const d of all('Decal')) {
+      const n = child(me.path, 'Decal');
+      const size = (d.size as number[]) ?? [1, 0.4, 1];
+      w.node({
+        name: n.name,
+        type: 'Decal',
+        parent: me.path,
+        props: {
+          size: vec3([size[0]!, size[1]!, size[2]!]),
+          texture_albedo: ext(w.ext('Texture2D', res(d.texture as string))),
+          modulate: color((d.color as string) ?? '#ffffff', (d.opacity as number) ?? 1),
+          normal_fade: 0.4,
+          upper_fade: 0.2,
+          lower_fade: 0.2,
+        },
+      });
+    }
+
     // Camera
     const cam = get('Camera');
     if (cam) {
