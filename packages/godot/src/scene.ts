@@ -367,6 +367,7 @@ export function sceneToTscn(scene: SceneDoc, ctx: SceneExportContext): SceneExpo
             for (let i = 0; i < pm.surfaces; i++) at(pm.part)[`surface_material_override/${i}`] = ext(matId);
           }
           for (const part of model.noShadowParts ?? []) at(part).cast_shadow = 0;
+          if (parts.size) w.editable(n.path);
           for (const [part, props] of parts) {
             // a part may sit deeper than the root, e.g. 'Skeleton3D/hoodie' for a skinned character
             const slash = part.lastIndexOf('/');

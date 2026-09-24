@@ -89,6 +89,7 @@ export class TscnWriter {
   private readonly extByPath = new Map<string, string>();
   private readonly subByKey = new Map<string, string>();
   private readonly nodes: NodeSpec[] = [];
+  private readonly editables = new Set<string>();
   private counter = 0;
 
   /** Adds (or reuses) an external resource and returns its id. */
@@ -123,6 +124,14 @@ export class TscnWriter {
     this.nodes.push(spec);
   }
 
+  /**
+   * Marks an instanced scene's children as editable. Needed for overrides on its inner nodes (e.g. per-part
+   * materials on an imported glb) to survive the export's binary scene conversion; text scenes apply them anyway.
+   */
+  editable(path: string): void {
+    this.editables.add(path);
+  }
+
   get nodeCount(): number {
     return this.nodes.length;
   }
@@ -155,6 +164,7 @@ export class TscnWriter {
         if (v !== undefined) out.push(`${k} = ${format(v)}`);
       out.push('');
     }
+    for (const path of this.editables) out.push(`[editable path=${str(path)}]`);
     return `${out.join('\n').trimEnd()}\n`;
   }
 
