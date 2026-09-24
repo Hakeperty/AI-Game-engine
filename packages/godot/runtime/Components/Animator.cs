@@ -83,6 +83,8 @@ public partial class Animator : Node3D
     Quaternion _jawBase = Quaternion.Identity, _jawWritten = Quaternion.Identity;
     readonly List<(MeshInstance3D mesh, int index)> _mouthShapes = new();
     FaceRig? _face;
+    EyesAndTremor? _life;
+    float _lastDt = 1f / 60f;
 
     /// <summary>The character's facial blend shapes (null before setup).</summary>
     public FaceRig? Face => _face;
@@ -137,6 +139,7 @@ public partial class Animator : Node3D
         }
         FindMouthShapes(mesh ?? entity);
         _face = new FaceRig(mesh ?? entity) { Blink = Blink };
+        if (_skeleton != null) _life = new EyesAndTremor(_skeleton);
         if (!string.IsNullOrEmpty(Expression)) _face.Set(Expression, 1f, 0.01f);
 
         if (_player != null)
@@ -270,6 +273,7 @@ public partial class Animator : Node3D
     public override void _Process(double delta)
     {
         var dt = (float)delta;
+        _lastDt = dt;
         MeasureSpeed(dt);
 
         _mouth = Mathf.Lerp(_mouth, Mathf.Clamp(Mouth, 0f, 1f), Easing.Damp(30f, delta));
@@ -341,6 +345,7 @@ public partial class Animator : Node3D
 
     void ApplyJaw()
     {
+        _life?.Apply(_lastDt, _face?.Distress ?? 0f);
         if (_skeleton == null || _jaw < 0 || !IsInstanceValid(_skeleton)) return;
         var current = _skeleton.GetBonePoseRotation(_jaw);
         if (!current.IsEqualApprox(_jawWritten)) _jawBase = current;

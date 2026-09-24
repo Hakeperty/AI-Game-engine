@@ -113,6 +113,8 @@ export async function exportGodot(
   // 2. Models: every (model, params, material overrides) used by a scene
   const modelRefs = new Map<string, ModelRef | null>();
   let baked = 0;
+  // model files this export uses; older bakes are pruned so the release build does not pack them
+  const usedModels = new Set<string>();
   const materialDoc = (path: string): MaterialDoc | null => {
     const doc = state.materials[path];
     if (!doc) warnings.push(`Material '${path}' not found.`);
@@ -139,6 +141,7 @@ export async function exportGodot(
           .split('/')
           .pop()!
           .replace(/\.glb$/, '')}-${shortHash(bytes)}.glb`;
+        usedModels.add(out);
         if (!(await fs.exists(out))) {
           await fs.write(out, bytes);
           baked++;
@@ -177,6 +180,7 @@ export async function exportGodot(
         .pop()!
         .replace(/\.(model\.ts|glb)$/, '');
       const out = `godot/models/${name}-${shortHash(key)}.glb`;
+      usedModels.add(out);
       const prev = await fs.readBinary(out);
       if (!prev || shortHash(prev) !== shortHash(glb)) {
         await fs.write(out, glb);
@@ -308,6 +312,17 @@ export async function exportGodot(
   const gi = (await fs.read('.gitignore')) ?? '';
   const need = ['.godot/', 'dist/', 'godot/'].filter((l) => !gi.split(/\r?\n/).includes(l));
   if (need.length) await fs.write('.gitignore', `${gi.trimEnd()}\n${need.join('\n')}\n`);
+
+  // prune stale bakes (and the textures Godot extracted from them, which share the glb name as a prefix)
+  const keep = [...usedModels].map((p) => p.slice('godot/models/'.length).replace(/.glb$/, ''));
+  let pruned = 0;
+  for (const file of await fs.list('godot/models')) {
+    const base = file.split('/').pop()!;
+    if (keep.some((k) => base.startsWith(k))) continue;
+    await fs.remove(file);
+    pruned++;
+  }
+  if (pruned) warnings.push(`Removed ${pruned} stale files from godot/models.`);
 
   const result: GodotExportResult = {
     project: fs.abs('project.godot'),

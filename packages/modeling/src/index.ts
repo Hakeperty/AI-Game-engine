@@ -109,7 +109,12 @@ export {
   type HeadShape,
   type Sex,
 } from './character/anatomy.ts';
-export { builtinAnimations, builtinClipAliases, clipToModelAnimation } from './character/animation.ts';
+export {
+  animateFingers,
+  builtinAnimations,
+  builtinClipAliases,
+  clipToModelAnimation,
+} from './character/animation.ts';
 export type { BottomKind, ShoesKind, TopKind } from './character/clothing.ts';
 export type { HairStyle } from './character/hair.ts';
 export {
@@ -122,4 +127,12 @@ export {
   resolveHumanoidOptions,
 } from './character/humanoid.ts';
 export { humanoidFromMakeHuman, type MakeHumanOptions, makeHumanBone } from './character/makehuman.ts';
+export {
+  type Bvh,
+  closeLoop,
+  type MocapOptions,
+  mocapAnimation,
+  parseBvh,
+  sliceAnimation,
+} from './character/mocap.ts';
 export { computeSkin, type SkinOptions, type WeightBone } from './character/skinning.ts';

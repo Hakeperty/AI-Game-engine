@@ -2,10 +2,11 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { AigeError, defineCommand } from '@aige/core';
+import { AigeError, canonicalJson, defineCommand, VoiceLineDoc } from '@aige/core';
 import { z } from 'zod';
 import type { ProjectHost } from '../host.ts';
 import { ENGINE_ROOT } from '../project-io.ts';
+import { decodeWav, encodeOgg, mouthCurve, probeDuration } from './audio.ts';
 import { ttsInstalled, ttsPython } from './tts-client.ts';
 
 type Services = { host: ProjectHost };
@@ -32,6 +33,23 @@ const Sound = z.object({
     .default(1)
     .describe("Loudness relative to the voice's reference recording"),
   seed: z.number().int().default(1),
+  maxSeconds: z
+    .number()
+    .min(0)
+    .max(20)
+    .default(0)
+    .describe('Cut longer takes here with a short fade (0 = no limit)'),
+  expect: z
+    .string()
+    .default('')
+    .describe('Words the take must contain (Whisper), e.g. "murphy" for a scream that calls a name'),
+  line: z
+    .string()
+    .default('')
+    .describe(
+      'Also write it as this voice line (audio/voice/<line>.ogg + .json with a lip-sync curve), replacing a TTS line that could not act it',
+    ),
+  lineText: z.string().default('').describe("Subtitle text for the line (default: the existing line's text)"),
 });
 
 export const voiceVocalize = defineCommand({
@@ -68,10 +86,8 @@ Example: {"voice":"milch","sounds":[{"name":"pain_groan","text":"(groans) Nnngh.
       });
     const dir = await mkdtemp(join(tmpdir(), 'aige-vocal-'));
     const jobs = join(dir, 'jobs.json');
-    await writeFile(
-      jobs,
-      JSON.stringify({ voice, out: 'audio/vocal', takes: input.takes, items: input.sounds }),
-    );
+    const items = input.sounds.map((s) => ({ ...s, words: s.words || !!s.expect, wav: !!s.line }));
+    await writeFile(jobs, JSON.stringify({ voice, out: 'audio/vocal', takes: input.takes, items }));
     let log = '';
     const code = await new Promise<number>((resolve, reject) => {
       const child = spawn(
@@ -100,7 +116,44 @@ Example: {"voice":"milch","sounds":[{"name":"pain_groan","text":"(groans) Nnngh.
     for (const s of input.sounds) {
       const report = JSON.parse(await readFile(host.fs.abs(`audio/vocal/${s.name}.json`), 'utf8'));
       const { seconds, similarity, rejected, heard } = report.best;
-      sounds.push({ name: s.name, audio: `audio/vocal/${s.name}.ogg`, seconds, similarity, rejected, heard });
+      let line: string | undefined;
+      if (s.line) {
+        // a proper voice line: ogg + VoiceLineDoc with the mouth curve, so cutscene voice tracks lip-sync it
+        const wav = host.fs.abs(`audio/vocal/${s.name}.wav`);
+        const pcm = decodeWav(new Uint8Array(await readFile(wav)));
+        const audio = `audio/voice/${s.line}.ogg`;
+        await host.fs.write(audio, new Uint8Array());
+        await encodeOgg(wav, host.fs.abs(audio), 'none');
+        await rm(wav, { force: true });
+        const old = await host.fs.read(`audio/voice/${s.line}.json`);
+        const prev = old ? (JSON.parse(old) as { speaker?: string; text?: string }) : {};
+        const doc = VoiceLineDoc.parse({
+          format: 'aige.voiceline',
+          version: 1,
+          id: s.line,
+          speaker:
+            prev.speaker ??
+            (input.voice ? input.voice.charAt(0).toUpperCase() + input.voice.slice(1) : 'Voice'),
+          text: s.lineText || prev.text || s.text,
+          voice: voice || undefined,
+          instruct: `dia: ${s.text}`,
+          audio,
+          duration: Number(((await probeDuration(host.fs.abs(audio))) ?? seconds).toFixed(3)),
+          fps: 30,
+          mouth: mouthCurve(pcm, 30),
+        });
+        await ctx.writeFile(`audio/voice/${s.line}.json`, canonicalJson(doc));
+        line = audio;
+      }
+      sounds.push({
+        name: s.name,
+        audio: `audio/vocal/${s.name}.ogg`,
+        seconds,
+        similarity,
+        rejected,
+        heard,
+        ...(line ? { line } : {}),
+      });
     }
     return { sounds };
   },

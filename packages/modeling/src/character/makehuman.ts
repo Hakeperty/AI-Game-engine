@@ -11,7 +11,8 @@ import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import type { V2, V3 } from '../math.ts';
 import { type Joint, Model } from '../model.ts';
 import { PolyMesh } from '../polymesh.ts';
-import { builtinAnimations, builtinClipAliases } from './animation.ts';
+import { animateFingers, builtinAnimations, builtinClipAliases } from './animation.ts';
+import { type MocapOptions, mocapAnimation, parseBvh, sliceAnimation } from './mocap.ts';
 
 /** Where each AIGE joint sits: the head of this MakeHuman "default" rig bone. */
 const JOINT_AT: Record<string, string> = {
@@ -21,6 +22,8 @@ const JOINT_AT: Record<string, string> = {
   neck: 'neck01',
   head: 'head',
   jaw: 'jaw',
+  eye_l: 'eye.L',
+  eye_r: 'eye.R',
   shoulder_l: 'clavicle.L',
   upperarm_l: 'upperarm01.L',
   forearm_l: 'lowerarm01.L',
@@ -65,6 +68,8 @@ const PARENT: Record<string, string | null> = {
   neck: 'chest',
   head: 'neck',
   jaw: 'head',
+  eye_l: 'head',
+  eye_r: 'head',
   shoulder_l: 'chest',
   upperarm_l: 'shoulder_l',
   forearm_l: 'upperarm_l',
@@ -113,6 +118,7 @@ export function makeHumanBone(name: string, lowerLip: ReadonlySet<string> = new 
   if (b === 'spine02' || b === 'spine01' || b === 'breast') return 'chest';
   if (b.startsWith('neck')) return 'neck';
   if (b === 'jaw' || b.startsWith('tongue') || lowerLip.has(name)) return 'jaw';
+  if (b === 'eye') return `eye${side}`; // the runtime moves the eyes (saccades)
   if (b === 'clavicle') return `shoulder${side}`;
   if (b === 'shoulder01' || b.startsWith('upperarm')) return `upperarm${side}`;
   if (b.startsWith('lowerarm')) return `forearm${side}`;
@@ -138,6 +144,10 @@ export interface MakeHumanOptions {
   followMorphs?: RegExp;
   /** Built-in clips to include: 'all' (default), 'none' or a list. */
   clips?: 'all' | 'none' | string[];
+  /** Motion-capture takes (BVH text, CMU skeleton) that replace or add clips by name. */
+  mocap?: (MocapOptions & { bvh: string })[];
+  /** New clips cut from others (built-in or mocap), e.g. the leg swing at the end of a keyframed wake-up. */
+  slices?: { name: string; of: string; from: number; to: number; loop?: boolean; next?: string }[];
 }
 
 /** Converts a skinned MakeHuman GLB (tools/makehuman/build_human.py) into an AIGE humanoid Model. */
@@ -238,6 +248,26 @@ export async function humanoidFromMakeHuman(glb: Uint8Array, opts: MakeHumanOpti
   model.setCollider({ shape: 'capsule', radius: 0.2, height, offset: [0, height / 2, 0] });
   model.smoothAngle = 85;
   model.animations = builtinAnimations(model.skeleton, opts.clips ?? 'all');
+  // slices come from the built-in clips, before mocap takes replace any of them
+  for (const sl of opts.slices ?? []) {
+    const src = model.animations.find((a) => a.name === sl.of);
+    if (!src) throw new Error(`Slice ${sl.name}: no clip ${sl.of}.`);
+    const cut = sliceAnimation(src, sl.from, sl.to, sl.name, sl);
+    model.animations = [...model.animations.filter((a) => a.name !== sl.name), cut];
+  }
+  if (opts.mocap?.length) {
+    // fingers keep the relaxed curl of the built-in idle (captures have no fingers), then flex on their own
+    const idle = model.animations.find((a) => a.name === 'idle');
+    const hold = new Map<string, [number, number, number, number]>();
+    for (const ch of idle?.channels ?? [])
+      if (ch.path === 'rotation' && /^(fingers|fingertips|thumb)_/.test(ch.joint))
+        hold.set(ch.joint, [ch.values[0]!, ch.values[1]!, ch.values[2]!, ch.values[3]!]);
+    for (const m of opts.mocap) {
+      const anim = animateFingers(mocapAnimation(parseBvh(m.bvh), model.skeleton, m, hold), model.skeleton);
+      model.animations = [...model.animations.filter((a) => a.name !== m.name), anim];
+    }
+  }
+
   if (model.animations.length) model.clipAliases = builtinClipAliases();
   return model;
 }

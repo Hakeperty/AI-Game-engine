@@ -111,6 +111,27 @@ export function builtinClipAliases(): Record<string, string> {
   return { ...CLIP_ALIASES };
 }
 
+/** Adds the per-finger channels (see deriveFingers) to an animation with fingers/fingertips rotations (mocap takes). */
+export function animateFingers(anim: ModelAnimation, skeleton: Skeleton): ModelAnimation {
+  const names = new Set(skeleton.joints.map((j) => j.name));
+  const rot = new Map<string, Float32Array>();
+  let times: Float32Array | null = null;
+  for (const ch of anim.channels)
+    if (ch.path === 'rotation') {
+      rot.set(ch.joint, ch.values);
+      times = ch.times;
+    }
+  if (!times) return anim;
+  const bones = [...rot.keys()];
+  deriveFingers(rot, names, times, anim.duration ?? times[times.length - 1]!, times.length - 1, bones);
+  for (const b of bones) {
+    const ch = anim.channels.find((c) => c.joint === b && c.path === 'rotation');
+    if (ch) ch.values = rot.get(b)!;
+    else anim.channels.push({ joint: b, path: 'rotation', times, values: rot.get(b)! });
+  }
+  return anim;
+}
+
 /**
  * Skeletons with separate index/ring/pinky bones (MakeHuman characters) get them from the hand's curl: the
  * index curls less and the pinky more than the middle finger (fingers/fingertips), and every finger flexes a

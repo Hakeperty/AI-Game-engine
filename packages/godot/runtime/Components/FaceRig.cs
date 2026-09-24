@@ -52,6 +52,9 @@ public sealed class FaceRig
     public float MouthAmount = 0.6f;
     /// <summary>The expression currently faded in.</summary>
     public string Expression { get; private set; } = "neutral";
+    /// <summary>0..1 how frightened the face is (inner brows raised past "worried"): drives darting eyes and trembling.</summary>
+    public float Distress => Mathf.Clamp((_current.GetValueOrDefault("eyebrows_left_inner_up") - 0.6f) / 0.35f, 0f, 1f);
+
     /// <summary>True when the character has facial blend shapes.</summary>
     public bool Active => _shapes.Count > 0;
     /// <summary>True when the lip-sync mouth goes through a blend shape here.</summary>
@@ -162,5 +165,79 @@ static class FaceRigExt
     {
         foreach (var (u, w) in units) d[u] = w;
         return d;
+    }
+}
+
+/// <summary>
+/// Small signs of life applied after the animation mixer: the eyes move in quick saccades (darting when
+/// frightened), and fear makes the head and hands tremble. Needs <c>eye_l</c>/<c>eye_r</c> bones for the eyes.
+/// </summary>
+public sealed class EyesAndTremor
+{
+    readonly Skeleton3D _sk;
+    readonly int _eyeL, _eyeR;
+    readonly (int bone, float amp, float freq)[] _tremble;
+    readonly Dictionary<int, (Quaternion baseQ, Quaternion written)> _state = new();
+    readonly RandomNumberGenerator _rng = new();
+    Vector2 _gaze, _target;
+    float _next = 1f, _t;
+
+    public EyesAndTremor(Skeleton3D sk)
+    {
+        _sk = sk;
+        _rng.Randomize();
+        _eyeL = sk.FindBone("eye_l");
+        _eyeR = sk.FindBone("eye_r");
+        var list = new List<(int, float, float)>();
+        foreach (var (name, amp, freq) in new[] { ("head", 1.2f, 7.3f), ("hand_l", 2.4f, 9.1f), ("hand_r", 2.4f, 8.6f), ("forearm_l", 0.9f, 6.2f), ("forearm_r", 0.9f, 6.7f) })
+        {
+            var i = sk.FindBone(name);
+            if (i >= 0) list.Add((i, amp, freq));
+        }
+        _tremble = list.ToArray();
+    }
+
+    /// <summary><paramref name="fear"/> 0..1: how often and far the eyes dart, how hard he trembles.</summary>
+    public void Apply(float dt, float fear)
+    {
+        if (!GodotObject.IsInstanceValid(_sk)) return;
+        _t += dt;
+        if (_eyeL >= 0 || _eyeR >= 0)
+        {
+            _next -= dt;
+            if (_next <= 0f)
+            {
+                var range = Mathf.Lerp(1f, 2.2f, fear);
+                _target = new Vector2(_rng.RandfRange(-8f, 8f) * range, _rng.RandfRange(-3.5f, 3.5f) * range);
+                _next = _rng.RandfRange(Mathf.Lerp(0.6f, 0.2f, fear), Mathf.Lerp(2.6f, 0.8f, fear));
+            }
+            // a saccade snaps in ~40 ms, then the eye holds with a tiny drift
+            _gaze = _gaze.Lerp(_target, 1f - Mathf.Exp(-dt * 35f));
+            var yaw = _gaze.X + Mathf.Sin(_t * 13.1f) * 0.25f;
+            var pitch = _gaze.Y + Mathf.Sin(_t * 11.7f) * 0.2f;
+            var q = Quaternion.FromEuler(new Vector3(Mathf.DegToRad(-pitch), Mathf.DegToRad(yaw), 0f));
+            Set(_eyeL, q);
+            Set(_eyeR, q);
+        }
+        if (fear > 0.01f)
+            foreach (var (bone, amp, freq) in _tremble)
+            {
+                var a = Mathf.DegToRad(amp * fear);
+                var x = (Mathf.Sin(_t * freq * 6.283f) + 0.5f * Mathf.Sin(_t * freq * 2.1f * 6.283f + 1.3f)) * a;
+                var z = (Mathf.Sin(_t * freq * 1.3f * 6.283f + 0.7f) + 0.4f * Mathf.Sin(_t * freq * 3.2f * 6.283f)) * a;
+                Set(bone, Quaternion.FromEuler(new Vector3(x, 0f, z)));
+            }
+    }
+
+    // applies an offset on top of what the mixer wrote this frame (never on top of our own last write)
+    void Set(int bone, Quaternion offset)
+    {
+        if (bone < 0) return;
+        var current = _sk.GetBonePoseRotation(bone);
+        (Quaternion baseQ, Quaternion written) st = _state.TryGetValue(bone, out var s) ? s : (Quaternion.Identity, Quaternion.Identity);
+        var baseQ = current.IsEqualApprox(st.written) ? st.baseQ : current;
+        var w = baseQ * offset;
+        _sk.SetBonePoseRotation(bone, w);
+        _state[bone] = (baseQ, w);
     }
 }

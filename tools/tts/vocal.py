@@ -12,7 +12,8 @@ jobs.json:
 
 `text` uses Dia's tags: (gasps) (inhales) (exhales) (sighs) (groans) (screams) (sniffs) (coughs) (mumbles)
 (laughs) (clears throat); onomatopoeia ("Nnh...", "hhh", "Ah!") shapes the rest. `words: false` rejects takes
-where Whisper hears more than a word or two. Output: <out>/<name>.ogg and <out>/<name>.json (score, takes).
+where Whisper hears more than a word or two; `expect: "murphy"` rejects takes where it does not hear those words;
+`wav: true` keeps <name>.wav (voice_vocalize uses it for the lip-sync curve). Output: <out>/<name>.ogg and <out>/<name>.json (score, takes).
 """
 
 import json
@@ -145,6 +146,10 @@ def main():
             words = [w for w in re.findall(r"[a-z']+", heard.lower()) if len(w) > 2 and not VOCAL.match(w)]
             if not item.get("words", False) and len(words) > int(item.get("maxWords", 2)):
                 reasons.append(f"speaks: {heard[:40]}")
+            # scripted words must be heard (a scream that says the name, not just noise)
+            missing = [w for w in item.get("expect", "").lower().split() if w not in heard.lower()]
+            if missing:
+                reasons.append(f"missing: {' '.join(missing)}")
             score = sim - 0.5 * len(reasons)
             results.append({"take": i, "score": round(score, 3), "similarity": round(sim, 3), "seconds": round(dur, 2), "heard": heard, "rejected": reasons, "audio": audio})
 
@@ -161,7 +166,8 @@ def main():
         sf.write(wav_path, audio, SR)
         ogg_path = os.path.join(out_dir, f"{name}.ogg")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav_path, "-c:a", "libvorbis", "-q:a", "5", ogg_path], check=True)
-        os.remove(wav_path)
+        if not item.get("wav", False):
+            os.remove(wav_path)
         report = {"name": name, "text": item["text"], "best": {k: v for k, v in best.items() if k != "audio"}, "takes": [{k: v for k, v in r.items() if k != "audio"} for r in results]}
         with open(os.path.join(out_dir, f"{name}.json"), "w", encoding="utf-8", newline="\n") as f:
             f.write(json.dumps(report, indent=2) + "\n")
