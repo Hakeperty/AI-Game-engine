@@ -83,3 +83,19 @@ Voice: *an 18-year-old young man, soft and slightly husky, quiet and tired, dry 
 | milch_knife_3 | "That was close." | quiet, shaken relief | none |
 
 Non-speech sounds (breathing, gasps, coughs, heartbeat, thunder, creaks, wind, fridge hum, birds) come from the engine's audio synthesis.
+
+## Lore: environmental storytelling (proposal, open to Harry's changes)
+*A suggestion for extra depth, told through the house rather than dialogue. None of it contradicts Chapter 1; change or drop anything.*
+
+The cabin stands in rural Ireland, and Irish folklore fits the story's mysteries. The **sídhe** (the fairy folk; *sí* means an earthen mound) live inside hills and fairy forts. They are said to take children, leaving a changeling or nothing behind, and to cloud people's memories. Families kept them at bay with **milk left on the doorstep**, an **iron horseshoe** over the door, and a **St. Brigid's cross**. They never brought **hawthorn**, the fairy tree, indoors. (*Milch* is also German for milk.)
+
+What the player can find in Chapter 1:
+- **A saucer of fresh milk** inside the front door. It is fresh in an abandoned house: someone, or something, still keeps up the offering.
+- **A horseshoe** over the door outside, a **St. Brigid's cross** above it inside, and a **holy water font** beside it.
+- **The Sacred Heart picture with its red lamp still burning**. Who keeps it lit?
+- **The calendar:** every day is crossed off up to the 13th, the 14th is circled in red, and nothing after, as if time stopped that day (the day Mam was forgotten?).
+- **Hawthorn in a jar** on the kitchen table: "Nobody brings hawthorn into a house... Mam always said that." Milch quotes the mother he can't remember.
+- **Murphy's crayon drawing:** Milch, Murphy, and someone between them holding both their hands, with the face scribbled out, and a triple spiral in the corner.
+- **The triple spiral (Newgrange triskele)** on Murphy's shield: the ancient mark of the passage tombs, the door to the Otherworld.
+- **The dirt upstairs** ("Why is there dirt up here?") runs in a trail from the stairs to the locked room, like earth from a mound.
+- Outside: drystone field walls, windswept thorn trees, and (next) a fairy ring in the field.

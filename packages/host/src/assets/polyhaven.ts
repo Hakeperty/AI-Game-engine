@@ -190,7 +190,13 @@ Example: {"kind":"texture","id":"old_wooden_floor_02","resolution":"1k","name":"
       const dir = `textures/polyhaven/${input.id}`;
       const saved: Record<string, string> = {};
       const want: [string, string][] = [
-        ['Diffuse', 'color'],
+        // most sets call the colour map 'Diffuse'; fabric sets come in colour variants (col_01, col_02, ...)
+        [
+          files.Diffuse
+            ? 'Diffuse'
+            : (Object.keys(files).find((k) => /^(col|diff|albedo|base)/i.test(k)) ?? 'Diffuse'),
+          'color',
+        ],
         ['nor_gl', 'normal'],
         ['arm', 'orm'],
       ];

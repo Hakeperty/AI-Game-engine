@@ -1,0 +1,10 @@
+Library/
+Temp/
+Logs/
+obj/
+UserSettings/
+Build/
+Builds/
+*.csproj
+*.sln
+.gdignore

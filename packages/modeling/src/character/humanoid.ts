@@ -7,6 +7,7 @@
  * humanoid skeleton plus the built-in clip library as glTF animations. Output follows the skeleton convention
  * in @aige/core (faces +Z, feet on y = 0, bind A-pose with arms 40 degrees down, identity bind rotations).
  */
+import { HUMANOID_ARM_ANGLE } from '@aige/core';
 import { hexToRgb, mixColor, type RGB, smoothstep, type V3 } from '../math.ts';
 import { Model } from '../model.ts';
 import { Noise } from '../noise.ts';
@@ -63,6 +64,8 @@ export interface HumanoidOptions {
   stubble?: number;
   /** Built-in clips to include as animations: 'all' (default), 'none' or a list of names. */
   clips?: 'all' | 'none' | string[];
+  /** Garments get meter-scale UVs and neutral vertex tints for scanned fabric textures (game materials). */
+  textured?: boolean;
   /** Mesh detail. 'medium' is ~20-28k triangles. */
   detail?: 'low' | 'medium' | 'high';
   seed?: number;
@@ -90,6 +93,7 @@ const BASE: Resolved = {
   wear: 0.3,
   stubble: 0,
   clips: 'all',
+  textured: false,
   detail: 'medium',
   seed: 1,
 };
@@ -317,7 +321,7 @@ export function humanoid(options: HumanoidOptions = {}): Model {
   const mouthDark: RGB = [0.22, 0.1, 0.09];
 
   const head = fw.warp(headSdf(hopts, L)).scale(frame.scale).translate(frame.origin);
-  const { body, proxy } = bodySdfs(an);
+  const { body, cloth } = bodySdfs(an);
   const fc: RGB = [1, 1, 1];
   const skinSdf = body.smoothUnion(head, 0.009 * s).colorBy((p) => {
     const hp = toHead(p);
@@ -336,7 +340,7 @@ export function humanoid(options: HumanoidOptions = {}): Model {
   });
 
   // --- garments decide which skin is visible
-  const clothes: ClothingSet = dressUp(an, proxy, o, { toHead, L });
+  const clothes: ClothingSet = dressUp(an, cloth, o, { toHead, L });
 
   const model = new Model();
   model.skeleton = {
@@ -436,7 +440,8 @@ export function humanoid(options: HumanoidOptions = {}): Model {
     const shape = region(g.shape, () => -1, g.shape.bounds.min, g.shape.bounds.max);
     const res = resFor(shape, g.cell ?? q.cloth);
     const mesh = meshSolid(shape, { resolution: res, ao: { strength: 0.75, radius: 0.03 * s }, smooth: 2 });
-    model.add(decimated(mesh, g.triangles * q.tri).material(g.material), g.name);
+    const dm = decimated(mesh, g.triangles * q.tri);
+    model.add((g.uv ? dm.uvBox(1) : dm).material(g.material), g.name);
   }
 
   // skin weights
@@ -453,7 +458,7 @@ export function humanoid(options: HumanoidOptions = {}): Model {
   for (const side of [1, -1] as const) {
     const t = side > 0 ? 'l' : 'r';
     const palm = handToModel(an, side, [0.075 * k, -0.02 * k, 0.005 * k]);
-    model.socket(`hand_${t}`, palm, [0, 0, side * -40], `hand_${t}`);
+    model.socket(`hand_${t}`, palm, [0, 0, side * -HUMANOID_ARM_ANGLE], `hand_${t}`);
   }
   model.socket('head', [0, an.H + 0.01, 0], [0, 0, 0], 'head');
   model.socket(
@@ -532,6 +537,9 @@ export function humanoidRecipe(preset: HumanoidPreset = 'none') {
       wear: p.number(d.wear, { min: 0, max: 1, description: 'Clothes: 0 new .. 1 worn and dirty' }),
       stubble: p.number(d.stubble, { min: 0, max: 1 }),
       clips: p.choice(['all', 'none'], 'all', { description: 'Include the built-in clips as animations' }),
+      textured: p.boolean(d.textured, {
+        description: 'Garment UVs + neutral tints for scanned fabric materials',
+      }),
       detail: p.choice(['low', 'medium', 'high'], d.detail),
     },
     build(v) {

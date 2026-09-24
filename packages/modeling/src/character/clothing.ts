@@ -10,6 +10,7 @@ import { clamp, hexToRgb, mixColor, type RGB, smoothstep, type V3 } from '../mat
 import { Noise } from '../noise.ts';
 import { Sdf, sdf } from '../sdf.ts';
 import type { Anatomy } from './anatomy.ts';
+import type { ClothBase } from './body.ts';
 import type { FaceLayout } from './head.ts';
 
 export type TopKind = 'hoodie' | 'tshirt' | 'sweater';
@@ -24,6 +25,8 @@ export interface Garment {
   triangles: number;
   /** Meshing cell size override (meters). */
   cell?: number;
+  /** Give the mesh meter-scale box UVs (for tiling fabric textures). */
+  uv?: boolean;
 }
 
 export interface ClothingSet {
@@ -48,6 +51,8 @@ export interface DressOptions {
   shoeColor: string;
   wear: number;
   seed: number;
+  /** Garments get scanned fabric textures in the game: vertex colors then only tint and shade them. */
+  textured?: boolean;
 }
 
 /** Region mask with explicit bounds (negative inside). */
@@ -57,7 +62,7 @@ const shade = (c: RGB, k: number): RGB => [c[0] * k, c[1] * k, c[2] * k];
 
 export function dressUp(
   an: Anatomy,
-  proxy: Sdf,
+  cloth: ClothBase,
   o: DressOptions,
   _ctx: { toHead: (p: V3) => V3; L: FaceLayout },
 ): ClothingSet {
@@ -65,6 +70,8 @@ export function dressUp(
   const noise = new Noise(o.seed * 7 + 3);
   const wear = clamp(o.wear, 0, 1);
   const garments: Garment[] = [];
+  // textured garments: the texture carries the color, vertex colors add a light tint, wear and occlusion
+  const tint = (c: RGB): RGB => (o.textured ? mixColor([1, 1, 1], c, 0.3) : c);
   const U = an.len.upperArm;
   const F = an.len.forearm;
   const dL = an.armDir;
@@ -86,37 +93,34 @@ export function dressUp(
   let armCut = 0;
   {
     const top = o.top;
-    const base = hexToRgb(o.topColor);
-    const loose = top === 'hoodie' ? 1 : top === 'sweater' ? 0.75 : 0.45;
-    const ease = (0.012 + 0.012 * loose) * s;
-    const sleeveEnd = top === 'tshirt' ? U * 0.44 : U + F - 0.012 * s;
-    armCut = top === 'tshirt' ? sleeveEnd - 0.045 * s : U + F - 0.05 * s;
+    const hoodie = top === 'hoodie';
+    const base = tint(hexToRgb(o.topColor));
+    const loose = hoodie ? 1 : top === 'sweater' ? 0.8 : 0.5;
+    const easeT = (0.008 + 0.008 * loose) * s;
+    const easeA = (0.006 + 0.006 * loose) * s;
+    const sleeveEnd = top === 'tshirt' ? U * 0.46 : U + F - 0.008 * s;
+    armCut = top === 'tshirt' ? sleeveEnd - 0.04 * s : U + F - 0.045 * s;
     const hemY =
-      top === 'tshirt'
-        ? y.hipJoint + 0.015 * s
-        : top === 'hoodie'
-          ? y.crotch + 0.07 * s
-          : y.hipJoint + 0.005 * s;
-    // torso: proxy + a straight drape from the chest to the hem
-    const drape = sdf.ellipsoid(
-      [D.chestW * (1 + 0.1 * loose), (y.chest - hemY) * 0.95, D.chestD * (1 + 0.12 * loose)],
-      [0, hemY + (y.chest - hemY) * 0.35, 0.004 * s],
+      top === 'tshirt' ? y.hipJoint + 0.01 * s : hoodie ? y.crotch + 0.075 * s : y.hipJoint + 0.004 * s;
+    const cuffLen = top === 'tshirt' ? 0 : 0.05 * s;
+    // fabric hangs straight from the chest instead of clinging to the waist
+    const hang = sdf.ellipsoid(
+      [D.chestW * (0.97 + 0.07 * loose), (y.chest - hemY) * 0.78, D.chestD * (0.98 + 0.1 * loose)],
+      [0, hemY + (y.chest - hemY) * 0.42, 0.006 * s],
     );
-    let torso = proxy.round(ease).smoothUnion(drape, 0.06 * s);
-    // cut: below the hem and at the sleeve ends; the neckline is carved out around the neck
-    const neckR = D.neckR + (top === 'hoodie' ? 0.016 : 0.009) * s;
-    const nx = 0;
-    const neckAxisZ = -0.02 * s;
-    torso = torso.intersect(
+    const torsoC = cloth.torso.round(easeT).smoothUnion(hang, 0.05 * s);
+    const sleeves = cloth.arms.map((a) => a.round(easeA));
+    let shell = sdf.smoothUnionAll([torsoC, ...sleeves], 0.02 * s);
+    const neckR = D.neckR + (hoodie ? 0.014 : 0.008) * s;
+    shell = shell.intersect(
       mask(
         (x, yy, z) => {
-          const [t, r] = armCoord(x, yy, z);
+          const [t] = armCoord(x, yy, z);
           const onArm = t > 0.02 * s && Math.abs(x) > D.shoulderHalf * 0.8 ? t - sleeveEnd : -1;
           const neck =
             neckR -
-            Math.hypot(x - nx, z - neckAxisZ - (yy - y.neck) * 0.25) -
+            Math.hypot(x, z + 0.02 * s - (yy - y.neck) * 0.25) -
             Math.max(0, y.neck - 0.02 * s - yy) * 2;
-          void r;
           return Math.max(
             hemY + 0.0025 * s * Math.sin(x * 41 + z * 29) - yy,
             onArm,
@@ -128,148 +132,192 @@ export function dressUp(
         [1.2 * s, y.neck + 0.08 * s, 0.3 * s],
       ),
     );
-    // folds: sleeves bunch toward the cuff and at the inner elbow, the torso drapes at the hem
-    const cuffLen = top === 'tshirt' ? 0 : 0.055 * s;
-    torso = torso.displaceBy(
+    // folds: sleeves bunch at the cuffs and crease at the elbows; the body drapes in vertical folds from the
+    // chest, pulls diagonally from the armpits and compresses above the hem band
+    const cA = Math.cos((an.armAngle * Math.PI) / 180);
+    const sA = Math.sin((an.armAngle * Math.PI) / 180);
+    shell = shell.displaceBy(
       ([x, yy, z]) => {
+        const ax = Math.abs(x);
         const [t] = armCoord(x, yy, z);
-        const onArm = Math.abs(x) > D.shoulderHalf * 0.9 && t > 0.05 * s;
+        const armW =
+          smoothstep(0.02 * s, 0.07 * s, t) * smoothstep(D.shoulderHalf * 0.75, D.shoulderHalf, ax);
         let d = 0;
-        if (onArm) {
+        const n1 = noise.noise3(x * 13, yy * 13, z * 13);
+        if (armW > 0) {
+          // angle around the arm (0 = up/outside, pi/2 = front)
+          const rx = ax - shL[0];
+          const ry = yy - shL[1];
+          const phi = Math.atan2(z - shL[2], rx * sA + ry * cA);
+          let da = 0;
           if (top !== 'tshirt') {
-            const nearCuff = smoothstep(U + F * 0.3, U + F - cuffLen, t);
-            const wobble = noise.noise3(t * 25, x * 14, z * 14) * 3.2;
-            const amp = 0.5 + 0.5 * noise.noise3(x * 30 + 5, yy * 30, z * 30);
-            d += 0.0042 * s * nearCuff * amp * Math.sin((t / (0.034 * s)) * Math.PI * 2 + wobble);
-            // cuff: tighter band
-            if (t > U + F - cuffLen - 0.012 * s)
-              d -= 0.009 * s * smoothstep(U + F - cuffLen - 0.012 * s, U + F - cuffLen, t);
-            // elbow creases
-            const el = Math.exp(-(((t - U) / (0.05 * s)) ** 2));
-            d += 0.004 * s * el * Math.sin(z * 180 + t * 90);
+            const near = smoothstep(U + F * 0.3, U + F - cuffLen, t);
+            const ring = Math.sin(
+              (t / (0.028 * s)) * Math.PI * 2 + 1.7 * Math.sin(phi * 2 + n1 * 2) + n1 * 2.4,
+            );
+            da += 0.0048 * s * near * ring * (0.55 + 0.45 * noise.noise3(x * 31, yy * 31, z * 31));
+            const el = Math.exp(-(((t - U) / (0.055 * s)) ** 2));
+            da +=
+              0.0034 *
+              s *
+              el *
+              Math.sin(((t - U) / s) * 150 + phi * 3) *
+              (0.45 + 0.55 * Math.max(0, Math.sin(phi)));
+            da +=
+              0.0014 *
+              s *
+              Math.sin(phi * 3 + (t / s) * 22 + n1) *
+              smoothstep(0.05 * s, 0.14 * s, t) *
+              (1 - smoothstep(U * 0.8, U, t));
+            // ribbed cuff, snug at the wrist
+            const cuff = smoothstep(U + F - cuffLen - 0.01 * s, U + F - cuffLen, t);
+            da += cuff * (-0.006 * s + 0.0006 * s * Math.sin(phi * 38));
+          } else {
+            // short sleeve: a soft hem fold and a little flare
+            da += 0.0015 * s * Math.sin(phi * 4 + n1 * 2) * smoothstep(sleeveEnd - 0.08 * s, sleeveEnd, t);
           }
-        } else {
-          // torso drape: vertical folds toward the hem, a few horizontal wrinkles at the waist
-          const low = smoothstep(y.waist, hemY + 0.02 * s, yy);
-          d +=
-            0.0045 *
+          d += da * armW;
+        }
+        if (armW < 1) {
+          let dt = 0;
+          const az = Math.atan2(x, z);
+          // vertical drape below the chest
+          const low = smoothstep(y.chest + 0.02 * s, y.waist, yy);
+          dt +=
+            0.0038 *
             s *
             low *
-            noise.noise3(x * 16, 3.1, z * 16) *
-            (0.6 + 0.4 * Math.sin(Math.atan2(x, z) * 9));
-          d += 0.0025 * s * smoothstep(y.chest, y.waist, yy) * noise.noise3(x * 8, yy * 40, z * 8);
-          // hem band
-          if (top !== 'tshirt') d -= 0.004 * s * smoothstep(hemY + 0.07 * s, hemY + 0.05 * s, yy);
+            Math.sin(az * 7 + noise.noise3(x * 6, yy * 2.5, z * 6) * 3) *
+            (0.45 + 0.55 * n1);
+          // diagonal pull from the armpits toward the chest
+          const ap = Math.hypot(ax - (D.shoulderHalf - 0.035 * s), yy - (y.shoulder - 0.11 * s));
+          dt +=
+            0.0028 *
+            s *
+            Math.exp(-((ap / (0.09 * s)) ** 2)) *
+            Math.sin(((yy + ax * 1.3) / s) * 120 + n1 * 1.5);
+          // horizontal compression folds at the lower back and sides
+          const back = z < 0 ? 1 : 0.35;
+          dt +=
+            0.0024 *
+            s *
+            back *
+            smoothstep(y.waist + 0.06 * s, hemY + 0.07 * s, yy) *
+            Math.sin((yy / s) * 160 + n1 * 2.5 + az);
+          // hem band: snug and ribbed
+          if (top !== 'tshirt') {
+            const band = smoothstep(hemY + 0.065 * s, hemY + 0.05 * s, yy);
+            dt += band * (-0.005 * s + 0.0006 * s * Math.sin(az * 90));
+          }
+          d += dt * (1 - armW);
         }
         return d;
       },
-      0.012 * s,
-      2.2,
+      0.0075 * s,
+      2.4,
     );
-    const parts: Sdf[] = [torso];
-    if (top === 'hoodie') {
-      // hood lying behind the neck: a thick roll and fabric on the upper back
-      const hy = y.neck + 0.005 * s;
-      const roll = sdf.tube(
-        [
-          [0.075 * s, hy - 0.035 * s, 0.035 * s],
-          [0.095 * s, hy + 0.0 * s, -0.03 * s],
-          [0.07 * s, hy + 0.02 * s, -0.085 * s],
-          [0, hy + 0.025 * s, -0.105 * s],
-          [-0.07 * s, hy + 0.02 * s, -0.085 * s],
-          [-0.095 * s, hy + 0.0 * s, -0.03 * s],
-          [-0.075 * s, hy - 0.035 * s, 0.035 * s],
-        ],
-        (t) => (0.028 + 0.012 * Math.sin(Math.PI * t)) * s,
+    const parts: Sdf[] = [shell];
+    if (hoodie) {
+      // hood lying on the upper back: a soft sack hanging from a thick rim around the neckline, with the
+      // opening dipping to a V at the front where the drawstrings come out
+      const hy = y.neck;
+      const rimPts: V3[] = [];
+      for (let i = 0; i <= 16; i++) {
+        const a = (i / 16) * Math.PI * 2;
+        const front = Math.max(0, Math.cos(a));
+        rimPts.push([
+          Math.sin(a) * (D.neckR + 0.03 * s),
+          hy + 0.01 * s - 0.065 * s * front ** 3 + 0.018 * s * Math.max(0, -Math.cos(a)),
+          -0.02 * s + Math.cos(a) * (D.neckR + 0.028 * s) + 0.012 * s * front,
+        ]);
+      }
+      const rim = sdf.tube(rimPts, (t) => (0.013 + 0.005 * Math.abs(Math.cos(t * Math.PI))) * s);
+      const sack = sdf
+        .ellipsoid([0.115 * s, 0.13 * s, 0.03 * s], [0, 0, 0])
+        .rotate([-14, 0, 0])
+        .translate([0, hy - 0.085 * s, -D.chestD - 0.045 * s]);
+      const sides = [1, -1].map((sd) =>
+        sdf.ellipsoid([0.04 * s, 0.07 * s, 0.035 * s], [sd * 0.085 * s, hy - 0.03 * s, -0.07 * s]),
       );
-      const back = sdf.ellipsoid([0.12 * s, 0.1 * s, 0.035 * s], [0, hy - 0.07 * s, -D.chestD - 0.02 * s]);
-      const hood = roll
-        .smoothUnion(back, 0.04 * s)
+      let hood = sdf.smoothUnionAll([rim, sack, ...sides], 0.03 * s);
+      hood = hood
         .subtract(
-          sdf.capsule(
-            [0, y.neck - 0.08 * s, -0.02 * s],
-            [0, y.neck + 0.2 * s, 0.01 * s],
-            D.neckR + 0.012 * s,
-          ),
+          sdf.capsule([0, y.neck - 0.1 * s, -0.02 * s], [0, y.neck + 0.2 * s, 0.0], D.neckR + 0.01 * s),
         )
-        .displaceBy(([x, yy, z]) => 0.004 * s * noise.noise3(x * 25, yy * 25, z * 25), 0.004 * s);
+        .displaceBy(([x, yy, z]) => {
+          // center seam groove and soft crumples
+          const seam = z < -0.08 * s ? -0.0025 * s * Math.exp(-((x / (0.006 * s)) ** 2)) : 0;
+          return seam + 0.003 * s * noise.noise3(x * 22, yy * 22, z * 22);
+        }, 0.004 * s);
       parts.push(hood);
       // kangaroo pocket
       const py = y.waist - 0.035 * s;
       const pocket = sdf
         .box([0.23 * s, 0.13 * s, 0.05 * s], [0, py, 0], 0.02 * s)
-        .intersect(torso.round(0.006 * s))
+        .intersect(torsoC.round(0.004 * s))
         .intersect(
           mask((_x, _y, z) => 0.02 * s - z, [-0.2 * s, py - 0.1 * s, 0], [0.2 * s, py + 0.1 * s, 0.3 * s]),
         );
       parts.push(pocket);
-    }
-    if (top !== 'hoodie') {
+    } else {
       // ribbed collar band
       const collar = sdf
-        .torus(D.neckR + 0.012 * s, 0.009 * s, [0, 0, 0])
+        .torus(D.neckR + 0.01 * s, 0.007 * s, [0, 0, 0])
         .rotate([-12, 0, 0])
-        .translate([0, y.neck - 0.006 * s, -0.012 * s]);
+        .translate([0, y.neck - 0.006 * s, -0.014 * s]);
       parts.push(collar);
     }
-    let shape = sdf.smoothUnionAll(parts, 0.012 * s);
-    // colors: worn fabric, faded where it rubs, darker bands and seams, a little dirt near the hem
-    const faded = mixColor(base, [0.78, 0.78, 0.76], 0.18 + 0.2 * wear);
-    const dark = shade(base, 0.82);
+    let shape = sdf.smoothUnionAll(parts, 0.01 * s);
+    const faded = mixColor(base, o.textured ? [1, 1, 1] : [0.78, 0.78, 0.76], 0.15 + 0.15 * wear);
+    const dark = shade(base, 0.84);
     shape = shape.colorBy(([x, yy, z]) => {
       const [t] = armCoord(x, yy, z);
       const onArm = Math.abs(x) > D.shoulderHalf * 0.9 && t > 0.05 * s;
       let c: RGB = [...base];
       const n = noise.fbm(x * 9, yy * 9, z * 9, 3);
-      const fine = noise.noise3(x * 90, yy * 90, z * 90);
       let fade = 0.35 + 0.5 * n;
       if (onArm) fade += 0.5 * Math.exp(-(((t - U) / (0.06 * s)) ** 2)) * (z < 0 ? 1 : 0.4);
       else fade += 0.35 * smoothstep(y.chest - 0.05 * s, y.chest + 0.1 * s, yy) * (z > 0 ? 1 : 0.6);
       c = mixColor(c, faded, clamp(fade * (0.22 + 0.33 * wear), 0, 0.7));
-      // ribbed bands (cuffs, hem, collar)
       const band =
-        (onArm && top !== 'tshirt' && t > U + F - cuffLen - 0.008 * s) ||
-        (!onArm && top !== 'tshirt' && yy < hemY + 0.06 * s) ||
-        (top !== 'hoodie' && yy > y.neck - 0.02 * s && !onArm);
-      if (band)
-        c = mixColor(c, dark, 0.45 + 0.15 * Math.sin(onArm ? Math.atan2(z, yy) * 40 : Math.atan2(x, z) * 60));
-      // shoulder seam
-      if (!onArm && Math.abs(Math.abs(x) - D.shoulderHalf * 0.92) < 0.004 * s && yy > y.chest)
-        c = shade(c, 0.85);
-      // hoodie pocket seam and drawstring holes
-      if (top === 'hoodie' && !onArm && z > 0) {
+        (onArm && top !== 'tshirt' && t > U + F - cuffLen - 0.006 * s) ||
+        (!onArm && top !== 'tshirt' && yy < hemY + 0.058 * s) ||
+        (!hoodie && yy > y.neck - 0.02 * s && !onArm);
+      if (band) c = shade(c, 0.9);
+      if (!onArm && Math.abs(Math.abs(x) - D.shoulderHalf * 0.95) < 0.003 * s && yy > y.chest)
+        c = shade(c, 0.86);
+      if (hoodie && !onArm && z > 0) {
         const py = y.waist - 0.035 * s;
         const edge = Math.abs(Math.max(Math.abs(x) - 0.105 * s, Math.abs(yy - py) - 0.055 * s));
-        if (edge < 0.0035 * s) c = shade(c, 0.8);
+        if (edge < 0.003 * s) c = shade(c, 0.82);
       }
-      // dirt / grime toward the hem and cuffs
       const grime =
         wear *
-        0.25 *
+        0.22 *
         (smoothstep(hemY + 0.15 * s, hemY, yy) + (onArm ? smoothstep(U + F * 0.6, U + F, t) : 0));
-      c = mixColor(c, [0.3, 0.27, 0.23], clamp(grime * (0.6 + 0.4 * n), 0, 0.35));
-      return shade(c, 0.97 + 0.06 * fine);
+      c = mixColor(c, [0.3, 0.27, 0.23], clamp(grime * (0.6 + 0.4 * n), 0, 0.3));
+      return shade(c, 0.97 + 0.06 * noise.noise3(x * 90, yy * 90, z * 90));
     });
     garments.push({
       name: top,
       shape,
       material: { name: top, color: '#ffffff', roughness: 0.93 },
-      triangles: top === 'tshirt' ? 3600 : 5200,
+      triangles: top === 'tshirt' ? 4000 : 6200,
+      uv: true,
     });
-    if (top === 'hoodie') {
-      // drawstrings: thin separate cords
+    if (hoodie) {
       const cords: Sdf[] = [];
       for (const sd of [1, -1]) {
-        const x0 = sd * 0.04 * s;
-        const z0 = D.chestD + 0.035 * s;
+        const x0 = sd * 0.022 * s;
+        const z0 = D.chestD + 0.03 * s;
         cords.push(
           sdf.chain(
             [
-              [x0, y.neck - 0.035 * s, z0 - 0.01 * s],
-              [x0 * 1.1, y.neck - 0.11 * s, z0 + 0.012 * s],
-              [x0 * 1.2, y.neck - 0.19 * s, z0 + 0.018 * s],
+              [x0, y.neck - 0.05 * s, z0 - 0.012 * s],
+              [x0 * 1.3, y.neck - 0.12 * s, z0 + 0.008 * s],
+              [x0 * 1.5 + sd * 0.004 * s, y.neck - 0.21 * s, z0 + 0.012 * s],
             ],
-            [0.0042 * s, 0.004 * s, 0.0045 * s],
+            [0.0035 * s, 0.0033 * s, 0.004 * s],
           ),
         );
       }
@@ -278,7 +326,7 @@ export function dressUp(
         shape: sdf.unionAll(cords).color(mixColor(base, [0.85, 0.84, 0.8], 0.35)),
         material: { name: 'cord', color: '#ffffff', roughness: 0.85 },
         triangles: 600,
-        cell: 0.0022 * s,
+        cell: 0.002 * s,
       });
     }
   }
@@ -290,7 +338,7 @@ export function dressUp(
   const shoeTop = shoes === 'boots' ? 0.145 * s : shoes === 'barefoot' ? 0 : y.ankle + 0.005 * s;
   {
     const bottom = o.bottom;
-    const base = hexToRgb(o.bottomColor);
+    const base = tint(hexToRgb(o.bottomColor));
     const waistY = y.hipJoint + (bottom === 'shorts' ? 0.085 : 0.075) * s;
     const hemY = bottom === 'shorts' ? y.knee + 0.07 * s : shoes === 'boots' ? 0.06 * s : 0.035 * s;
     const legR = (t: number) => {
@@ -325,7 +373,7 @@ export function dressUp(
         }),
       );
     }
-    const pelvis = proxy
+    const pelvis = cloth.torso
       .round((o.top === 'tshirt' ? 0.012 : 0.008) * s)
       .intersect(
         mask(
@@ -414,6 +462,7 @@ export function dressUp(
       shape,
       material: { name: bottom, color: '#ffffff', roughness: bottom === 'jeans' ? 0.9 : 0.88 },
       triangles: bottom === 'shorts' ? 2400 : 3800,
+      uv: true,
     });
     if (bottom === 'shorts') {
       legTop = hemY + 0.04 * s;
@@ -421,7 +470,7 @@ export function dressUp(
     }
     if (o.top === 'hoodie' || bottom === 'jeans') {
       // a leather belt (mostly under the hoodie; Milch tucks the knife into it)
-      const belt = proxy
+      const belt = cloth.all
         .round(0.011 * s)
         .intersect(
           mask(
@@ -445,6 +494,7 @@ export function dressUp(
         shape: belt,
         material: { name: 'belt', color: '#ffffff', roughness: 0.55 },
         triangles: 900,
+        uv: true,
         cell: 0.004 * s,
       });
     }
@@ -452,7 +502,7 @@ export function dressUp(
 
   // ------------------------------------------------------------------ shoes
   if (shoes !== 'barefoot') {
-    const base = hexToRgb(o.shoeColor);
+    const base = tint(hexToRgb(o.shoeColor));
     const soleC: RGB = shoes === 'sneakers' ? [0.9, 0.89, 0.86] : [0.12, 0.1, 0.09];
     const soleH = (shoes === 'boots' ? 0.03 : shoes === 'sneakers' ? 0.028 : 0.018) * s;
     const pair: Sdf[] = [];
@@ -525,6 +575,7 @@ export function dressUp(
       shape,
       material: { name: shoes, color: '#ffffff', roughness: shoes === 'sneakers' ? 0.75 : 0.5 },
       triangles: 2200,
+      uv: true,
       cell: 0.0045 * s,
     });
   }

@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/stretch_poplin/stretch_poplin_diff_1k.jpg",
+  "mapRepeat": [3.448, 3.571],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/stretch_poplin/stretch_poplin_nor_gl_1k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/stretch_poplin/stretch_poplin_arm_1k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

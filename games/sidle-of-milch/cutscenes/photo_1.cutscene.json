@@ -1,0 +1,85 @@
+{
+  "format": "aige.cutscene",
+  "version": 1,
+  "name": "photo_1",
+  "duration": 12.5,
+  "letterbox": true,
+  "returnControl": true,
+  "skippable": true,
+  "tracks": [
+    {
+      "type": "animation",
+      "actor": "Milch",
+      "clips": [
+        {
+          "clip": "examine_object",
+          "fade": 0.3,
+          "loop": false,
+          "speed": 1,
+          "t": 0
+        }
+      ]
+    },
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "position": [-2.05, 1.32, -2.2],
+          "aperture": 0.5,
+          "cut": false,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 32,
+          "lookAt": [-1.62, 1.06, -2.42],
+          "shake": 0,
+          "t": 0
+        },
+        {
+          "position": [-1.95, 1.22, -2.36],
+          "aperture": 0.6,
+          "cut": false,
+          "ease": "inOut",
+          "focus": 0.4,
+          "fov": 22,
+          "lookAt": [-1.62, 1.06, -2.42],
+          "shake": 0,
+          "t": 6
+        }
+      ]
+    },
+    {
+      "type": "voice",
+      "clips": [
+        {
+          "actor": "Milch",
+          "line": "milch_photo_1",
+          "subtitle": true,
+          "t": 0.6
+        },
+        {
+          "actor": "Milch",
+          "line": "milch_photo_1b",
+          "subtitle": true,
+          "t": 10.2
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "duration": 3,
+          "effect": "desaturate",
+          "t": 3,
+          "to": 0.4
+        },
+        {
+          "duration": 1,
+          "effect": "desaturate",
+          "t": 11.5,
+          "to": 0
+        }
+      ]
+    }
+  ]
+}

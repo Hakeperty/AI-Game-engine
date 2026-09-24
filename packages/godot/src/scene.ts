@@ -29,6 +29,8 @@ export interface ModelRef {
   /** Name of the GLB's root node and its transparent parts (glass), which must not cast shadows. */
   root?: string;
   noShadowParts?: string[];
+  /** Shared Godot materials per part (res:// .tres), assigned to each of the part's surfaces. */
+  partMaterials?: { part: string; surfaces: number; material: string }[];
 }
 
 const packedVec3 = (xyz: number[]) =>
@@ -354,10 +356,18 @@ export function sceneToTscn(scene: SceneDoc, ctx: SceneExportContext): SceneExpo
           instance: w.ext('PackedScene', model.res),
           props: { visible: hidden },
         });
-        // Godot lets transparent meshes cast solid shadows; windows would block the moon.
-        for (const part of model.noShadowParts ?? [])
-          if (model.root)
-            w.node({ name: part, parent: `${n.path}/${model.root}`, props: { cast_shadow: 0 } });
+        // Per-part overrides on the instanced GLB: shared materials (each texture is imported once), and no
+        // shadows from transparent parts (Godot lets glass cast solid shadows, which would block the moon).
+        if (model.root) {
+          const parts = new Map<string, Record<string, GdValue>>();
+          const at = (p: string) => parts.get(p) ?? parts.set(p, {}).get(p)!;
+          for (const pm of model.partMaterials ?? []) {
+            const matId = w.ext('Material', pm.material);
+            for (let i = 0; i < pm.surfaces; i++) at(pm.part)[`surface_material_override/${i}`] = ext(matId);
+          }
+          for (const part of model.noShadowParts ?? []) at(part).cast_shadow = 0;
+          for (const [part, props] of parts) w.node({ name: part, parent: `${n.path}/${model.root}`, props });
+        }
       } else if (!mr.model || !model) {
         const prim = (mr.primitive as string) ?? 'box';
         const matPath = mr.material ? ctx.material(mr.material as string) : null;
@@ -546,6 +556,7 @@ export function sceneToTscn(scene: SceneDoc, ctx: SceneExportContext): SceneExpo
         Temperature: n('temperature', 0),
         Tint: n('tint', 0),
         LightShafts: n('lightShafts', 0),
+        Chromatic: n('chromaticAberration', 0),
       },
     });
   } else
@@ -654,6 +665,7 @@ export function environmentTres(
       temperature: n('temperature', 0),
       tint: n('tint', 0),
       lightShafts: n('lightShafts', 0),
+      chromatic: n('chromaticAberration', 0),
     },
   });
 }

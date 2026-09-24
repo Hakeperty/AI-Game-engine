@@ -7,7 +7,15 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/examples/**/.aige", "!**/*.golden.png"]
+    "includes": [
+      "**",
+      "!**/examples/**/.aige",
+      "!**/*.golden.png",
+      "!**/games/*/unity",
+      "!**/games/*/addons",
+      "!**/games/*/godot",
+      "!**/games/*/.godot"
+    ]
   },
   "formatter": {
     "enabled": true,

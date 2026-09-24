@@ -1,0 +1,305 @@
+{
+  "format": "aige.cutscene",
+  "version": 1,
+  "name": "cs3_kitchen",
+  "duration": 27,
+  "letterbox": true,
+  "returnControl": true,
+  "skippable": true,
+  "tracks": [
+    {
+      "type": "move",
+      "actor": "Milch",
+      "keys": [
+        {
+          "position": [1.9, 0, 0.3],
+          "rotation": [0, 180, 0],
+          "ease": "inOut",
+          "t": 0
+        },
+        {
+          "position": [1.8, 0, -2.75],
+          "rotation": [0, 180, 0],
+          "ease": "inOut",
+          "t": 2.6
+        },
+        {
+          "position": [1.8, 0, -2.75],
+          "rotation": [0, 180, 0],
+          "ease": "inOut",
+          "t": 13
+        },
+        {
+          "position": [3.95, 0, -3.15],
+          "rotation": [0, 90, 0],
+          "ease": "inOut",
+          "t": 15.5
+        }
+      ]
+    },
+    {
+      "type": "animation",
+      "actor": "Milch",
+      "clips": [
+        {
+          "clip": "walk",
+          "fade": 0.3,
+          "loop": true,
+          "speed": 1,
+          "t": 0
+        },
+        {
+          "clip": "search_drawer",
+          "fade": 0.3,
+          "loop": false,
+          "speed": 1,
+          "t": 2.6
+        },
+        {
+          "clip": "pick_up",
+          "fade": 0.3,
+          "loop": false,
+          "speed": 1,
+          "t": 9.4
+        },
+        {
+          "clip": "walk",
+          "fade": 0.3,
+          "loop": true,
+          "speed": 1,
+          "t": 13
+        },
+        {
+          "clip": "examine_object",
+          "fade": 0.4,
+          "loop": false,
+          "speed": 1,
+          "t": 15.5
+        },
+        {
+          "clip": "gasp_startle",
+          "fade": 0.1,
+          "loop": false,
+          "speed": 1,
+          "t": 22.1
+        }
+      ]
+    },
+    {
+      "type": "camera",
+      "keys": [
+        {
+          "position": [2.6, 1.7, 1.1],
+          "aperture": 0.5,
+          "cut": false,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 55,
+          "lookAt": [1.9, 1.1, -1.5],
+          "shake": 0,
+          "t": 0
+        },
+        {
+          "position": [2.9, 1.45, -2.2],
+          "aperture": 0.5,
+          "cut": true,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 42,
+          "lookAt": [1.8, 0.75, -3.35],
+          "shake": 0,
+          "t": 2.8
+        },
+        {
+          "position": [2.6, 1.2, -2.6],
+          "aperture": 0.5,
+          "cut": false,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 36,
+          "lookAt": [1.7, 0.7, -3.1],
+          "shake": 0,
+          "t": 9.2
+        },
+        {
+          "position": [3.2, 1.6, -1.6],
+          "aperture": 0.5,
+          "cut": true,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 45,
+          "lookAt": [4.4, 1.25, -3.2],
+          "shake": 0,
+          "t": 13.2
+        },
+        {
+          "position": [4, 1.45, -2.55],
+          "aperture": 0.5,
+          "cut": false,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 30,
+          "lookAt": [4.39, 1.3, -3.18],
+          "shake": 0,
+          "t": 16.5
+        },
+        {
+          "position": [2.4, 1.7, -0.4],
+          "aperture": 0.5,
+          "cut": true,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 55,
+          "lookAt": [4.2, 1.2, -2.8],
+          "shake": 0.4,
+          "t": 22.1
+        },
+        {
+          "position": [2.6, 1.7, -0.6],
+          "aperture": 0.5,
+          "cut": false,
+          "ease": "inOut",
+          "focus": 0,
+          "fov": 55,
+          "lookAt": [4, 1.1, -2.9],
+          "shake": 0,
+          "t": 26.5
+        }
+      ]
+    },
+    {
+      "type": "voice",
+      "clips": [
+        {
+          "actor": "Milch",
+          "line": "milch_kitchen_1",
+          "subtitle": true,
+          "t": 0.8
+        },
+        {
+          "actor": "Milch",
+          "line": "milch_kitchen_2",
+          "subtitle": true,
+          "t": 5.2
+        },
+        {
+          "actor": "Milch",
+          "line": "milch_knife_1",
+          "subtitle": true,
+          "t": 10.9
+        },
+        {
+          "actor": "Milch",
+          "line": "milch_photo_2",
+          "subtitle": true,
+          "t": 16.2
+        }
+      ]
+    },
+    {
+      "type": "sound",
+      "clips": [
+        {
+          "sfx": "breath_in",
+          "t": 0.2,
+          "volume": 0.7
+        },
+        {
+          "at": "Counter_Drawers",
+          "sfx": "drawer",
+          "t": 3.2,
+          "volume": 0.9
+        },
+        {
+          "sfx": "knife_pickup",
+          "t": 10.1,
+          "volume": 0.9
+        },
+        {
+          "sfx": "thunder",
+          "t": 22,
+          "volume": 1
+        },
+        {
+          "sfx": "gasp",
+          "t": 22.3,
+          "volume": 0.9
+        }
+      ]
+    },
+    {
+      "type": "light",
+      "items": [
+        {
+          "duration": 0.04,
+          "entity": "Lightning",
+          "intensity": 9,
+          "t": 22
+        },
+        {
+          "duration": 0.08,
+          "entity": "Lightning",
+          "intensity": 0.5,
+          "t": 22.12
+        },
+        {
+          "duration": 0.04,
+          "entity": "Lightning",
+          "intensity": 7,
+          "t": 22.3
+        },
+        {
+          "duration": 0.6,
+          "entity": "Lightning",
+          "intensity": 0,
+          "t": 22.5
+        }
+      ]
+    },
+    {
+      "type": "fx",
+      "items": [
+        {
+          "duration": 0.5,
+          "effect": "flash",
+          "t": 22,
+          "to": 0.8
+        },
+        {
+          "duration": 1.2,
+          "effect": "shake",
+          "t": 22,
+          "to": 0.5
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "items": [
+        {
+          "disable": "Counter_Drawers",
+          "enable": "Counter_Drawers_Open",
+          "t": 3.2
+        },
+        {
+          "enable": "Knife_In_Drawer",
+          "t": 3.3
+        },
+        {
+          "disable": "Knife_In_Drawer",
+          "give": "knife",
+          "setFlag": "has_knife",
+          "t": 10.1
+        },
+        {
+          "setFlag": "saw_photo_2",
+          "t": 16
+        },
+        {
+          "setFlag": "heard_thunder",
+          "t": 26.5
+        }
+      ]
+    }
+  ]
+}

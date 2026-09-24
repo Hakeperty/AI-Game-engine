@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/rough_plaster_brick_04/rough_plaster_brick_04_diff_1k.jpg",
+  "mapRepeat": [0.5, 0.5],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/rough_plaster_brick_04/rough_plaster_brick_04_nor_gl_1k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/rough_plaster_brick_04/rough_plaster_brick_04_arm_1k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

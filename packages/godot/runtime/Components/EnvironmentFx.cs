@@ -30,6 +30,9 @@ public partial class EnvironmentFx : WorldEnvironment
     /// <summary>Visible light beams for spot lights (0 = off, 0.5 = subtle).</summary>
     [Export] public float LightShafts { get; set; }
 
+    /// <summary>Chromatic aberration 0..1 (lens fringing at the edges of the frame).</summary>
+    [Export] public float Chromatic { get; set; }
+
     /// <summary>The EnvironmentFx of the running scene.</summary>
     public static EnvironmentFx? Current { get; private set; }
 
@@ -135,6 +138,9 @@ public partial class EnvironmentFx : WorldEnvironment
     void Adopt(Godot.Environment? env)
     {
         _known = env;
+        Hud.Chromatic = env != null && env.HasMeta("aige_fx") && env.GetMeta("aige_fx").AsGodotDictionary().TryGetValue("chromatic", out var ca)
+            ? ca.AsSingle()
+            : Chromatic;
         _fadeDuration = 0f;
         if (env == null)
         {

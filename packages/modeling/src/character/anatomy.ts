@@ -42,6 +42,8 @@ export interface Anatomy {
   j: Record<HumanoidBone, V3>;
   /** A-pose arm direction for the left arm (unit); mirror x for the right. */
   armDir: V3;
+  /** Bind A-pose arm angle below horizontal (degrees). */
+  armAngle: number;
   y: {
     crown: number;
     chin: number;
@@ -118,8 +120,7 @@ export function computeAnatomy(params: BodyParams): Anatomy {
   const spineJ = hipsY + 0.217 * (neck - hipsY);
   const waist = hipsY + 0.3 * (neck - hipsY);
 
-  const shoulderFrac =
-    params.age === 'child' ? 0.093 : mix(params.age === 'teen' ? 0.098 : 0.1022, 0.095, fem);
+  const shoulderFrac = params.age === 'child' ? 0.092 : mix(params.age === 'teen' ? 0.0955 : 0.1, 0.093, fem);
   const shoulderHalf = H * shoulderFrac * (0.94 + 0.12 * build + 0.05 * muscle);
   const hipHalf = H * mix(0.0506, 0.0575, fem) * (0.95 + 0.1 * build);
   const upperArm = H * mix(0.161, 0.166, maturity);
@@ -188,6 +189,7 @@ export function computeAnatomy(params: BodyParams): Anatomy {
     joints,
     j,
     armDir,
+    armAngle: HUMANOID_ARM_ANGLE,
     y: { crown, chin, neck, shoulder, chest: chestJ, waist, hipJoint, crotch, knee, ankle },
     len: {
       upperArm,

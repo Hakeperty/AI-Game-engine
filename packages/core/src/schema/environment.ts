@@ -46,6 +46,14 @@ export const Environment = defineComponent({
     tint: z.number().min(-1).max(1).default(0).describe('-1 = green, +1 = magenta'),
     vignette: z.number().min(0).max(1).default(0.25),
     grain: z.number().min(0).max(1).default(0.12).describe('Film grain amount'),
+    chromaticAberration: z
+      .number()
+      .min(0)
+      .max(1)
+      .default(0)
+      .describe(
+        'Lens fringing (red/blue split) toward the frame edges; 0.3 = the camera-lens look of modern horror games',
+      ),
     hdri: AssetPath.optional().describe(
       "Equirectangular .hdr sky for lighting and reflections (asset_fetch kind 'hdri'); overrides `sky`",
     ),

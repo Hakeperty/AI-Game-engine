@@ -162,6 +162,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -209,6 +210,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -255,6 +257,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -302,6 +305,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -349,6 +353,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -395,6 +400,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -441,6 +447,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -483,6 +490,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -525,6 +533,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -571,6 +580,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -617,6 +627,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -659,6 +670,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -705,6 +717,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -747,6 +760,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -789,6 +803,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -836,6 +851,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -883,6 +899,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -930,6 +947,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -976,6 +994,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -1022,6 +1041,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -1064,6 +1084,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -1106,6 +1127,7 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
+            "chink": "materials/plaster_chink.material.json",
             "frame": "materials/wood_table.material.json",
             "logs": "materials/log_wood.material.json"
           },
@@ -1738,7 +1760,7 @@
       "tags": ["Furniture"],
       "transform": {
         "position": [-4.33, 0, -2.8],
-        "rotation": [0, 0, 0],
+        "rotation": [0, 180, 0],
         "scale": [1, 1, 1]
       },
       "components": [
@@ -1754,6 +1776,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -1801,6 +1825,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -1848,6 +1874,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -1895,6 +1923,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -1942,6 +1972,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -1989,6 +2021,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2037,6 +2071,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2077,13 +2113,14 @@
           "castShadow": true,
           "materials": {
             "blanket": "materials/wool_blanket.material.json",
-            "body": "materials/wood_cabinet.material.json",
             "cabinet": "materials/wood_cabinet.material.json",
             "chair": "materials/wood_cabinet.material.json",
             "crate": "materials/wood_table.material.json",
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2131,6 +2168,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2178,6 +2217,8 @@
             "doors": "materials/wood_table.material.json",
             "drawers": "materials/wood_table.material.json",
             "frame": "materials/wood_table.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_table.material.json",
             "top": "materials/wood_table.material.json"
           },
@@ -2206,7 +2247,7 @@
       "name": "Chair_1",
       "parent": "e4",
       "active": true,
-      "tags": ["Furniture"],
+      "tags": [],
       "transform": {
         "position": [3.2, 0, -0.12],
         "rotation": [0, 360, 0],
@@ -2217,20 +2258,11 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
-            "blanket": "materials/wool_blanket.material.json",
-            "body": "materials/wood_table.material.json",
-            "cabinet": "materials/wood_table.material.json",
-            "chair": "materials/wood_table.material.json",
-            "crate": "materials/wood_table.material.json",
-            "doors": "materials/wood_table.material.json",
-            "drawers": "materials/wood_table.material.json",
-            "frame": "materials/wood_table.material.json",
-            "shelf": "materials/wood_table.material.json",
-            "top": "materials/wood_table.material.json"
+            "chair": "materials/wood_table.material.json"
           },
-          "model": "models/furniture.model.ts",
+          "model": "models/irish.model.ts",
           "params": {
-            "kind": "chair"
+            "kind": "sugan_chair"
           },
           "receiveShadow": true,
           "visible": true
@@ -2253,7 +2285,7 @@
       "name": "Chair_2",
       "parent": "e4",
       "active": true,
-      "tags": ["Furniture"],
+      "tags": [],
       "transform": {
         "position": [2.5245, 0, -1.29],
         "rotation": [0, 240, 0],
@@ -2264,20 +2296,11 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
-            "blanket": "materials/wool_blanket.material.json",
-            "body": "materials/wood_table.material.json",
-            "cabinet": "materials/wood_table.material.json",
-            "chair": "materials/wood_table.material.json",
-            "crate": "materials/wood_table.material.json",
-            "doors": "materials/wood_table.material.json",
-            "drawers": "materials/wood_table.material.json",
-            "frame": "materials/wood_table.material.json",
-            "shelf": "materials/wood_table.material.json",
-            "top": "materials/wood_table.material.json"
+            "chair": "materials/wood_table.material.json"
           },
-          "model": "models/furniture.model.ts",
+          "model": "models/irish.model.ts",
           "params": {
-            "kind": "chair"
+            "kind": "sugan_chair"
           },
           "receiveShadow": true,
           "visible": true
@@ -2300,7 +2323,7 @@
       "name": "Chair_3",
       "parent": "e4",
       "active": true,
-      "tags": ["Furniture"],
+      "tags": [],
       "transform": {
         "position": [3.8755, 0, -1.29],
         "rotation": [0, 132, 0],
@@ -2311,20 +2334,11 @@
           "type": "MeshRenderer",
           "castShadow": true,
           "materials": {
-            "blanket": "materials/wool_blanket.material.json",
-            "body": "materials/wood_table.material.json",
-            "cabinet": "materials/wood_table.material.json",
-            "chair": "materials/wood_table.material.json",
-            "crate": "materials/wood_table.material.json",
-            "doors": "materials/wood_table.material.json",
-            "drawers": "materials/wood_table.material.json",
-            "frame": "materials/wood_table.material.json",
-            "shelf": "materials/wood_table.material.json",
-            "top": "materials/wood_table.material.json"
+            "chair": "materials/wood_table.material.json"
           },
-          "model": "models/furniture.model.ts",
+          "model": "models/irish.model.ts",
           "params": {
-            "kind": "chair"
+            "kind": "sugan_chair"
           },
           "receiveShadow": true,
           "visible": true
@@ -2366,6 +2380,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2413,6 +2429,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2460,6 +2478,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2516,6 +2536,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2564,6 +2586,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2611,6 +2635,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2658,6 +2684,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2705,6 +2733,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2752,6 +2782,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2799,6 +2831,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2846,6 +2880,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2887,13 +2923,16 @@
           "castShadow": true,
           "materials": {
             "blanket": "materials/wool_blanket.material.json",
-            "body": "materials/wood_cabinet.material.json",
+            "body": "materials/painted_blue.material.json",
             "cabinet": "materials/wood_cabinet.material.json",
             "chair": "materials/wood_cabinet.material.json",
             "crate": "materials/wood_table.material.json",
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "lid": "materials/painted_blue.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2941,6 +2980,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -2988,6 +3029,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -3035,6 +3078,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -3082,6 +3127,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -3129,6 +3176,8 @@
             "doors": "materials/wood_cabinet.material.json",
             "drawers": "materials/wood_cabinet.material.json",
             "frame": "materials/wood_cabinet.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_cabinet.material.json",
             "top": "materials/wood_cabinet.material.json"
           },
@@ -3178,6 +3227,8 @@
             "doors": "materials/wood_table.material.json",
             "drawers": "materials/wood_table.material.json",
             "frame": "materials/wood_table.material.json",
+            "mattress": "materials/fabric_cotton.material.json",
+            "pillow": "materials/fabric_cotton.material.json",
             "shelf": "materials/wood_table.material.json",
             "top": "materials/wood_table.material.json"
           },
@@ -3443,6 +3494,9 @@
         {
           "type": "MeshRenderer",
           "castShadow": true,
+          "materials": {
+            "rug": "materials/carpet_dirty.material.json"
+          },
           "model": "models/props.model.ts",
           "params": {
             "kind": "rug",
@@ -3828,6 +3882,744 @@
     },
     {
       "id": "e103",
+      "name": "Dresser (2)",
+      "parent": "e4",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [4.83, 0, 0.55],
+        "rotation": [0, -90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "doors": "materials/painted_blue.material.json",
+            "dresser": "materials/painted_blue.material.json"
+          },
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "dresser"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e104",
+      "name": "Range",
+      "parent": "e4",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.6, 0, 1.18],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "range"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e105",
+      "name": "Kettle",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.8, 0.93, 1.2],
+        "rotation": [0, 160, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "kettle"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e106",
+      "name": "Turf_Basket",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.45, 0, 1.12],
+        "rotation": [0, 20, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "turf_basket"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e107",
+      "name": "Sacred_Heart",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.32, 1.72, -2.2],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "sacred_heart"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look",
+          "range": 1.5,
+          "text": "The Sacred Heart. The lamp under it is still lit... who keeps it burning?"
+        }
+      ]
+    },
+    {
+      "id": "e108",
+      "name": "Red_Lamp",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.32, 1.38, -2.2],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "glow": 3,
+            "kind": "red_lamp"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e109",
+      "name": "Red_Lamp_Glow",
+      "parent": "e7",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.45, 1.42, -2.2],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "Light",
+          "angle": 30,
+          "castShadow": false,
+          "color": "#ff2414",
+          "flicker": 0.15,
+          "groundColor": "#444444",
+          "intensity": 0.35,
+          "kind": "point",
+          "range": 1.8
+        }
+      ]
+    },
+    {
+      "id": "e110",
+      "name": "Calendar",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.32, 1.6, -3.3],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "photo": "materials/story_calendar.material.json"
+          },
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "calendar"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look",
+          "range": 1.5,
+          "text": "Every day crossed off... up to the thirteenth. The fourteenth is circled. After that, nothing."
+        }
+      ]
+    },
+    {
+      "id": "e111",
+      "name": "Hawthorn_Jar",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.05, 0.765, -0.75],
+        "rotation": [0, 30, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "jar_sprig"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look",
+          "range": 1.3,
+          "text": "Hawthorn. Nobody brings hawthorn into a house... Mam always said that."
+        }
+      ]
+    },
+    {
+      "id": "e112",
+      "name": "Mug_1",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.42, 0.765, -1.08],
+        "rotation": [0, 110, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "mug"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e113",
+      "name": "Mug_2",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.92, 0.765, -1.15],
+        "rotation": [0, -40, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "mug"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e114",
+      "name": "Newspaper",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [3.4, 0.768, -0.62],
+        "rotation": [0, 24, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "newspaper"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e115",
+      "name": "Plates_Counter",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [1.62, 0.9, -3.55],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "plates"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e116",
+      "name": "Bottle_1",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.35, 0.9, -3.72],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "bottle"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e117",
+      "name": "Bottle_2",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.47, 0.9, -3.62],
+        "rotation": [0, 60, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "bottle"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e118",
+      "name": "Bottle_Floor",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [4.2, 0.04, -2.2],
+        "rotation": [0, 0, 88],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "bottle"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e119",
+      "name": "Brigid_Cross",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 2.33, 3.85],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "brigid_cross"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e120",
+      "name": "Holy_Water_Font",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0.78, 1.35, 3.85],
+        "rotation": [0, 180, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "holy_water_font"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e121",
+      "name": "Horseshoe",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, 2.28, 4.16],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "horseshoe"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e122",
+      "name": "Saucer_Of_Milk",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0.55, 0, 3.55],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "saucer_milk"
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look",
+          "range": 1.4,
+          "text": "A saucer of milk... it's fresh. Who left this here?"
+        }
+      ]
+    },
+    {
+      "id": "e123",
+      "name": "Rosary",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.38, 0.585, -3.55],
+        "rotation": [0, 30, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/irish.model.ts",
+          "params": {
+            "kind": "rosary"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e124",
+      "name": "Candle_Bedroom",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-3.58, 0.585, -3.62],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "candle"
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e125",
+      "name": "Murphy_Drawing",
+      "parent": "e10",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [2.7, 4.35, 0.72],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "photo": "materials/story_drawing.material.json"
+          },
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "paper",
+            "size": 1.2
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Interactable",
+          "enabled": true,
+          "once": false,
+          "prompt": "Look",
+          "range": 1.6,
+          "text": "Murphy drew this. Me, him... and someone between us. Why did he scribble out the face?"
+        }
+      ]
+    },
+    {
+      "id": "e126",
+      "name": "Dirt_Trail_1",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.15, 3, -0.25],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 0.45
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e127",
+      "name": "Dirt_Trail_2",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.5, 3, -0.8],
+        "rotation": [0, 41, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 0.5
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e128",
+      "name": "Dirt_Trail_3",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-0.85, 3, -1.3],
+        "rotation": [0, 82, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 0.55
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e129",
+      "name": "Dirt_Trail_4",
+      "parent": "e5",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-1.05, 3, -1.7],
+        "rotation": [0, 123, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/props.model.ts",
+          "params": {
+            "kind": "dirt",
+            "size": 0.4
+          },
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e130",
       "name": "Milch",
       "parent": "e10",
       "active": true,
@@ -3858,15 +4650,21 @@
         {
           "type": "MeshRenderer",
           "castShadow": true,
-          "color": "#6d6f73",
-          "primitive": "capsule",
+          "model": "models/milch.model.ts",
           "receiveShadow": true,
           "visible": true
+        },
+        {
+          "type": "Animator",
+          "clips": [],
+          "initial": "idle",
+          "locomotion": true,
+          "speed": 1
         }
       ]
     },
     {
-      "id": "e104",
+      "id": "e131",
       "name": "Camera",
       "parent": "e10",
       "active": true,
@@ -3881,10 +4679,10 @@
           "type": "Script",
           "enabled": true,
           "props": {
-            "distance": 2.3,
-            "fov": 62,
+            "distance": 1.8,
+            "fov": 55,
             "height": 1.55,
-            "shoulder": 0.45,
+            "shoulder": 0.55,
             "target": "Milch"
           },
           "script": "builtin:ThirdPersonCamera"
@@ -3892,7 +4690,7 @@
       ]
     },
     {
-      "id": "e105",
+      "id": "e132",
       "name": "Trigger_Hall",
       "parent": "e10",
       "active": true,
@@ -3925,7 +4723,7 @@
       ]
     },
     {
-      "id": "e106",
+      "id": "e133",
       "name": "Trigger_Kitchen",
       "parent": "e10",
       "active": true,
@@ -3959,7 +4757,7 @@
       ]
     },
     {
-      "id": "e107",
+      "id": "e134",
       "name": "Trigger_Table",
       "parent": "e10",
       "active": true,
@@ -3993,7 +4791,7 @@
       ]
     },
     {
-      "id": "e108",
+      "id": "e135",
       "name": "Trigger_Bathroom",
       "parent": "e10",
       "active": true,
@@ -4025,7 +4823,7 @@
       ]
     },
     {
-      "id": "e109",
+      "id": "e136",
       "name": "Trigger_Storage",
       "parent": "e10",
       "active": true,
@@ -4057,7 +4855,7 @@
       ]
     },
     {
-      "id": "e110",
+      "id": "e137",
       "name": "Trigger_Upstairs",
       "parent": "e10",
       "active": true,
@@ -4090,7 +4888,7 @@
       ]
     },
     {
-      "id": "e111",
+      "id": "e138",
       "name": "Trigger_Murphys_Room",
       "parent": "e10",
       "active": true,
@@ -4124,7 +4922,7 @@
       ]
     },
     {
-      "id": "e112",
+      "id": "e139",
       "name": "Trigger_Leave",
       "parent": "e10",
       "active": true,
@@ -4157,7 +4955,7 @@
       ]
     },
     {
-      "id": "e113",
+      "id": "e140",
       "name": "Chapter1",
       "parent": "e10",
       "active": true,
@@ -4177,7 +4975,7 @@
       ]
     },
     {
-      "id": "e114",
+      "id": "e141",
       "name": "Environment_Night",
       "parent": "e7",
       "active": true,
@@ -4192,36 +4990,37 @@
           "type": "Environment",
           "ambient": 0.7,
           "autoExposure": 0.5,
-          "bloom": 0.35,
+          "bloom": 0.45,
           "bloomThreshold": 0.9,
-          "contrast": 1.1,
-          "exposure": 1.35,
+          "chromaticAberration": 0.35,
+          "contrast": 1.22,
+          "exposure": 1.2,
           "fogBaseHeight": 0,
-          "fogColor": "#1b2230",
-          "fogDensity": 0.006,
+          "fogColor": "#16201f",
+          "fogDensity": 0.008,
           "fogHeightFalloff": 0.2,
           "gi": "sdfgi",
-          "grain": 0.18,
+          "grain": 0.3,
           "hdri": "textures/hdri/moonlit_golf_2k.hdr",
           "hdriRotation": 140,
           "lightShafts": 0,
-          "saturation": 0.72,
+          "saturation": 0.6,
           "sky": "none",
           "skyEnergy": 0.35,
-          "ssao": 1,
+          "ssao": 1.2,
           "ssaoRadius": 0.35,
           "ssil": true,
           "sunDirection": [-0.4, 0.45, -0.8],
-          "temperature": -0.3,
-          "tint": 0,
+          "temperature": -0.18,
+          "tint": -0.14,
           "toneMapping": "agx",
-          "vignette": 0.38,
-          "volumetricFog": 0.025
+          "vignette": 0.48,
+          "volumetricFog": 0.03
         }
       ]
     },
     {
-      "id": "e115",
+      "id": "e142",
       "name": "Moon",
       "parent": "e7",
       "active": true,
@@ -4246,7 +5045,7 @@
       ]
     },
     {
-      "id": "e116",
+      "id": "e143",
       "name": "Lightning",
       "parent": "e7",
       "active": true,
@@ -4271,7 +5070,7 @@
       ]
     },
     {
-      "id": "e117",
+      "id": "e144",
       "name": "Light_Kitchen",
       "parent": "e7",
       "active": true,
@@ -4296,7 +5095,7 @@
       ]
     },
     {
-      "id": "e118",
+      "id": "e145",
       "name": "Light_Hall",
       "parent": "e7",
       "active": true,
@@ -4321,7 +5120,7 @@
       ]
     },
     {
-      "id": "e119",
+      "id": "e146",
       "name": "Fill_Bedroom",
       "parent": "e7",
       "active": true,
@@ -4346,7 +5145,7 @@
       ]
     },
     {
-      "id": "e120",
+      "id": "e147",
       "name": "Fill_Bathroom",
       "parent": "e7",
       "active": true,
@@ -4371,7 +5170,7 @@
       ]
     },
     {
-      "id": "e121",
+      "id": "e148",
       "name": "Fill_Hall",
       "parent": "e7",
       "active": true,
@@ -4396,7 +5195,7 @@
       ]
     },
     {
-      "id": "e122",
+      "id": "e149",
       "name": "Fill_Storage",
       "parent": "e7",
       "active": true,
@@ -4421,7 +5220,7 @@
       ]
     },
     {
-      "id": "e123",
+      "id": "e150",
       "name": "Fill_Upstairs_Hall",
       "parent": "e7",
       "active": true,
@@ -4446,7 +5245,7 @@
       ]
     },
     {
-      "id": "e124",
+      "id": "e151",
       "name": "Fill_Murphy",
       "parent": "e7",
       "active": true,
@@ -4471,7 +5270,7 @@
       ]
     },
     {
-      "id": "e125",
+      "id": "e152",
       "name": "Environment_Morning",
       "parent": "e8",
       "active": false,
@@ -4488,6 +5287,7 @@
           "autoExposure": 0.5,
           "bloom": 0.35,
           "bloomThreshold": 0.9,
+          "chromaticAberration": 0,
           "contrast": 1.05,
           "exposure": 1,
           "fogBaseHeight": 0,
@@ -4515,7 +5315,7 @@
       ]
     },
     {
-      "id": "e126",
+      "id": "e153",
       "name": "Sun",
       "parent": "e8",
       "active": false,
@@ -4540,7 +5340,7 @@
       ]
     },
     {
-      "id": "e127",
+      "id": "e154",
       "name": "Storm",
       "parent": "e9",
       "active": true,
@@ -4563,7 +5363,7 @@
       ]
     },
     {
-      "id": "e128",
+      "id": "e155",
       "name": "Rain_Bedroom_Window",
       "parent": "e9",
       "active": true,
@@ -4586,7 +5386,7 @@
       ]
     },
     {
-      "id": "e129",
+      "id": "e156",
       "name": "Rain_Kitchen_Window",
       "parent": "e9",
       "active": true,
@@ -4609,7 +5409,7 @@
       ]
     },
     {
-      "id": "e130",
+      "id": "e157",
       "name": "Fridge_Hum",
       "parent": "e9",
       "active": true,
@@ -4632,7 +5432,7 @@
       ]
     },
     {
-      "id": "e131",
+      "id": "e158",
       "name": "Creaks",
       "parent": "e9",
       "active": true,
@@ -4655,7 +5455,7 @@
       ]
     },
     {
-      "id": "e132",
+      "id": "e159",
       "name": "Birds",
       "parent": "e9",
       "active": false,
@@ -4678,7 +5478,7 @@
       ]
     },
     {
-      "id": "e133",
+      "id": "e160",
       "name": "Dust_Bedroom",
       "parent": "e5",
       "active": true,
@@ -4693,16 +5493,16 @@
           "type": "ParticleSystem",
           "area": [3.6, 2.4, 3.6],
           "color": "#fff3d6",
-          "count": 450,
-          "opacity": 0.45,
+          "count": 225,
+          "opacity": 0.22,
           "preset": "dust",
-          "size": 0.012,
+          "size": 0.004,
           "speed": 1
         }
       ]
     },
     {
-      "id": "e134",
+      "id": "e161",
       "name": "Dust_Kitchen",
       "parent": "e5",
       "active": true,
@@ -4717,16 +5517,16 @@
           "type": "ParticleSystem",
           "area": [3.6, 2.4, 4.8],
           "color": "#fff3d6",
-          "count": 400,
-          "opacity": 0.45,
+          "count": 200,
+          "opacity": 0.22,
           "preset": "dust",
-          "size": 0.012,
+          "size": 0.004,
           "speed": 1
         }
       ]
     },
     {
-      "id": "e135",
+      "id": "e162",
       "name": "Dust_Upstairs",
       "parent": "e5",
       "active": true,
@@ -4741,16 +5541,16 @@
           "type": "ParticleSystem",
           "area": [9, 2.2, 7],
           "color": "#fff3d6",
-          "count": 700,
-          "opacity": 0.45,
+          "count": 350,
+          "opacity": 0.22,
           "preset": "dust",
-          "size": 0.012,
+          "size": 0.004,
           "speed": 1
         }
       ]
     },
     {
-      "id": "e136",
+      "id": "e163",
       "name": "Ground",
       "parent": "e11",
       "active": true,
@@ -4766,7 +5566,7 @@
           "castShadow": true,
           "materials": {
             "beams": "materials/log_wood.material.json",
-            "slab": "materials/ground_mud.material.json"
+            "slab": "materials/grass_field.material.json"
           },
           "model": "models/slab.model.ts",
           "params": {
@@ -4790,9 +5590,228 @@
           "size": [1, 1, 1]
         }
       ]
+    },
+    {
+      "id": "e164",
+      "name": "Field_Wall_W",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-11, -0.2, -2],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "stones": "materials/stone_lichen.material.json"
+          },
+          "model": "models/drystone-wall.model.ts",
+          "params": {
+            "length": 18,
+            "tumble": 0.25
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e165",
+      "name": "Field_Wall_N",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [0, -0.2, -10],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "stones": "materials/stone_lichen.material.json"
+          },
+          "model": "models/drystone-wall.model.ts",
+          "params": {
+            "length": 16,
+            "tumble": 0.25
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e166",
+      "name": "Field_Wall_E",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [11, -0.2, 1],
+        "rotation": [0, 90, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "stones": "materials/stone_lichen.material.json"
+          },
+          "model": "models/drystone-wall.model.ts",
+          "params": {
+            "length": 14,
+            "tumble": 0.25
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e167",
+      "name": "Field_Wall_S",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-5, -0.2, 11],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "materials": {
+            "stones": "materials/stone_lichen.material.json"
+          },
+          "model": "models/drystone-wall.model.ts",
+          "params": {
+            "length": 10,
+            "tumble": 0.25
+          },
+          "receiveShadow": true,
+          "visible": true
+        },
+        {
+          "type": "Collider",
+          "friction": 0.5,
+          "height": 1,
+          "isTrigger": false,
+          "offset": [0, 0, 0],
+          "radius": 0.5,
+          "restitution": 0,
+          "shape": "auto",
+          "size": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "id": "e168",
+      "name": "Thorn_Tree_1",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-8.5, -0.2, -5.5],
+        "rotation": [0, 40, 0],
+        "scale": [0.9, 0.9, 0.9]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/polyhaven/island_tree_03.glb",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e169",
+      "name": "Thorn_Tree_2",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [8.5, -0.2, -7],
+        "rotation": [0, 200, 0],
+        "scale": [0.8, 0.8, 0.8]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/polyhaven/island_tree_02.glb",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "e170",
+      "name": "Thorn_Tree_3",
+      "parent": "e11",
+      "active": true,
+      "tags": [],
+      "transform": {
+        "position": [-7.5, -0.2, 7.5],
+        "rotation": [0, 120, 0],
+        "scale": [0.7, 0.7, 0.7]
+      },
+      "components": [
+        {
+          "type": "MeshRenderer",
+          "castShadow": true,
+          "model": "models/polyhaven/island_tree_03.glb",
+          "receiveShadow": true,
+          "visible": true
+        }
+      ]
     }
   ],
-  "nextId": 137,
+  "nextId": 171,
   "settings": {
     "ambientColor": "#ffffff",
     "ambientIntensity": 0.4,

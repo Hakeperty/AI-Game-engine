@@ -215,6 +215,7 @@ export async function captureShots(
       'res://addons/aige/Tools/capture.gd',
       '--',
       jobPath,
+      '--aige-no-cutscenes',
     ],
     dir,
     120_000 + shots.length * 5000,

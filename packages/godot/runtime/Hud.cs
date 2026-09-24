@@ -37,6 +37,7 @@ uniform float pulse = 0.0;
 uniform float fade = 0.0;
 uniform vec3 fade_color = vec3(0.0);
 uniform float letterbox = 0.0;
+uniform float chromatic = 0.0;
 
 float hash12(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -57,7 +58,9 @@ void fragment() {
 		col += textureLod(screen_tex, uv + vec2(-px.x * 0.5, px.y), lod).rgb * 0.16;
 		col += textureLod(screen_tex, uv - vec2(-px.x * 0.5, px.y), lod).rgb * 0.16;
 	} else {
-		col = textureLod(screen_tex, uv, 0.0).rgb;
+		// lens fringing: red and blue split outward toward the edges of the frame
+		vec2 ca = c * dot(c, c) * chromatic * 0.045;
+		col = vec3(textureLod(screen_tex, uv + ca, 0.0).r, textureLod(screen_tex, uv, 0.0).g, textureLod(screen_tex, uv - ca, 0.0).b);
 	}
 	col *= vec3(1.0 + 0.10 * temperature + 0.03 * tint, 1.0 + 0.01 * temperature - 0.06 * tint, 1.0 - 0.12 * temperature + 0.03 * tint);
 	float luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
@@ -187,6 +190,9 @@ void fragment() {
         foreach (var name in new List<string>(Instance._channels.Keys))
             Instance.FxImpl(name, DefaultOf(name), seconds, null);
     }
+
+    /// <summary>Chromatic aberration (lens fringing at the frame edges), 0..1; set from the Environment by EnvironmentFx.</summary>
+    public static float Chromatic { get; set; }
 
     /// <summary>Base look from the scene's Environment (called by EnvironmentFx).</summary>
     public static void SetBaseLook(float vignette, float grain, float temperature, float tint)
@@ -604,10 +610,11 @@ void fragment() {
         var temperature = Mathf.Clamp(_baseTemperature + Ch("temperature"), -1f, 1f);
         var tint = Mathf.Clamp(_baseTint + Ch("tint"), -1f, 1f);
         float blur = Ch("blur"), darken = Ch("darken"), desat = Ch("desaturate"), flash = Ch("flash"), fade = Ch("fade"), lb = Ch("letterbox");
-        var active = vignette + grain + Mathf.Abs(temperature) + Mathf.Abs(tint) + blur + darken + desat + flash + fade + lb + pulse > 0.002f;
+        var active = vignette + grain + Mathf.Abs(temperature) + Mathf.Abs(tint) + blur + darken + desat + flash + fade + lb + pulse + Chromatic > 0.002f;
         _fx.Visible = active;
         if (!active) return;
         _fxMat.SetShaderParameter("vignette", vignette);
+        _fxMat.SetShaderParameter("chromatic", Chromatic);
         _fxMat.SetShaderParameter("grain", grain);
         _fxMat.SetShaderParameter("temperature", temperature);
         _fxMat.SetShaderParameter("tint", tint);

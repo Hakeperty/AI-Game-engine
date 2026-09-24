@@ -6,4 +6,8 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>SidleOfMilch</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Other engines' project folders and generated output are not part of the Godot game -->
+    <Compile Remove="unity/**;node_modules/**;.aige/**;build/**" />
+  </ItemGroup>
 </Project>

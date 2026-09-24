@@ -18,6 +18,7 @@ import {
   type V3,
 } from './quat.ts';
 import {
+  AUTHORED_ARM_ANGLE,
   forwardKinematics,
   HUMANOID_ARM_ANGLE,
   type JointWorld,
@@ -132,7 +133,8 @@ function armQuatsLeft(p: ArmPose): Record<string, Quat> {
     upperarm: quatChain(
       quatAxisAngle([0, 1, 0], -n0(p.across)),
       quatAxisAngle([1, 0, 0], -n0(p.fwd)),
-      quatAxisAngle([0, 0, 1], -n0(p.down)),
+      // `down` is authored for a 40 degree A-pose; a lower bind pose needs that much less
+      quatAxisAngle([0, 0, 1], -(n0(p.down) - (HUMANOID_ARM_ANGLE - AUTHORED_ARM_ANGLE))),
       quatAxisAngle(DIR_L, n0(p.twist)),
     ),
     forearm: quatChain(quatAxisAngle(HINGE_L, n0(p.elbow)), quatAxisAngle(DIR_L, n0(p.ftwist))),

@@ -64,6 +64,7 @@ public partial class Story : Node
     {
         Instance = this;
         ProcessMode = ProcessModeEnum.Always;
+        VertexColors.Hook(GetTree());
     }
 
     public override void _ExitTree()

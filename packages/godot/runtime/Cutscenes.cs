@@ -89,6 +89,9 @@ public partial class Cutscenes : Node
     // Static API
     // =====================================================================================
 
+    /// <summary>True when the game was started with <c>--aige-no-cutscenes</c> (screenshot tool); Play does nothing.</summary>
+    public static bool Disabled { get; } = System.Array.IndexOf(OS.GetCmdlineUserArgs(), "--aige-no-cutscenes") >= 0;
+
     /// <summary>
     /// Plays a cutscene by path ('res://cutscenes/cs1.cutscene.json') or name ('cs1'). If one is
     /// already playing, this one is queued. Returns false when the file is missing or invalid.
@@ -97,6 +100,8 @@ public partial class Cutscenes : Node
     {
         var self = Instance;
         if (self == null) return false;
+        // Screenshot runs (addons/aige/Tools/capture.gd) frame the level itself, not the story.
+        if (Disabled) return false;
         var doc = CutsceneDoc.Load(pathOrName);
         if (doc == null) return false;
         if (self._run != null) self._queue.Enqueue((doc, onFinished));

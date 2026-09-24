@@ -1,0 +1,19 @@
+{
+  "format": "aige.material",
+  "version": 1,
+  "aoIntensity": 1,
+  "color": "#ffffff",
+  "doubleSided": false,
+  "emissive": "#000000",
+  "emissiveIntensity": 1,
+  "flatShading": false,
+  "map": "textures/polyhaven/blue_painted_planks/blue_painted_planks_diff_1k.jpg",
+  "mapRepeat": [1, 1],
+  "metalness": 1,
+  "normalMap": "textures/polyhaven/blue_painted_planks/blue_painted_planks_nor_gl_1k.jpg",
+  "normalScale": 1,
+  "opacity": 1,
+  "ormMap": "textures/polyhaven/blue_painted_planks/blue_painted_planks_arm_1k.jpg",
+  "roughness": 1,
+  "vertexColors": false
+}

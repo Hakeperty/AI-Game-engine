@@ -40,6 +40,16 @@ const KINDS = [
   'ball',
   'blocks',
   'horse',
+  'paper',
+  'calendar',
+  'saucer_milk',
+  'horseshoe',
+  'jar_sprig',
+  'bottle',
+  'mug',
+  'plates',
+  'newspaper',
+  'candle',
 ] as const;
 
 export default defineModel({
@@ -296,6 +306,180 @@ export default defineModel({
             color: '#6b4a30',
             roughness: 0.8,
           }),
+        });
+      }
+      case 'paper':
+      case 'calendar': {
+        // A sheet pinned flat against +Z (origin at its back); part 'photo' carries the image (0..1 UVs).
+        const cal = kind === 'calendar';
+        const [w, h] = cal ? [0.3 * s, 0.4 * s] : [0.3 * s, 0.225 * s];
+        const sheet = box({ size: [w, h, 0.002], center: [0, 0, 0.003] })
+          .bend(cal ? 0 : 3)
+          .material({ color: '#ffffff', roughness: 0.9 });
+        const pin = cal
+          ? cylinder({ radius: 0.004, height: 0.03, segments: 6 })
+              .rotate([90, 0, 0])
+              .translate([0, h / 2 - 0.012, 0.015])
+          : sphere({ radius: 0.006, segments: 8, rings: 5, center: [0, h / 2 - 0.015, 0.007] });
+        return model({
+          photo: sheet,
+          pin: pin.material({ color: cal ? '#3a3632' : '#b22222', metalness: 0.5, roughness: 0.5 }),
+        });
+      }
+      case 'saucer_milk': {
+        // A saucer of milk left out on the floor. Old custom: an offering so the fairies leave the house alone.
+        const saucer = lathe(
+          [
+            [0, 0],
+            [0.05, 0],
+            [0.075, 0.012],
+            [0.085, 0.02],
+            [0.08, 0.021],
+            [0.07, 0.014],
+            [0, 0.008],
+          ],
+          { segments: 28 },
+        ).material({ color: '#e8e4da', roughness: 0.25 });
+        const milk = cylinder({ radius: 0.068, height: 0.004, segments: 28, center: [0, 0.013, 0] }).material(
+          {
+            color: '#f3f1ea',
+            roughness: 0.1,
+          },
+        );
+        return model({ saucer, milk });
+      }
+      case 'horseshoe': {
+        // Iron horseshoe nailed up with the ends pointing up to hold the luck (and keep the fairies out).
+        const shoe = torus({ radius: 0.06, tube: 0.011, segments: 24, tubeSegments: 6 })
+          .intersect(box({ size: [0.2, 0.2, 0.1], center: [0, -0.035, 0] }))
+          .scale([1, 1.15, 0.6])
+          .rotate([90, 0, 180])
+          .rotate([-90, 0, 0])
+          .translate([0, 0, 0.008])
+          .jitter(0.002, 5);
+        return model({ shoe: shoe.material({ color: '#3b332d', metalness: 0.85, roughness: 0.75 }) });
+      }
+      case 'jar_sprig': {
+        // A jam jar with a hawthorn sprig in it. Bringing hawthorn into a house is said to bring death.
+        const jar = lathe(
+          [
+            [0, 0],
+            [0.04, 0],
+            [0.042, 0.1],
+            [0.035, 0.115],
+            [0.036, 0.13],
+            [0, 0.13],
+          ],
+          { segments: 20 },
+        ).material({ color: '#c9d4d2', roughness: 0.05, opacity: 0.35 });
+        const twigs: PolyMesh[] = [];
+        const blossoms: PolyMesh[] = [];
+        for (let i = 0; i < 7; i++) {
+          const a = (i / 7) * Math.PI * 2 + rng.range(-0.3, 0.3);
+          const lean = rng.range(10, 35);
+          const len = rng.range(0.18, 0.32);
+          twigs.push(
+            cylinder({ radius: 0.003, radiusTop: 0.0015, height: len, segments: 5, center: [0, len / 2, 0] })
+              .rotate([lean, (a * 180) / Math.PI, 0])
+              .translate([0, 0.02, 0]),
+          );
+          for (let k = 0; k < 5; k++) {
+            const t = rng.range(0.5, 1);
+            const r = Math.sin((lean * Math.PI) / 180) * len * t;
+            blossoms.push(
+              sphere({ radius: 0.006, segments: 6, rings: 4 }).translate([
+                Math.sin(a) * r + rng.range(-0.01, 0.01),
+                0.02 + Math.cos((lean * Math.PI) / 180) * len * t,
+                Math.cos(a) * r + rng.range(-0.01, 0.01),
+              ]),
+            );
+          }
+        }
+        return model({
+          jar,
+          twigs: PolyMesh.merge(...twigs).material({ color: '#3d2e22', roughness: 0.9 }),
+          blossoms: PolyMesh.merge(...blossoms).material({ color: '#e9e0d6', roughness: 0.8 }),
+        });
+      }
+      case 'bottle': {
+        const bottle = lathe(
+          [
+            [0, 0],
+            [0.036, 0],
+            [0.038, 0.17],
+            [0.02, 0.22],
+            [0.013, 0.26],
+            [0.014, 0.29],
+            [0, 0.29],
+          ],
+          { segments: 20 },
+        ).material({ color: rng.chance(0.5) ? '#3b5a2a' : '#5a3a1c', roughness: 0.1, opacity: 0.75 });
+        return model({ bottle }).setCollider({
+          shape: 'cylinder',
+          size: [0.08, 0.29, 0.08],
+          offset: [0, 0.145, 0],
+        });
+      }
+      case 'mug': {
+        const mug = lathe(
+          [
+            [0, 0],
+            [0.04, 0],
+            [0.042, 0.095],
+            [0.037, 0.095],
+            [0.035, 0.008],
+            [0, 0.008],
+          ],
+          { segments: 20 },
+        );
+        const handle = torus({ radius: 0.028, tube: 0.007, segments: 16, tubeSegments: 6 })
+          .rotate([90, 0, 0])
+          .translate([0.045, 0.05, 0]);
+        const tea = cylinder({ radius: 0.034, height: 0.003, segments: 20, center: [0, 0.06, 0] });
+        return model({
+          mug: PolyMesh.merge(mug, handle).material({ color: '#d9d2c3', roughness: 0.3 }),
+          tea: tea.material({ color: '#2a1a10', roughness: 0.05 }),
+        });
+      }
+      case 'plates': {
+        const plates = PolyMesh.merge(
+          ...Array.from({ length: 5 }, (_, i) =>
+            cylinder({
+              radius: 0.12,
+              height: 0.012,
+              segments: 28,
+              center: [rng.range(-0.006, 0.006), 0.006 + i * 0.014, rng.range(-0.006, 0.006)],
+            }),
+          ),
+        ).material({ color: '#e7e3d9', roughness: 0.25 });
+        return model({ plates });
+      }
+      case 'newspaper': {
+        const paper = box({ size: [0.36, 0.006, 0.28], center: [0, 0.003, 0] })
+          .subdivide(1)
+          .displace({ amount: 0.004, scale: 6, seed: 4 })
+          .colorBy((q) =>
+            Math.abs(Math.sin(q[2] * 90)) > 0.8 && Math.abs(q[0]) < 0.15 ? '#5a5650' : '#d8d2c2',
+          );
+        return model({ paper: paper.material({ roughness: 0.95 }) });
+      }
+      case 'candle': {
+        // A candle burnt down to a stub in a saucer, with drips of wax.
+        const dish = cylinder({ radius: 0.05, height: 0.01, segments: 20, center: [0, 0.005, 0] });
+        const stub = cylinder({ radius: 0.018, height: 0.045, segments: 14, center: [0, 0.032, 0] }).jitter(
+          0.002,
+          3,
+        );
+        const drips = PolyMesh.merge(
+          ...Array.from({ length: 5 }, (_, i) =>
+            sphere({ radius: 0.008, segments: 6, rings: 4 })
+              .scale([1, 0.5, 1])
+              .translate([Math.cos(i * 1.3) * 0.028, 0.012, Math.sin(i * 1.3) * 0.028]),
+          ),
+        );
+        return model({
+          dish: dish.material({ color: '#6f6a60', metalness: 0.6, roughness: 0.5 }),
+          wax: PolyMesh.merge(stub, drips).material({ color: '#e6dcc4', roughness: 0.6 }),
         });
       }
     }

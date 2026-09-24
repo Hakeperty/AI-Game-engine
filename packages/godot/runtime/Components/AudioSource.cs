@@ -41,7 +41,14 @@ public partial class AudioSource : Node
     {
         ApplyLoop(Clip, Loop);
         Set("volume_db", Mathf.LinearToDb(Mathf.Max(0.0001f, Volume)));
-        if (PlayOnStart) Play();
+        // Inactive entities (process mode disabled) stay silent until a cutscene or script enables them.
+        if (PlayOnStart && CanProcess()) Play();
+    }
+
+    public override void _Notification(int what)
+    {
+        if (what == NotificationEnabled && PlayOnStart && !IsPlaying) Play();
+        else if (what == NotificationDisabled && IsPlaying) Call("stop");
     }
 
     /// <summary>Sets looping on a stream (Ogg Vorbis, WAV, MP3).</summary>

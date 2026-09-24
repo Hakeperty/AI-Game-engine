@@ -15,3 +15,14 @@ Third-party assets used by this game.
 - **Cloudy Cliffside Road** (hdri) by Greg Zaal, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/cloudy_cliffside_road), CC0: `textures/hdri/cloudy_cliffside_road_2k.hdr`
 - **Island Tree 03** (model) by Rob Tuytel, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/island_tree_03), CC0: `models/polyhaven/island_tree_03.glb`
 - **Island Tree 02** (model) by Rob Tuytel, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/island_tree_02), CC0: `models/polyhaven/island_tree_02.glb`
+- **Jogging Melange** (texture) by colormass, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/jogging_melange), CC0: `textures/polyhaven/jogging_melange`
+- **Denim Fabric** (texture) by Rob Tuytel, [Poly Haven](https://polyhaven.com/a/denim_fabric), CC0: `textures/polyhaven/denim_fabric`
+- **Brown Leather** (texture) by Rob Tuytel, [Poly Haven](https://polyhaven.com/a/brown_leather), CC0: `textures/polyhaven/brown_leather`
+- **Cotton Jersey** (texture) by colormass, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/cotton_jersey), CC0: `textures/polyhaven/cotton_jersey`
+- **Stretch Poplin** (texture) by colormass, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/stretch_poplin), CC0: `textures/polyhaven/stretch_poplin`
+- **Wool Boucle** (texture) by colormass, Rico Cilliers, [Poly Haven](https://polyhaven.com/a/wool_boucle), CC0: `textures/polyhaven/wool_boucle`
+- **Leather White** (texture) by Rob Tuytel, [Poly Haven](https://polyhaven.com/a/leather_white), CC0: `textures/polyhaven/leather_white`
+- **Rough Plaster Brick 04** (texture) by Rob Tuytel, [Poly Haven](https://polyhaven.com/a/rough_plaster_brick_04), CC0: `textures/polyhaven/rough_plaster_brick_04`
+- **Dirty Carpet** (texture) by Rohit Seervi, [Poly Haven](https://polyhaven.com/a/dirty_carpet), CC0: `textures/polyhaven/dirty_carpet`
+- **Blue Painted Planks** (texture) by Rob Tuytel, [Poly Haven](https://polyhaven.com/a/blue_painted_planks), CC0: `textures/polyhaven/blue_painted_planks`
+- **Fabric Pattern 05** (texture) by Rob Tuytel, [Poly Haven](https://polyhaven.com/a/fabric_pattern_05), CC0: `textures/polyhaven/fabric_pattern_05`

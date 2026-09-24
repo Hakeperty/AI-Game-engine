@@ -152,6 +152,10 @@ export function csproj(assembly: string): string {
     <LangVersion>latest</LangVersion>
     <RootNamespace>${assembly}</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Other engines' project folders and generated output are not part of the Godot game -->
+    <Compile Remove="unity/**;node_modules/**;.aige/**;build/**" />
+  </ItemGroup>
 </Project>
 `;
 }
@@ -169,7 +173,7 @@ custom_features=""
 export_filter="all_resources"
 include_filter="cutscenes/*.json, audio/voice/*.json"
 exclude_filter="voices/*, scenes/*.scene.json"
-export_path="build/${assembly}.exe"
+export_path="dist/${assembly}.exe"
 patches=PackedStringArray()
 encryption_include_filters=""
 encryption_exclude_filters=""

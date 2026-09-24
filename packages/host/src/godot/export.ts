@@ -160,8 +160,13 @@ export async function exportGodot(
       const built = await host.assets.build(path, params);
       let glb = built.glb;
       if (all || Object.keys(parts).length) {
-        const r = await applyMaterialOverrides(glb, { ...(all ? { all } : {}), parts }, (p) =>
-          fs.readBinary(p),
+        const r = await applyMaterialOverrides(
+          glb,
+          { ...(all ? { all } : {}), parts },
+          (p) => fs.readBinary(p),
+          {
+            embedTextures: false,
+          },
         );
         glb = r.glb;
         warnings.push(...r.warnings);
@@ -184,6 +189,23 @@ export async function exportGodot(
         ...(needTris ? { triangles: triangleSoup(built.model ?? (await importGlb(built.glb))) } : {}),
         ...(await glbParts(glb)),
       };
+      // The scene assigns the shared .tres materials to the overridden parts (textures imported once).
+      const surfaces = await glbSurfaces(glb);
+      const pm: NonNullable<ModelRef['partMaterials']> = [];
+      for (const [part, count] of surfaces) {
+        const docPath =
+          (mr.materials as Record<string, string> | undefined)?.[part] ?? (mr.material as string | undefined);
+        if (docPath && state.materials[docPath])
+          pm.push({
+            part: godotPartName(part, surfaces.root),
+            surfaces: count,
+            material: materialResPath(docPath),
+          });
+      }
+      if (pm.length) {
+        ref.partMaterials = pm;
+        ref.root ??= surfaces.root;
+      }
     } catch (err) {
       warnings.push(`Model '${path}': ${(err as Error).message.split('\n')[0]}`);
     }
@@ -200,15 +222,11 @@ export async function exportGodot(
       if (mr?.model) refsByEntity.set(e, await modelFor(mr, needTris));
     }
 
-  // 3. Materials for primitives
+  // 3. Materials (shared by model parts and primitives)
   const materialRes = new Map<string, string>();
   for (const [path, doc] of Object.entries(state.materials)) {
-    const out = `godot/materials/${path
-      .split('/')
-      .pop()!
-      .replace(/\.material\.json$/, '')}.tres`;
-    await writeIfChanged(host, out, materialTres(doc));
-    materialRes.set(path, `res://${out}`);
+    await writeIfChanged(host, materialResPath(path).replace('res://', ''), materialTres(doc));
+    materialRes.set(path, materialResPath(path));
   }
 
   // 4. Audio: ambience loops used by scenes, and every story SFX (the runtime's Sfx.Play uses them)
@@ -281,10 +299,12 @@ export async function exportGodot(
   );
   if (!(await fs.exists(`${assembly}.csproj`))) await fs.write(`${assembly}.csproj`, csproj(assembly));
   if (!(await fs.exists('export_presets.cfg'))) await fs.write('export_presets.cfg', exportPresets(assembly));
-  if (!(await fs.exists('voices/.gdignore')) && (await fs.exists('voices')))
-    await fs.write('voices/.gdignore', '');
+  // Folders Godot must not import: voice references, and a sibling Unity project (unity_export)
+  for (const dir of ['voices', 'unity'])
+    if (!(await fs.exists(`${dir}/.gdignore`)) && (await fs.exists(dir)))
+      await fs.write(`${dir}/.gdignore`, '');
   const gi = (await fs.read('.gitignore')) ?? '';
-  const need = ['.godot/', 'build/', 'godot/models/'].filter((l) => !gi.split(/\r?\n/).includes(l));
+  const need = ['.godot/', 'dist/', 'godot/'].filter((l) => !gi.split(/\r?\n/).includes(l));
   if (need.length) await fs.write('.gitignore', `${gi.trimEnd()}\n${need.join('\n')}\n`);
 
   const result: GodotExportResult = {
@@ -336,6 +356,34 @@ async function glbParts(glb: Uint8Array): Promise<{ root?: string; noShadowParts
         ?.listPrimitives()
         .some((p) => p.getMaterial()?.getAlphaMode() === 'BLEND'),
     )
-    .map((n) => n.getName());
+    .map((n) => godotPartName(n.getName(), root.getName()));
   return parts.length ? { root: root.getName(), noShadowParts: parts } : {};
+}
+
+/** res:// path of the shared Godot material written for a 'materials/<name>.material.json' doc. */
+function materialResPath(docPath: string): string {
+  const name = docPath
+    .split('/')
+    .pop()!
+    .replace(/\.material\.json$/, '');
+  return `res://godot/materials/${name}.tres`;
+}
+
+/** Surface (primitive) count per part node, and the GLB's root node name. */
+async function glbSurfaces(glb: Uint8Array): Promise<Map<string, number> & { root?: string }> {
+  const doc = await new WebIO().registerExtensions([KHRTextureTransform]).readBinary(glb);
+  const root = (doc.getRoot().getDefaultScene() ?? doc.getRoot().listScenes()[0])?.listChildren()[0];
+  const out = new Map<string, number>() as Map<string, number> & { root?: string };
+  if (!root) return out;
+  out.root = root.getName();
+  for (const n of root.listChildren()) {
+    const mesh = n.getMesh();
+    if (mesh) out.set(n.getName(), mesh.listPrimitives().length);
+  }
+  return out;
+}
+
+/** The node name Godot gives a part after import (names are made unique across the file: 'slab' in 'slab' → 'slab2'). */
+function godotPartName(part: string, root: string | undefined): string {
+  return part === root ? `${part}2` : part;
 }

@@ -3,6 +3,7 @@
  * girdle, abdomen, pelvis and glutes; limbs with muscle masses; five-fingered hands; feet; the neck joining the
  * head. `bodyProxy` is a smoother, simpler version used as the base for clothing and for skin-weight projection.
  */
+import { HUMANOID_ARM_ANGLE } from '@aige/core';
 import { add, mul, type V3 } from '../math.ts';
 import { type Sdf, sdf } from '../sdf.ts';
 import type { Anatomy } from './anatomy.ts';
@@ -11,7 +12,7 @@ const sym = (make: (side: 1 | -1) => Sdf): Sdf[] => [make(1), make(-1)];
 
 /** Oriented ellipsoid: radii along (dir, up-ish, side) frame of the left arm, placed at c. */
 function armEll(side: 1 | -1, r: V3, c: V3): Sdf {
-  const e = sdf.ellipsoid(r, [0, 0, 0]).rotate([0, 0, -40 * side]);
+  const e = sdf.ellipsoid(r, [0, 0, 0]).rotate([0, 0, -HUMANOID_ARM_ANGLE * side]);
   return e.translate(c);
 }
 
@@ -70,8 +71,8 @@ export function thumbChain(k: number): FingerChain {
 
 /** Hand-local point -> model space for the given side (A-pose, wrist at the hand joint). */
 export function handToModel(an: Anatomy, side: 1 | -1, p: V3): V3 {
-  const c = Math.cos((-40 * Math.PI) / 180);
-  const sn = Math.sin((-40 * Math.PI) / 180);
+  const c = Math.cos((-HUMANOID_ARM_ANGLE * Math.PI) / 180);
+  const sn = Math.sin((-HUMANOID_ARM_ANGLE * Math.PI) / 180);
   const w = an.j.hand_l;
   const x = w[0] + p[0] * c - p[1] * sn;
   const y = w[1] + p[0] * sn + p[1] * c;
@@ -131,8 +132,17 @@ export interface BodySdfs {
   body: Sdf;
   /** Left and right hand in model space (also part of `body`). */
   hands: Sdf;
-  /** Smooth base shape for clothing and weight projection (no fingers, no head details). */
+  /** Smooth, simple body masses (legacy clothing base). */
   proxy: Sdf;
+  /** Garment bases: the anatomical body split into torso(+neck), arms (shoulder to wrist) and legs. */
+  cloth: ClothBase;
+}
+
+export interface ClothBase {
+  torso: Sdf;
+  arms: Sdf[];
+  legs: Sdf[];
+  all: Sdf;
 }
 
 export function bodySdfs(an: Anatomy): BodySdfs {
@@ -224,7 +234,7 @@ export function bodySdfs(an: Anatomy): BodySdfs {
     const F = an.len.forearm;
     return [
       // deltoid over the shoulder joint
-      armEll(sd, [0.075 * g, 0.052 * g, 0.056 * g], alongArm(an, sd, 0.03 * s, [0.008 * s, 0.012 * s, 0])),
+      armEll(sd, [0.056 * g, 0.04 * g, 0.045 * g], alongArm(an, sd, 0.014 * s, [-0.006 * s, 0.008 * s, 0])),
       // upper arm core, biceps, triceps
       sdf.roundCone(alongArm(an, sd, 0.02 * s), alongArm(an, sd, U), D.upperArmR, D.forearmR * 0.93),
       armEll(
@@ -273,23 +283,24 @@ export function bodySdfs(an: Anatomy): BodySdfs {
       sdf.ellipsoid([D.calfR * 0.95, 0.11 * s, D.calfR], [hx * 1.02, y.knee - 0.14 * s, -0.024 * g]),
     ];
   };
-  const handL = handLocal(an).rotate([0, 0, -40]).translate(an.j.hand_l);
+  const handL = handLocal(an).rotate([0, 0, -HUMANOID_ARM_ANGLE]).translate(an.j.hand_l);
   const hands = handL.union(handL.mirrorX().intersect(sdf.box([1, 3, 1], [-0.5, 1.5, 0])));
   const footL = footLeft(an);
+  const torsoS = sdf.smoothUnionAll(torso, 0.05 * s);
+  const neckS = sdf.smoothUnionAll(neck, 0.025 * s);
+  const armS = [sdf.smoothUnionAll(arm(1), 0.012 * s), sdf.smoothUnionAll(arm(-1), 0.012 * s)];
+  const legS = [sdf.smoothUnionAll(leg(1), 0.015 * s), sdf.smoothUnionAll(leg(-1), 0.015 * s)];
   const body = sdf
-    .smoothUnionAll(
-      [
-        sdf.smoothUnionAll(torso, 0.05 * s),
-        sdf.smoothUnionAll(neck, 0.025 * s),
-        ...arm(1),
-        ...arm(-1),
-        ...leg(1),
-        ...leg(-1),
-      ],
-      0.022 * s,
-    )
+    .smoothUnionAll([torsoS, neckS, ...armS, ...legS], 0.022 * s)
     .smoothUnion(hands, 0.012 * s)
     .smoothUnion(footL.union(footL.mirrorX().intersect(sdf.box([1, 1, 1], [-0.5, 0.5, 0]))), 0.02 * s);
+  // garments are built on the real body (without hands, feet and head) so they follow its anatomy
+  const cloth = {
+    torso: torsoS.smoothUnion(neckS, 0.03 * s),
+    arms: armS,
+    legs: legS,
+    all: sdf.smoothUnionAll([torsoS, neckS, ...armS, ...legS], 0.03 * s),
+  };
 
   // --- proxy: few, smooth masses
   const proxyParts: Sdf[] = [
@@ -337,5 +348,5 @@ export function bodySdfs(an: Anatomy): BodySdfs {
     );
   }
   const proxy = sdf.smoothUnionAll(proxyParts, 0.05 * s);
-  return { body, hands, proxy };
+  return { body, hands, proxy, cloth };
 }

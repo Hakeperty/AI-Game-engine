@@ -182,6 +182,10 @@ Helpers:
 
 Organic templates: creature, slime, fish, mushroom, bush, flower, cactus, snake (or worm), tentacle, tree-organic, island-terrain, blob-character.
 
+## Human characters (skinned + animated)
+- \`character_create\` {name, preset: 'milch'|'murphy'|'parent'|'none', params} writes models/<name>.model.ts (templates human, milch, murphy, parent). In a recipe: humanoid({ preset, height, age: 'adult'|'teen'|'child', sex, build, muscle, headShape, skin, eyes, hair: 'messy'|'short'|'buzz'|'shoulder'|'bun'|'none', hairColor, top: 'hoodie'|'tshirt'|'sweater', bottom: 'jeans'|'shorts'|'trousers', shoes: 'boots'|'sneakers'|'shoes'|'barefoot', *Color, wear, stubble, clips, detail }).
+- Output: faces +Z, feet on y = 0, AIGE humanoid skeleton (hips, spine, chest, neck, head, jaw, shoulder/upperarm/forearm/hand/fingers/fingertips/thumb _l/_r, thigh/shin/foot/toe _l/_r), automatic skin weights, sockets hand_r/hand_l/head/eyes/belt/back, and every built-in clip as a glTF animation named by clip (\`animation_list\`). Check a clip with \`animation_preview\` {model, clip, frames}.
+
 ## Tips
 - Keep triangle counts modest (under 20k per prop). Lower segments, or use .mesh({ decimate }) for SDF models.
 - flatShading: true gives a low-poly look. Use vertex colors (color/gradient) for cheap variety.

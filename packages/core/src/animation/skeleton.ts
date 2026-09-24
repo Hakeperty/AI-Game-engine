@@ -7,13 +7,19 @@
  * - every joint's bind rotation is identity (joints are only offset from their parent), so a clip rotation is
  *   expressed in model-aligned axes: +X bends a spine bone forward, +Y turns it to the character's left,
  *   +Z leans it to the character's right;
- * - bind pose is a relaxed A-pose: arms straight, 40 degrees below horizontal in the frontal plane, palms
+ * - bind pose is a relaxed A-pose: arms straight, 50 degrees below horizontal in the frontal plane, palms
  *   facing down/in, thumbs forward; legs straight down; feet pointing +Z.
  */
 import { type Quat, quatMul, quatRotate, type V3 } from './quat.ts';
 
-/** Arm angle below horizontal in the bind A-pose (degrees). Must match @aige/modeling's humanoid(). */
-export const HUMANOID_ARM_ANGLE = 40;
+/**
+ * Arm angle below horizontal in the bind A-pose (degrees). Must match @aige/modeling's humanoid(). A fairly low
+ * A-pose keeps the shoulders from deforming much when the arms hang (most of the time).
+ */
+export const HUMANOID_ARM_ANGLE = 50;
+
+/** A-pose angle the clip library's arm `down` values are authored against (the rig compensates). */
+export const AUTHORED_ARM_ANGLE = 40;
 
 /** Hip height the built-in clips' hips translations are authored for (meters); scaled per character. */
 export const REFERENCE_HIPS_HEIGHT = 0.96;

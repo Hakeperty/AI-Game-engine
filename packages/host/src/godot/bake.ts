@@ -29,7 +29,9 @@ export async function applyMaterialOverrides(
   glb: Uint8Array,
   overrides: MaterialOverrides,
   readImage: (path: string) => Promise<Uint8Array | null>,
+  opts: { embedTextures?: boolean } = {},
 ): Promise<{ glb: Uint8Array; warnings: string[] }> {
+  const embed = opts.embedTextures ?? true;
   const warnings: string[] = [];
   const io = new WebIO().registerExtensions([KHRTextureTransform]);
   const doc = await io.readBinary(glb);
@@ -38,7 +40,7 @@ export async function applyMaterialOverrides(
   const materials = new Map<MaterialDoc, Material>();
 
   const texture = async (path: string | undefined): Promise<Texture | null> => {
-    if (!path) return null;
+    if (!path || !embed) return null;
     if (!textures.has(path)) {
       const bytes = await readImage(path);
       if (!bytes) warnings.push(`Texture '${path}' not found.`);
@@ -99,6 +101,7 @@ export async function applyMaterialOverrides(
       prim.setMaterial(mat);
       if (!md.vertexColors) prim.setAttribute('COLOR_0', null);
       if (!prim.getAttribute('TEXCOORD_0') && (md.map || md.normalMap || md.ormMap)) boxUvs(doc, prim);
+      // Without embedded textures the engine assigns the material itself; keep the UVs and drop the tint.
     }
   }
   return { glb: await io.writeBinary(doc), warnings };

@@ -2,8 +2,8 @@
 .aige/
 .godot/
 addons/aige/
-build/
 dist/
+exports/
 godot/
 godot/models/
 node_modules/
