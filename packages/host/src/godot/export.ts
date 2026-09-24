@@ -272,10 +272,22 @@ export async function exportGodot(
       for (const c of e.components) {
         const src = c.type === 'Script' ? String(c.script) : '';
         if (!src.endsWith('.cs') || scriptBases.has(src)) continue;
-        const code = await fs.read(src);
-        const cls = src.split('/').pop()!.replace(/\.cs$/, '');
-        const m = code && new RegExp(`class\\s+${cls}\\s*:\\s*(?:Godot\\.)?(\\w+)`).exec(code);
-        scriptBases.set(src, m ? m[1]! : null);
+        // follow the inheritance chain through the game's own classes (Goblin : Enemy : CharacterBody3D)
+        const dir = src.includes('/') ? src.slice(0, src.lastIndexOf('/') + 1) : '';
+        let file = src;
+        let cls = src.split('/').pop()!.replace(/\.cs$/, '');
+        let base: string | null = null;
+        for (let depth = 0; depth < 6; depth++) {
+          const code = await fs.read(file);
+          const m = code && new RegExp(`class\\s+${cls}\\s*:\\s*(?:Godot\\.)?(\\w+)`).exec(code);
+          if (!m) break;
+          base = m[1]!;
+          const next = `${dir}${base}.cs`;
+          if (!(await fs.exists(next))) break;
+          file = next;
+          cls = base;
+        }
+        scriptBases.set(src, base);
       }
   const scenes: GodotExportResult['scenes'] = [];
   for (const [path, scene] of Object.entries(state.scenes)) {

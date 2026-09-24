@@ -14,6 +14,7 @@ export const AMBIENCE_KINDS = [
   'creaks',
   'birds',
   'crickets',
+  'surf',
   'room_tone',
   'heartbeat',
   'breathing',
@@ -45,6 +46,21 @@ export const STORY_SFX = [
   'breath_in',
   'breath_out',
   'bird_call',
+  // action games
+  'sword_swing',
+  'roll',
+  'hit',
+  'hurt',
+  'block_clang',
+  'coin',
+  'pop',
+  'chime',
+  'paper',
+  'chest_open',
+  'rumble',
+  'splash',
+  'footstep_grass',
+  'spit',
 ] as const;
 export type StorySfx = (typeof STORY_SFX)[number];
 
@@ -250,6 +266,7 @@ const LOOP_RMS: Partial<Record<AmbienceKind, number>> = {
   creaks: 0.012,
   birds: 0.02,
   crickets: 0.05,
+  surf: 0.12,
   room_tone: 0.025,
 };
 
@@ -307,6 +324,29 @@ export function renderAmbienceLoop(
     case 'crickets':
       renderCrickets(raw, sr, rng, seconds);
       break;
+    case 'surf': {
+      // small waves on a shore: each one swells in, breaks, and hisses back out over the sand
+      const brown = new Brown();
+      const pink = new Pink();
+      const body = new Svf(sr, 300, 0.7);
+      const hiss = new Svf(sr, 2800, 0.8);
+      const waves = Math.max(1, Math.round(seconds / 5.5));
+      const sizes = Array.from({ length: waves }, () => 0.6 + 0.4 * rng.next());
+      for (let i = 0; i < total; i++) {
+        const u = (((i / sr) * waves) / seconds) % 1;
+        const k = Math.floor((((i / sr) * waves) / seconds) % waves);
+        const phase = (u + 1 - 0.13 * (k % 2)) % 1;
+        const env = (phase < 0.3 ? (phase / 0.3) ** 2 : Math.exp(-(phase - 0.3) * 4.5)) * sizes[k]!;
+        const wash =
+          phase < 0.3 ? 0 : Math.exp(-(phase - 0.3) * 2.2) * Math.min(1, (phase - 0.3) * 8) * sizes[k]!;
+        if ((i & 31) === 0) body.set(180 + 900 * env, 0.7);
+        const w = rng.next() * 2 - 1;
+        body.process(brown.next(w));
+        hiss.process(pink.next(w));
+        raw[i] = body.low * (0.25 + 1.1 * env) + hiss.band * 0.5 * wash;
+      }
+      break;
+    }
     case 'birds': {
       // soft morning air; the chirps themselves are scheduled live (never repeating)
       const pink = new Pink();
@@ -506,6 +546,20 @@ function renderCrickets(out: Float32Array, sr: number, rng: Rng, loopSeconds: nu
 
 /** Relative loudness of each story preset (peak after normalization). */
 const STORY_PEAK: Record<StorySfx, number> = {
+  sword_swing: 0.5,
+  roll: 0.45,
+  hit: 0.85,
+  hurt: 0.7,
+  block_clang: 0.6,
+  coin: 0.4,
+  pop: 0.6,
+  chime: 0.5,
+  paper: 0.35,
+  chest_open: 0.6,
+  rumble: 0.8,
+  splash: 0.55,
+  footstep_grass: 0.25,
+  spit: 0.5,
   thunder: 0.95,
   thunder_distant: 0.55,
   creak: 0.5,
@@ -762,6 +816,176 @@ export function synthStorySfx(preset: StorySfx, sampleRate = 44100, seed = 1): F
         f2.process(w);
         out[i] = (f1.band + f2.band * 0.45) * env;
       }
+      break;
+    }
+    case 'sword_swing': {
+      // a blade cutting air: a narrow band of noise sweeping up and back down, fast
+      out = make(0.32);
+      const bp = new Svf(sr, 800, 2.4);
+      for (let i = 0; i < out.length; i++) {
+        const k = i / out.length;
+        if ((i & 15) === 0) bp.set(700 + 4200 * Math.sin(Math.PI * k) ** 1.6, 2.4);
+        bp.process(rng.next() * 2 - 1);
+        out[i] = bp.band * Math.sin(Math.PI * k) ** 2;
+      }
+      break;
+    }
+    case 'roll': {
+      // cloth and fur tumbling over grass, then a soft landing
+      out = make(0.55);
+      const lp = new Svf(sr, 500, 0.8);
+      for (let i = 0; i < out.length; i++) {
+        const k = Math.min(1, i / (0.4 * sr));
+        if ((i & 15) === 0) lp.set(260 + 1100 * Math.sin(Math.PI * k), 0.8);
+        lp.process(rng.next() * 2 - 1);
+        out[i] = lp.low * Math.sin(Math.PI * k) ** 1.5 * 0.8;
+      }
+      glideSine(out, sr, 0.36, 95, 55, 0.004, 0.05, 0.45);
+      break;
+    }
+    case 'hit': {
+      // a blow landing: a punchy low thump with a crunchy crack on top
+      out = make(0.38);
+      glideSine(out, sr, 0, 170, 55, 0.002, 0.05, 1);
+      burst(out, sr, rng, 0, { freq: 2200, q: 0.9, attack: 0.001, decay: 0.018, amp: 0.8 });
+      burst(out, sr, rng, 0.004, { freq: 420, q: 0.7, attack: 0.002, decay: 0.05, amp: 0.7, mode: 'low' });
+      break;
+    }
+    case 'hurt': {
+      out = make(0.45);
+      glideSine(out, sr, 0, 240, 100, 0.003, 0.08, 0.7);
+      burst(out, sr, rng, 0, { freq: 300, q: 0.7, attack: 0.002, decay: 0.07, amp: 0.8, mode: 'low' });
+      burst(out, sr, rng, 0.01, { freq: 1600, q: 1, attack: 0.002, decay: 0.03, amp: 0.3 });
+      break;
+    }
+    case 'block_clang': {
+      // wood-and-iron shield struck: inharmonic partials ringing out over a sharp click
+      out = make(1.0);
+      const partials: [number, number, number][] = [
+        [610, 0.7, 0.28],
+        [1127, 0.5, 0.2],
+        [1693, 0.35, 0.14],
+        [2476, 0.25, 0.09],
+        [3322, 0.18, 0.06],
+      ];
+      for (let i = 0; i < out.length; i++) {
+        const t = i / sr;
+        let x = 0;
+        for (const [f, a, d] of partials) x += Math.sin(TAU * f * t + a) * a * Math.exp(-t / d);
+        out[i] = x;
+      }
+      burst(out, sr, rng, 0, { freq: 4000, q: 0.8, attack: 0.0005, decay: 0.006, amp: 0.9, mode: 'high' });
+      break;
+    }
+    case 'coin': {
+      // a bright little two-note ding
+      out = make(0.5);
+      const note = (at: number, f: number, dur: number, amp: number) => {
+        const s0 = Math.floor(at * sr);
+        for (let i = s0; i < out.length; i++) {
+          const t = (i - s0) / sr;
+          out[i]! +=
+            (Math.sin(TAU * f * t) + 0.25 * Math.sin(TAU * 2 * f * t)) *
+            amp *
+            Math.exp(-t / dur) *
+            Math.min(1, t / 0.002);
+        }
+      };
+      note(0, 1318.5, 0.05, 0.7);
+      note(0.07, 1975.5, 0.18, 0.8);
+      break;
+    }
+    case 'pop': {
+      // a slime creature bursting: a squelchy downward pop and a wet splat
+      out = make(0.42);
+      glideSine(out, sr, 0, 440, 85, 0.002, 0.06, 0.9);
+      burst(out, sr, rng, 0, { freq: 950, q: 1.3, attack: 0.002, decay: 0.04, amp: 0.6 });
+      burst(out, sr, rng, 0.02, { freq: 260, q: 0.6, attack: 0.004, decay: 0.07, amp: 0.5, mode: 'low' });
+      break;
+    }
+    case 'chime': {
+      // resting at a shrine: a warm rising arpeggio that rings on
+      out = make(2.6);
+      [523.25, 659.25, 783.99, 1046.5].forEach((f, n) => {
+        const s0 = Math.floor(n * 0.13 * sr);
+        for (let i = s0; i < out.length; i++) {
+          const t = (i - s0) / sr;
+          out[i]! +=
+            (Math.sin(TAU * f * t) + 0.3 * Math.sin(TAU * 2.01 * f * t)) *
+            0.4 *
+            Math.exp(-t / 0.9) *
+            Math.min(1, t / 0.004);
+        }
+      });
+      break;
+    }
+    case 'paper': {
+      // a page unfolding: a few crisp rustles
+      out = make(0.55);
+      for (let n = 0; n < 7; n++)
+        burst(out, sr, rng, rng.next() * 0.42, {
+          freq: 3000 + rng.next() * 3500,
+          q: 0.6,
+          attack: 0.002,
+          decay: 0.012 + rng.next() * 0.02,
+          amp: 0.5,
+        });
+      break;
+    }
+    case 'chest_open': {
+      // an old lid: a short hinge squeak, then the lid thunking back
+      out = make(0.8);
+      glideSine(out, sr, 0.02, 620, 900, 0.02, 0.09, 0.18);
+      burst(out, sr, rng, 0.02, { freq: 1400, q: 3, attack: 0.02, decay: 0.08, amp: 0.2 });
+      glideSine(out, sr, 0.42, 130, 70, 0.003, 0.07, 0.8);
+      burst(out, sr, rng, 0.42, { freq: 500, q: 0.7, attack: 0.002, decay: 0.05, amp: 0.6, mode: 'low' });
+      break;
+    }
+    case 'rumble': {
+      // a great stone door grinding: deep filtered noise that swells and fades, with grit
+      out = make(3.4);
+      const lp = new Svf(sr, 90, 0.9);
+      for (let i = 0; i < out.length; i++) {
+        const t = i / sr;
+        const env = Math.min(1, t / 0.35) * Math.min(1, (3.3 - t) / 0.8);
+        lp.process(rng.next() * 2 - 1);
+        out[i] = lp.low * Math.max(0, env) * 1.8;
+      }
+      for (let n = 0; n < 40; n++)
+        burst(out, sr, rng, 0.2 + rng.next() * 2.8, {
+          freq: 700 + rng.next() * 1500,
+          q: 1,
+          attack: 0.002,
+          decay: 0.01,
+          amp: 0.12,
+        });
+      break;
+    }
+    case 'splash': {
+      out = make(0.8);
+      burst(out, sr, rng, 0, { freq: 1100, q: 0.7, attack: 0.004, decay: 0.12, amp: 0.8 });
+      burst(out, sr, rng, 0.01, { freq: 380, q: 0.6, attack: 0.004, decay: 0.08, amp: 0.5, mode: 'low' });
+      for (let n = 0; n < 10; n++)
+        burst(out, sr, rng, 0.08 + rng.next() * 0.5, {
+          freq: 2500 + rng.next() * 3000,
+          q: 4,
+          attack: 0.001,
+          decay: 0.012,
+          amp: 0.2,
+        });
+      break;
+    }
+    case 'footstep_grass': {
+      out = make(0.2);
+      burst(out, sr, rng, 0, { freq: 2600, q: 0.5, attack: 0.004, decay: 0.022, amp: 0.45 });
+      burst(out, sr, rng, 0.004, { freq: 220, q: 0.7, attack: 0.002, decay: 0.02, amp: 0.3, mode: 'low' });
+      break;
+    }
+    case 'spit': {
+      // a gob of mud flung: a rising wet squirt
+      out = make(0.38);
+      glideSine(out, sr, 0, 280, 720, 0.004, 0.05, 0.5);
+      burst(out, sr, rng, 0, { freq: 1500, q: 1.2, attack: 0.003, decay: 0.05, amp: 0.6 });
       break;
     }
     case 'bird_call': {

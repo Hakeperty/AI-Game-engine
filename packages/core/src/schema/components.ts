@@ -231,7 +231,7 @@ export const AudioSource = defineComponent({
   category: 'audio',
   multiple: true,
   description:
-    "Plays a sound. Use `clip` for an audio file ('audio/sfx/creak.ogg'), `sfx` for a synthesized one-shot preset, or `ambience` for a looping synthesized ambience (wind, rain, fridge hum...). Spatial sources fade out over `range` meters.",
+    "Plays a sound. Use `clip` for an audio file ('audio/sfx/creak.ogg'), `sfx` for a synthesized one-shot preset, or `ambience` for a looping synthesized ambience (wind, rain, surf, fridge hum...). Spatial sources fade out over `range` meters.",
   schema: z.object({
     clip: AssetPath.optional(),
     sfx: z.enum(['coin', 'jump', 'hit', 'explosion', 'powerup', 'laser', 'click', 'win', 'lose']).optional(),
@@ -246,6 +246,7 @@ export const AudioSource = defineComponent({
         'creaks',
         'birds',
         'crickets',
+        'surf',
         'room_tone',
         'heartbeat',
         'breathing',
