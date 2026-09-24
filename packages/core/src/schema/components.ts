@@ -294,12 +294,12 @@ export const Interactable = defineComponent({
     requireFlag: z.string().optional(),
     setFlag: z.string().optional(),
     cutscene: AssetPath.optional().describe("'cutscenes/intro.cutscene.json'"),
-    voice: z.string().optional().describe("Voice line id to play (Milch's thoughts)"),
+    voice: z.string().optional().describe("Voice line id to play (the player character's thoughts)"),
     text: z.string().optional().describe('Thought text shown as a subtitle when there is no voice line'),
     item: z.string().optional().describe("Item id added to the inventory ('knife'); hides this entity"),
     enabled: z.boolean().default(true),
   }),
-  example: { prompt: 'Look at picture', voice: 'milch_picture_1', setFlag: 'saw_picture_1' },
+  example: { prompt: 'Look at picture', voice: 'hero_picture_1', setFlag: 'saw_picture_1' },
 });
 
 export const Door = defineComponent({
@@ -338,7 +338,7 @@ export const Trigger = defineComponent({
     objective: z.string().optional().describe('Sets the current objective text'),
     delay: z.number().min(0).default(0).describe('Seconds to wait after entering'),
   }),
-  example: { voice: 'milch_three_chairs', once: true, setFlag: 'saw_table' },
+  example: { voice: 'hero_locked_door', once: true, setFlag: 'saw_table' },
 });
 
 export const ParticleSystem = defineComponent({

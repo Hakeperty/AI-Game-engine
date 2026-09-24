@@ -273,7 +273,7 @@ public sealed class VoiceLineDoc
         return Mathf.Lerp(Mouth[i], Mouth[i + 1], f - i);
     }
 
-    /// <summary>Loads a voice line by id ('milch_wake_1') or path. Cached; returns null when missing.</summary>
+    /// <summary>Loads a voice line by id ('hero_wake_1') or path. Cached; returns null when missing.</summary>
     public static VoiceLineDoc? Load(string idOrPath)
     {
         if (string.IsNullOrEmpty(idOrPath)) return null;

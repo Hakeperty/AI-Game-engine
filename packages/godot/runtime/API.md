@@ -8,7 +8,7 @@ Story.SetFlag("saw_photo_1");            Story.ClearFlag("x");     Story.HasFlag
 Story.Give("knife");                     Story.Take("knife");      Story.Has("knife");
 Story.SetObjective("Look around");                                             // text only
 Story.SetObjective("Search the kitchen", kitchenTable, pointerDelay: 30);      // waypoint after 30 s of free play
-Story.SetObjective("Find Murphy's room", "StairsDoor", pointerDelay: 45);      // target by entity id/path/name
+Story.SetObjective("Find Sam's room", "StairsDoor", pointerDelay: 45);      // target by entity id/path/name
 Story.ClearObjective();  Story.RevealPointer();
 Story.Emit("thunder");                                                         // named game event
 Story.On("thunder", () => LightFlicker.Lightning(), this);                     // handler, removed when `this` leaves the tree
@@ -19,7 +19,7 @@ Events: `FlagSet`, `FlagCleared`, `ItemGiven`, `ItemTaken`, `ObjectiveChanged(te
 
 ## Hud (subtitles, prompt, fades, screen FX)
 ```csharp
-Hud.Say("It smells so old in here.", 3f, "Milch");   // seconds <= 0 picks a reading time; queue: true to wait
+Hud.Say("It smells so old in here.", 3f, "Hero");   // seconds <= 0 picks a reading time; queue: true to wait
 Hud.ClearSubtitles();
 Hud.FadeOut(2f);  Hud.FadeIn(1.5f);  Hud.Fade(1f, 2f, new Color(1, 1, 1));
 Hud.Letterbox(true);
@@ -41,9 +41,9 @@ Hud.FadeOut(8f);
 
 ## Voice and Sfx
 ```csharp
-float seconds = Voice.Play("milch_wake_1");          // res://audio/voice/milch_wake_1.json + its audio; subtitle + lip-sync
-Voice.Play("milch_scream_1", milch, subtitle: false); // explicit actor (default: the entity named like the speaker)
-Voice.Stop();  Voice.IsPlaying;  Voice.DurationOf("milch_table");
+float seconds = Voice.Play("hero_wake_1");          // res://audio/voice/hero_wake_1.json + its audio; subtitle + lip-sync
+Voice.Play("hero_scream_1", hero, subtitle: false); // explicit actor (default: the entity named like the speaker)
+Voice.Stop();  Voice.IsPlaying;  Voice.DurationOf("hero_table");
 Sfx.Play("thunder");                                  // res://godot/audio/sfx/thunder.ogg
 Sfx.Play("creak", door.GlobalPosition, volume: 0.6f, pitch: 0.95f);   // 3D
 Sfx.Play("res://audio/sfx/drawer.ogg");
@@ -65,7 +65,7 @@ Cutscenes.Skip();  Cutscenes.ReturnControl();          // ReturnControl after a 
 Node3D? fridge = Entities.Find("Kitchen/Fridge");     // aige_id, then path from the scene root, then node name
 var door = Entities.Find<AnimatableBody3D>("StairsDoor");
 Entities.SetEnabled(knife, false);                     // hide + stop processing + collisions
-Entities.Teleport(milch, new Vector3(1, 0, 2), new Vector3(0, 180, 0));
+Entities.Teleport(hero, new Vector3(1, 0, 2), new Vector3(0, 180, 0));
 Entities.Player;  Entities.Tagged("Lightning");  Entities.Component<Interactable>(photo);
 ```
 
@@ -73,7 +73,7 @@ Entities.Player;  Entities.Tagged("Lightning");  Entities.Component<Interactable
 - **Interactable** (`Photo1/Interactable`): `Prompt`, `Range`, `Once`, `RequireFlag`, `SetFlag`, `Cutscene`, `Voice`, `Text`, `Item`, `Enabled`. `Interact()`, instance event `Interacted(by)`, static `AnyInteracted`.
 - **Door** (`StairsDoor/Door`): `OpenAngle`, `Speed`, `Locked`, `UnlockFlag`, `LockedText`, `StartOpen`, `Prompt`. `Open()`, `Close()`, `Unlock()`, `IsOpen`, `IsLocked`; static `AnyToggled`, `AnyLocked`.
 - **Trigger** (`Zone/Trigger`, uses the sibling `Area`): `Once`, `Tag`, `RequireFlag`, `SetFlag`, `Cutscene`, `Voice`, `Sound`, `Text`, `Objective`, `Delay`, `Enabled`. Instance event `Fired(body)`, `Reset()`.
-- **Animator** (`Milch/Animator`): `Animator.Of(milch)?.Play("look_around", fade: 0.3f, loop: false, speed: 1f)`, `Release()`, `HasClip`, `Mouth` (0..1), `Crouching`, `ClipFinished`. Locomotion blends idle/walk/run from movement. A one-shot clip holds its last pose while a cutscene has control. AIGE clip aliases work (`sit_up` → `sit_up_in_bed`).
+- **Animator** (`Hero/Animator`): `Animator.Of(hero)?.Play("look_around", fade: 0.3f, loop: false, speed: 1f)`, `Release()`, `HasClip`, `Mouth` (0..1), `Crouching`, `ClipFinished`. Locomotion blends idle/walk/run from movement. A one-shot clip holds its last pose while a cutscene has control. AIGE clip aliases work (`sit_up` → `sit_up_in_bed`).
 - **ParticleSystem**: `Preset` (dust, rain, snow, embers, fireflies, smoke, sparks, leaves), `Count`, `Area`, `Color`, `Size`, `Speed`, `Opacity`, `Emitting`, `Build()`.
 - **AudioSource** (on the `Audio` player node): `Volume`, `Loop`, `PlayOnStart`, `Range`; `Play()`, `Stop()`, `FadeTo(v, s)`, `FadeOut(s)`.
 - **LightFlicker** (`Lamp/Light/Flicker`): `Amount`, `Rate`, `BaseEnergy`, `BaseColor`; `Flash(intensity, duration)`. Static helpers: `LightFlicker.Lightning(intensity: 8, thunder: "thunder", thunderDelay: 1.2f)` flashes every light tagged `Lightning`, flashes the screen and plays thunder. `LightFlicker.FlashLight(anyLight)` flashes any single light.
@@ -94,7 +94,7 @@ public partial class KitchenBeats : Node
     public override void _Ready()
     {
         Story.On("flag:has_knife", OnKnife, this);
-        Entities.Find("Fridge")?.GetNode<Interactable>("Interactable").Interacted += _ => Voice.Play("milch_photo_2");
+        Entities.Find("Fridge")?.GetNode<Interactable>("Interactable").Interacted += _ => Voice.Play("hero_photo_2");
     }
 
     void OnKnife()

@@ -9,11 +9,11 @@
     {
       "type": "camera",
       "keys": [
-        { "t": 0, "position": [2.4, 1.7, 5.8], "lookAt": "Milch", "fov": 45, "ease": "inOut" },
+        { "t": 0, "position": [2.4, 1.7, 5.8], "lookAt": "Hero", "fov": 45, "ease": "inOut" },
         {
           "t": 3,
           "position": [1.2, 1.6, 5.0],
-          "lookAt": "Milch",
+          "lookAt": "Hero",
           "fov": 38,
           "ease": "inOut",
           "focus": 2.2,
@@ -29,16 +29,16 @@
         }
       ]
     },
-    { "type": "animation", "actor": "Milch", "clips": [{ "t": 0, "clip": "look_around", "fade": 0.3 }] },
+    { "type": "animation", "actor": "Hero", "clips": [{ "t": 0, "clip": "look_around", "fade": 0.3 }] },
     {
       "type": "move",
-      "actor": "Milch",
+      "actor": "Hero",
       "keys": [
         { "t": 0.5, "position": [0, 0, 2.8], "ease": "linear" },
         { "t": 2.5, "position": [0, 0, 3.6], "rotation": [0, 20, 0], "ease": "inOut" }
       ]
     },
-    { "type": "voice", "clips": [{ "t": 0.3, "line": "milch_wake_1", "actor": "Milch" }] },
+    { "type": "voice", "clips": [{ "t": 0.3, "line": "hero_wake_1", "actor": "Hero" }] },
     { "type": "subtitle", "items": [{ "t": 3.2, "duration": 2, "text": "(thunder in the distance)" }] },
     { "type": "sound", "clips": [{ "t": 3.4, "sfx": "thunder", "volume": 0.9 }] },
     {

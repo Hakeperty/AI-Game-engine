@@ -3,10 +3,10 @@
   "timeScale": 1,
   "skipCutscenes": false,
   "teleport": [
-    { "at": 0, "entity": "Milch", "position": [3, 0, -0.9], "yaw": 180 },
-    { "at": 0.8, "entity": "Milch", "position": [0, 0, 0], "yaw": 180 },
-    { "at": 4.0, "entity": "Milch", "position": [3, 0, -0.9], "yaw": 180 },
-    { "at": 5.0, "entity": "Milch", "position": [0, 0, 1], "yaw": 0 }
+    { "at": 0, "entity": "Hero", "position": [3, 0, -0.9], "yaw": 180 },
+    { "at": 0.8, "entity": "Hero", "position": [0, 0, 0], "yaw": 180 },
+    { "at": 4.0, "entity": "Hero", "position": [3, 0, -0.9], "yaw": 180 },
+    { "at": 5.0, "entity": "Hero", "position": [0, 0, 1], "yaw": 0 }
   ],
   "inputs": [
     { "at": 0.3, "action": "interact", "type": "tap" },
@@ -22,6 +22,6 @@
     { "at": 15.2, "action": "move_forward", "type": "up" },
     { "at": 15.2, "action": "sprint", "type": "up" }
   ],
-  "probes": ["Milch", "CameraRig"],
+  "probes": ["Hero", "CameraRig"],
   "captureAt": [3]
 }

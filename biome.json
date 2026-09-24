@@ -47,6 +47,12 @@
       "trailingCommas": "all"
     }
   },
+  "overrides": [
+    {
+      "includes": ["**/games/**/*.json", "**/examples/**/*.json"],
+      "formatter": { "enabled": false }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": {

@@ -13,7 +13,7 @@ namespace Aige
     /// (vignette, grain, blur, darken, desaturate, flash, shake, heartbeat, temperature/tint, grade multipliers,
     /// master volume). All static:
     /// <code>
-    /// Hud.Say("It smells so old in here.", 3f, "Milch");
+    /// Hud.Say("It smells so old in here.", 3f, "Hero");
     /// Hud.FadeOut(2f);  Hud.Letterbox(true);  Hud.Flash();  Hud.Shake(0.4f, 1f);
     /// Hud.Heartbeat(0.7f, bpm: 110);  Hud.Fx("vignette", 0.8f, 3f);  Hud.ResetFx(1f);
     /// </code>

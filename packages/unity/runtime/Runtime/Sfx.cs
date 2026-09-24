@@ -129,8 +129,8 @@ namespace Aige
     /// Voice lines with subtitles and lip-sync. Loads Resources/aige/audio/voice/&lt;id&gt; (VoiceLineDoc JSON + audio),
     /// shows the subtitle and drives the speaker's <see cref="AigeAnimator.Mouth"/> (jaw bone) from the mouth curve.
     /// <code>
-    /// float seconds = Voice.Play("milch_wake_1");
-    /// Voice.Play("milch_scream_1", milch, subtitle: false);
+    /// float seconds = Voice.Play("hero_wake_1");
+    /// Voice.Play("hero_scream_1", hero, subtitle: false);
     /// </code>
     /// </summary>
     [AddComponentMenu("")]

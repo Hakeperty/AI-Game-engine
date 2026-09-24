@@ -11,8 +11,8 @@ namespace Aige;
 /// 'look_around', 'faint'...); a one-shot clip holds its last pose while a cutscene has control,
 /// then locomotion takes over. <see cref="Mouth"/> (0..1) opens the jaw (voice lip-sync).
 /// <code>
-/// Animator.Of(milch)?.Play("look_around");
-/// Animator.Of(milch)?.Play("idle_nervous", fade: 0.4f, loop: true);
+/// Animator.Of(hero)?.Play("look_around");
+/// Animator.Of(hero)?.Play("idle_nervous", fade: 0.4f, loop: true);
 /// </code>
 /// </summary>
 public partial class Animator : Node3D

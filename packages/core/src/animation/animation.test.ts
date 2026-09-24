@@ -14,7 +14,7 @@ import {
   sampleClip,
 } from './index.ts';
 
-/** Clip names the Sidle of Milch story scripts and the Godot runtime use. */
+/** Clip names that story scripts and the Godot runtime use. */
 const STORY_CLIPS = [
   'idle',
   'walk',

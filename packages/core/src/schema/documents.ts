@@ -311,7 +311,7 @@ export const VoiceLineDoc = z.object({
   id: z.string(),
   speaker: z.string(),
   text: z.string(),
-  voice: z.string().describe("Voice profile ('voices/milch.voice.json')"),
+  voice: z.string().describe("Voice profile ('voices/hero.voice.json')"),
   instruct: z.string().default('').describe('Delivery/emotion instruction used for generation'),
   audio: AssetPath.describe("'audio/voice/<id>.ogg'"),
   duration: z.number().nonnegative(),

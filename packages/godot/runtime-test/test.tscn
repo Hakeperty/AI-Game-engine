@@ -11,7 +11,7 @@
 [ext_resource type="Script" path="res://addons/aige/Components/EnvironmentFx.cs" id="9"]
 [ext_resource type="Script" path="res://addons/aige/Components/AudioSource.cs" id="10"]
 [ext_resource type="Script" path="res://scripts/TestDirector.cs" id="11"]
-[ext_resource type="AudioStream" path="res://audio/voice/milch_wake_1.ogg" id="12"]
+[ext_resource type="AudioStream" path="res://audio/voice/hero_wake_1.ogg" id="12"]
 
 [sub_resource type="Environment" id="env"]
 background_mode = 1
@@ -164,7 +164,7 @@ Prompt = "Examine"
 Range = 1.8
 Once = false
 SetFlag = "saw_photo_1"
-Voice = "milch_photo_1"
+Voice = "hero_photo_1"
 Enabled = true
 
 [node name="StairsDoor" type="AnimatableBody3D" parent="."]
@@ -210,28 +210,28 @@ SetFlag = "entered_kitchen"
 Cutscene = "res://cutscenes/test_intro.cutscene.json"
 Delay = 0.3
 
-[node name="Milch" type="CharacterBody3D" parent="." groups=["Player"]]
+[node name="Hero" type="CharacterBody3D" parent="." groups=["Player"]]
 script = ExtResource("1")
 floor_max_angle = 0.872665
 floor_snap_length = 0.3
 metadata/aige_id = "e2"
 metadata/aige_tags = PackedStringArray("Player")
 
-[node name="Shape" type="CollisionShape3D" parent="Milch"]
+[node name="Shape" type="CollisionShape3D" parent="Hero"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("player_shape")
 
-[node name="Mesh" type="MeshInstance3D" parent="Milch"]
+[node name="Mesh" type="MeshInstance3D" parent="Hero"]
 transform = Transform3D(1.2, 0, 0, 0, 1.8, 0, 0, 0, 1.2, 0, 0.9, 0)
 mesh = SubResource("player_mesh")
 material_override = SubResource("mat_hoodie")
 
-[node name="Face" type="MeshInstance3D" parent="Milch"]
+[node name="Face" type="MeshInstance3D" parent="Hero"]
 transform = Transform3D(0.18, 0, 0, 0, 0.06, 0, 0, 0, 0.1, 0, 1.55, 0.27)
 mesh = SubResource("box")
 material_override = SubResource("mat_photo")
 
-[node name="Animator" type="Node3D" parent="Milch"]
+[node name="Animator" type="Node3D" parent="Hero"]
 script = ExtResource("7")
 Clips = PackedStringArray()
 Initial = "idle"
@@ -241,7 +241,7 @@ Speed = 1.0
 [node name="CameraRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 3)
 script = ExtResource("2")
-Target = "Milch"
+Target = "Hero"
 Distance = 3.2
 Height = 1.55
 Shoulder = 0.45

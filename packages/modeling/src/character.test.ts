@@ -8,7 +8,7 @@ let model: Model;
 
 beforeAll(async () => {
   await initModeling();
-  model = humanoid({ preset: 'murphy', detail: 'low', clips: ['idle', 'walk', 'faint'] });
+  model = humanoid({ preset: 'boy', detail: 'low', clips: ['idle', 'walk', 'faint'] });
 }, 60_000);
 
 describe('humanoid()', () => {

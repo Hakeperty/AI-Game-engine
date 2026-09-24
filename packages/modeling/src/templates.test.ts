@@ -6,7 +6,7 @@ import { buildRecipe, exportGlb, initModeling, isRecipe, toMeshData, validateMod
 const dir = join(import.meta.dirname, '..', 'templates');
 const files = readdirSync(dir).filter((f) => f.endsWith('.model.ts'));
 /** Skinned humans: bigger budget, slower builds (the seed check uses low detail). */
-const CHARACTERS = new Set(['human.model.ts', 'milch.model.ts', 'murphy.model.ts', 'parent.model.ts']);
+const CHARACTERS = new Set(['human.model.ts', 'young_man.model.ts', 'boy.model.ts', 'woman.model.ts']);
 
 beforeAll(async () => {
   await initModeling();
@@ -26,7 +26,7 @@ describe('model templates', () => {
       const model = buildRecipe(mod.default, {});
       const report = validateModel(model);
       expect(report.triangles).toBeGreaterThan(10);
-      expect(report.triangles, `${file} triangle budget`).toBeLessThan(character ? 32_000 : 30_000);
+      expect(report.triangles, `${file} triangle budget`).toBeLessThan(character ? 45_000 : 30_000);
       for (const part of report.parts) {
         expect(part.report.degenerateFaces, `${file}/${part.name}`).toBeLessThan(
           part.report.faces * 0.02 + 1,

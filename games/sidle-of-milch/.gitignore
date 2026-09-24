@@ -1,9 +1,0 @@
-*.import
-.aige/
-.godot/
-addons/aige/
-dist/
-exports/
-godot/
-godot/models/
-node_modules/

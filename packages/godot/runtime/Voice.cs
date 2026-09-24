@@ -4,13 +4,13 @@ using Godot;
 namespace Aige;
 
 /// <summary>
-/// Voice lines (autoload <c>Voice</c>). <c>Voice.Play("milch_wake_1")</c> loads
-/// <c>res://audio/voice/milch_wake_1.json</c> (VoiceLineDoc) and its audio, shows the subtitle and
+/// Voice lines (autoload <c>Voice</c>). <c>Voice.Play("hero_wake_1")</c> loads
+/// <c>res://audio/voice/hero_wake_1.json</c> (VoiceLineDoc) and its audio, shows the subtitle and
 /// moves the speaking character's jaw from the lip-sync curve. The actor defaults to the entity
-/// named like the speaker ('Milch').
+/// named like the speaker ('Hero').
 /// <code>
-/// var seconds = Voice.Play("milch_photo_1");
-/// Voice.Play("milch_scream_1", GetNode&lt;Node3D&gt;("../Milch"));
+/// var seconds = Voice.Play("hero_photo_1");
+/// Voice.Play("hero_scream_1", GetNode&lt;Node3D&gt;("../Hero"));
 /// </code>
 /// </summary>
 public partial class Voice : Node

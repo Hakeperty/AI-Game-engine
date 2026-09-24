@@ -10,7 +10,7 @@ namespace Aige;
 /// screen-FX pass (vignette, film grain, blur, darken, desaturate, flash, temperature/tint,
 /// heartbeat pulse, shake). All calls are static:
 /// <code>
-/// Hud.Say("It smells so old in here.", 3f, "Milch");
+/// Hud.Say("It smells so old in here.", 3f, "Hero");
 /// Hud.Fade(1f, 2f);            // to black over 2 s
 /// Hud.Fx("vignette", 0.8f, 3f); // tween any effect
 /// Hud.Flash();                 // lightning
@@ -129,7 +129,7 @@ void fragment() {
     /// Shows a subtitle at the bottom of the screen. <paramref name="seconds"/> ≤ 0 picks a reading
     /// time from the length. A new line replaces the current one unless <paramref name="queue"/> is true.
     /// </summary>
-    /// <example><code>Hud.Say("Three chairs... why three?", 4f, "Milch");</code></example>
+    /// <example><code>Hud.Say("The door won't open.", 4f, "Hero");</code></example>
     public static void Say(string text, float seconds = 0f, string? speaker = null, bool queue = false) =>
         Instance?.SayImpl(text, seconds, speaker, queue);
 

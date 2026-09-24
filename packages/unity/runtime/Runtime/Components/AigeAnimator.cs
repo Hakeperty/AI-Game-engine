@@ -11,7 +11,7 @@ namespace Aige
     /// Plays the glTF animation clips of a character model (AIGE Animator) with cross-fades, through the
     /// Playables API on the model's Animator. With <see cref="Locomotion"/> it switches idle/walk/run from how
     /// fast the entity moves while no clip overrides it. <see cref="Mouth"/> (0..1) opens the jaw bone.
-    /// <code>AigeAnimator.Of(milch)?.Play("look_around", fade: 0.3f, loop: false);</code>
+    /// <code>AigeAnimator.Of(hero)?.Play("look_around", fade: 0.3f, loop: false);</code>
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class AigeAnimator : MonoBehaviour

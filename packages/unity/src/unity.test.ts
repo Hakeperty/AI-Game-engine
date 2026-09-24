@@ -168,7 +168,7 @@ describe('scene mapping', () => {
       entity('e3', 'Lamp', [
         { type: 'Light', kind: 'point', intensity: 0.9, range: 0, flicker: 0.3, castShadow: true },
       ]),
-      entity('e4', 'Milch', [
+      entity('e4', 'Hero', [
         { type: 'CharacterController', height: 1.78, radius: 0.28 },
         { type: 'Script', script: 'builtin:PlayerController', props: { walkSpeed: 1.5 }, enabled: true },
         { type: 'Script', script: 'builtin:Nope', props: {}, enabled: true },
@@ -205,9 +205,9 @@ describe('scene mapping', () => {
       range: 30,
       flicker: 0.3,
     });
-    const milch = doc.entities.find((e) => e.name === 'Milch')!;
-    expect(milch.character).toMatchObject({ height: 1.78, radius: 0.28, stepHeight: 0.35 });
-    expect(milch.scripts).toEqual([{ kind: 'builtin', name: 'PlayerController', props: { walkSpeed: 1.5 } }]);
+    const hero = doc.entities.find((e) => e.name === 'Hero')!;
+    expect(hero.character).toMatchObject({ height: 1.78, radius: 0.28, stepHeight: 0.35 });
+    expect(hero.scripts).toEqual([{ kind: 'builtin', name: 'PlayerController', props: { walkSpeed: 1.5 } }]);
     expect(warnings.some((w) => w.includes("'Nope'"))).toBe(true);
     expect(doc.entities.find((e) => e.name === 'Story')!.scripts![0]).toMatchObject({
       kind: 'cs',
@@ -249,11 +249,11 @@ describe('project files', () => {
   it('patches project settings and makes stable GUIDs', () => {
     const s = patchProjectSettings(
       'x\n  m_ActiveColorSpace: 0\n  activeInputHandler: 0\n  productName: unity\n',
-      'The Sidle',
+      'The Harbour',
     );
     expect(s).toContain('m_ActiveColorSpace: 1');
     expect(s).toContain('activeInputHandler: 2');
-    expect(s).toContain('productName: The Sidle');
+    expect(s).toContain('productName: The Harbour');
     expect(unityGuid('Assets/Aige/Runtime/Story.cs')).toMatch(/^[0-9a-f]{32}$/);
     expect(unityGuid('Assets/Aige/Runtime/Story.cs')).toBe(unityGuid('Assets\\Aige\\Runtime\\Story.cs'));
     expect(metaFile('Assets/Aige', true)).toContain('folderAsset: yes');
@@ -278,7 +278,7 @@ public partial class Chapter1 : Node3D
         GD.Print("tick");
     }
 
-    private void Begin() => Animator.Of(Entities.Find("Milch"))?.Play("idle");
+    private void Begin() => Animator.Of(Entities.Find("Hero"))?.Play("idle");
 }
 `;
     const { code, notes } = portGodotScript(godot, 'Chapter1');

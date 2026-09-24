@@ -9,7 +9,7 @@ namespace Aige;
 /// waypoint, and named game events. Everything is static, so call it from anywhere:
 /// <code>
 /// Story.SetFlag("saw_photo_1");
-/// if (Story.HasFlag("saw_photo_1") &amp;&amp; Story.Has("knife")) Story.SetObjective("Find Murphy's room", "Stairs", pointerDelay: 30);
+/// if (Story.HasFlag("saw_photo_1") &amp;&amp; Story.Has("knife")) Story.SetObjective("Find Sam's room", "Stairs", pointerDelay: 30);
 /// Story.On("thunder", () =&gt; Sfx.Play("thunder"), this);
 /// </code>
 /// </summary>
@@ -149,7 +149,7 @@ public partial class Story : Node
     }
 
     /// <summary>Sets the objective with a target entity reference (id, path or name).</summary>
-    /// <example><code>Story.SetObjective("Find Murphy's room", "StairsDoor", pointerDelay: 45);</code></example>
+    /// <example><code>Story.SetObjective("Find Sam's room", "StairsDoor", pointerDelay: 45);</code></example>
     public static void SetObjective(string text, string targetRef, float pointerDelay = 0f)
     {
         var target = Entities.Find(targetRef);

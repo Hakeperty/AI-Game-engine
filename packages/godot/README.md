@@ -28,7 +28,7 @@ games/<game>/
   .godot/                  Godot's cache (gitignored)
 ```
 
-`res://` is the game folder, so `res://audio/voice/milch_wake_1.ogg` and `res://cutscenes/cs1_wake.cutscene.json` work as they are. The runtime reads AIGE JSON documents with `FileAccess` + `System.Text.Json`; the export preset includes `*.json`.
+`res://` is the game folder, so `res://audio/voice/hero_wake_1.ogg` and `res://cutscenes/cs1_wake.cutscene.json` work as they are. The runtime reads AIGE JSON documents with `FileAccess` + `System.Text.Json`; the export preset includes `*.json`.
 
 ## Autoloads (declared in project.godot)
 
@@ -89,20 +89,20 @@ Run `Godot --headless --path <game> --fixed-fps 60 -- --aige-test=<abs test.json
 Test file:
 ```json
 { "seconds": 30, "timeScale": 1, "skipCutscenes": false,
-  "teleport": [{ "at": 0, "entity": "Milch", "position": [1, 0, 2], "yaw": 180 }],
+  "teleport": [{ "at": 0, "entity": "Hero", "position": [1, 0, 2], "yaw": 180 }],
   "inputs": [
     { "at": 1.0, "action": "move_forward", "type": "down" },
     { "at": 2.5, "action": "move_forward", "type": "up" },
     { "at": 3.0, "action": "interact", "type": "tap" },
     { "at": 3.5, "look": [120, 0] } ],
-  "probes": ["Milch"], "captureAt": [5, 12], "capturePrefix": "<abs dir>/shot" }
+  "probes": ["Hero"], "captureAt": [5, 12], "capturePrefix": "<abs dir>/shot" }
 ```
 
 The report is JSON, written at the end or on a crash, and then Godot quits:
 ```json
 { "ok": true, "seconds": 30, "errors": ["..."], "logs": ["..."],
   "events": [{ "t": 3.1, "type": "interact", "data": { "entity": "Photo1", "prompt": "Examine" } }],
-  "probes": { "Milch": [{ "t": 0.5, "position": [0, 0, 0], "yaw": 0 }] },
+  "probes": { "Hero": [{ "t": 0.5, "position": [0, 0, 0], "yaw": 0 }] },
   "final": { "flags": [], "inventory": [], "objective": "", "cutscene": null, "scene": "house" },
   "screenshots": ["<abs path>.png"] }
 ```

@@ -4,7 +4,7 @@ import { color, Raw, str, TscnWriter, vec3 } from './tscn.ts';
 export const GODOT_VERSION = '4.7.2';
 export const GODOT_FEATURES = '4.7';
 
-/** 'The Sidle of Milch' → 'SidleOfMilch' (C# assembly / csproj name). */
+/** 'The Quiet Harbour' → 'QuietHarbour' (C# assembly / csproj name). */
 export function assemblyName(title: string): string {
   const words = title
     .replace(/^the\s+/i, '')

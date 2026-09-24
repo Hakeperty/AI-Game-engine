@@ -65,7 +65,7 @@ describe('sceneToTscn', () => {
     const scene = createSceneDoc('house');
     scene.entities = [
       entity(
-        'Milch',
+        'Hero',
         [
           { type: 'CharacterController', height: 1.78, radius: 0.3 },
           { type: 'Script', script: 'builtin:PlayerController', props: { walkSpeed: 1.5 } },
@@ -80,14 +80,14 @@ describe('sceneToTscn', () => {
         {
           type: 'Interactable',
           prompt: 'Look at photo',
-          voice: 'milch_photo_1',
+          voice: 'hero_photo_1',
           cutscene: 'cutscenes/photo.cutscene.json',
         },
       ]),
       entity('StairsDoor', [{ type: 'Door', locked: true, unlockFlag: 'upstairs' }]),
       entity('Table', [
         { type: 'Collider', shape: 'box', size: [2, 1, 2], isTrigger: true },
-        { type: 'Trigger', voice: 'milch_table' },
+        { type: 'Trigger', voice: 'hero_table' },
       ]),
       entity('Bulb', [
         { type: 'Light', kind: 'point', intensity: 2, range: 6, flicker: 0.4, castShadow: true },
@@ -100,10 +100,10 @@ describe('sceneToTscn', () => {
     ];
     const { tscn, warnings, environments } = sceneToTscn(scene, ctx);
     expect(tscn).toMatch(/^\[gd_scene load_steps=\d+ format=3\]/);
-    expect(tscn).toContain('[node name="Milch" type="CharacterBody3D" parent="." groups=["Player"]]');
+    expect(tscn).toContain('[node name="Hero" type="CharacterBody3D" parent="." groups=["Player"]]');
     expect(tscn).toContain('path="res://addons/aige/Builtins/PlayerController.cs"');
     expect(tscn).toContain('WalkSpeed = 1.5');
-    expect(tscn).toContain('[node name="Shape" type="CollisionShape3D" parent="Milch"]');
+    expect(tscn).toContain('[node name="Shape" type="CollisionShape3D" parent="Hero"]');
     expect(tscn).toContain('[node name="Mesh" parent="Bed" instance=ExtResource(');
     expect(tscn).toContain('[node name="Body" type="StaticBody3D" parent="Bed"]');
     expect(tscn).toContain('Prompt = "Look at photo"');
@@ -137,10 +137,10 @@ describe('sceneToTscn', () => {
 
 describe('project files', () => {
   it('names the assembly and writes autoloads + input map', () => {
-    expect(assemblyName('The Sidle of Milch')).toBe('SidleOfMilch');
+    expect(assemblyName('The Quiet Harbour')).toBe('QuietHarbour');
     const p = projectGodot({
-      title: 'The Sidle of Milch',
-      assembly: 'SidleOfMilch',
+      title: 'The Quiet Harbour',
+      assembly: 'QuietHarbour',
       mainScene: 'res://godot/scenes/house.tscn',
     });
     expect(p).toContain('Story="*res://addons/aige/Story.cs"');

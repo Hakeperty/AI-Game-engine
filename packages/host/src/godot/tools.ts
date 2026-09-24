@@ -131,7 +131,7 @@ export const godotPlayTestCmd = defineCommand({
   kind: 'action',
   tier: 'core',
   description: `Play-test the exported Godot game with scripted input and get a report: story events (flags, interactions, doors, triggers, cutscenes, voice lines, objectives), probe tracks, final state, C# errors, and screenshots at captureAt times. Headless (fast) unless captureAt is set. Run godot_export first after changes.
-Example: {"seconds":25,"teleport":[{"at":0,"entity":"Milch","position":[0,0,2],"yaw":180}],"inputs":[{"at":1,"action":"move_forward","type":"down"},{"at":3,"action":"move_forward","type":"up"},{"at":3.2,"action":"interact"}],"probes":["Milch"],"captureAt":[4]}`,
+Example: {"seconds":25,"teleport":[{"at":0,"entity":"Hero","position":[0,0,2],"yaw":180}],"inputs":[{"at":1,"action":"move_forward","type":"down"},{"at":3,"action":"move_forward","type":"up"},{"at":3.2,"action":"interact"}],"probes":["Hero"],"captureAt":[4]}`,
   input: TestInput.strict(),
   async run(ctx, input) {
     const { report, timedOut, images } = await playTest(hostOf(ctx), input);

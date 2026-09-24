@@ -15,7 +15,7 @@ public static class Log
     public static event Action<string>? Message;
 
     /// <summary>Prints a message and records it as a 'log' event in test reports.</summary>
-    /// <example><code>Log.Info("Milch found the knife");</code></example>
+    /// <example><code>Log.Info("Hero found the knife");</code></example>
     public static void Info(string message)
     {
         GD.Print("[aige] " + message);

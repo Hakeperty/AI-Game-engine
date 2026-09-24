@@ -15,7 +15,7 @@ import { addTo, bake, bump, cyclic, type Key, keyed, loopNoise, mergePose, ramp 
 import type { AnimClip } from './clip.ts';
 import type { V3 } from './quat.ts';
 import { type ArmPose, type BodyPose, evaluateBodyPose, type LegPose, REF } from './rig.ts';
-import { forwardKinematics } from './skeleton.ts';
+import { forwardKinematics, pointOnBone } from './skeleton.ts';
 
 /** Mattress / seat height the bed clips assume for the reference adult (scaled with hip height). */
 export const BED_TOP = 0.46;
@@ -179,7 +179,7 @@ const WALK: GaitCurves = {
     [0.38, 5],
     [0.5, 10],
     [0.6, 36],
-    [0.72, 60],
+    [0.72, 64],
     [0.86, 28],
     [0.96, 5],
   ]),
@@ -189,8 +189,8 @@ const WALK: GaitCurves = {
     [0.25, 4],
     [0.45, 10],
     [0.62, -17],
-    [0.76, 0],
-    [0.9, 3],
+    [0.76, 5],
+    [0.9, 4],
   ]),
 };
 
@@ -222,14 +222,77 @@ const RUN: GaitCurves = {
   ]),
 };
 
-/** Horizontal speed (m/s, reference skeleton) implied by a gait: stance-foot travel per stance time. */
-function gaitSpeed(g: GaitCurves, T: number, a: number, b: number): number {
-  const ankleZ = (ph: number) => {
-    const e = evaluateBodyPose({ legL: { flex: g.hip(ph), knee: g.knee(ph), ankle: g.ankle(ph) } });
-    const fk = forwardKinematics(REF, e);
-    return fk.get('foot_l')!.pos[2] - fk.get('hips')!.pos[2];
-  };
-  return (ankleZ(a) - ankleZ(b)) / ((b - a) * T);
+interface PlantedPose {
+  (t: number): BodyPose;
+  /** Ground speed of the cycle (m/s at the reference hip height). */
+  speed: number;
+}
+
+const smooth01 = (x: number) => {
+  const c = Math.max(0, Math.min(1, x));
+  return c * c * (3 - 2 * c);
+};
+
+/**
+ * Removes foot sliding from an in-place locomotion cycle: finds each foot's stance (ground contact) phase,
+ * takes the stance feet's average backward speed as the cycle's ground speed, then pins the stance ankle to a
+ * track moving back at exactly that speed with leg IK (easing in and out around contact changes). Played at
+ * `speed`, planted feet then stay put on the floor.
+ */
+function plantFeet(T: number, poseAt: (t: number) => BodyPose): PlantedPose {
+  const N = 90;
+  const dt = T / N;
+  const sample = (t: number) => forwardKinematics(REF, evaluateBodyPose(poseAt(t)));
+  const legs = (['l', 'r'] as const).map((side) => {
+    const bone = `foot_${side}`;
+    const ank: V3[] = [];
+    const low: number[] = [];
+    for (let i = 0; i < N; i++) {
+      const fk = sample(i * dt);
+      low.push(
+        Math.min(pointOnBone(fk, bone, [0, -0.078, -0.05])[1], pointOnBone(fk, bone, [0, -0.078, 0.16])[1]),
+      );
+      ank.push(fk.get(bone)!.pos);
+    }
+    const floor = Math.min(...low);
+    // stance = the longest run of frames with the foot on the floor
+    const stance = low.map((y) => y < floor + 0.0035);
+    let start = 0;
+    let len = 0;
+    for (let i = 0; i < N; i++) {
+      if (!stance[i] || stance[(i - 1 + N) % N]) continue;
+      let l = 0;
+      while (l < N && stance[(i + l) % N]) l++;
+      if (l > len) {
+        start = i;
+        len = l;
+      }
+    }
+    let vz = 0;
+    for (let k = 1; k < len; k++) vz += (ank[(start + k - 1) % N]![2] - ank[(start + k) % N]![2]) / dt;
+    return { ank, start, len, vz: vz / Math.max(1, len - 1) };
+  });
+  const speed = (legs[0]!.vz + legs[1]!.vz) / 2;
+  const fn = ((t: number) => {
+    const p = poseAt(t);
+    const u = (((t / T) % 1) + 1) % 1;
+    let fk: ReturnType<typeof sample> | null = null;
+    (['l', 'r'] as const).forEach((side, li) => {
+      const L = legs[li]!;
+      let k = u * N - L.start;
+      if (k < 0) k += N;
+      if (k > L.len - 1) return;
+      fk ??= sample(t);
+      const cur = fk.get(`foot_${side}`)!.pos;
+      const targetZ = L.ank[L.start]![2] - speed * k * dt;
+      const w = smooth01((Math.min(k, L.len - 1 - k) * dt) / (0.06 * T));
+      const key = side === 'l' ? 'legL' : 'legR';
+      p[key] = { ...(p[key] ?? {}), ik: [cur[0], cur[1], targetZ], ikw: w, flat: 0 };
+    });
+    return p;
+  }) as PlantedPose;
+  fn.speed = Math.round(speed * 100) / 100;
+  return fn;
 }
 
 function gait(
@@ -239,7 +302,7 @@ function gait(
   g: GaitCurves,
   o: { lean: number; armSwing: number; elbow: number; elbowSwing: number; pelvisYaw: number; flight: number },
 ): AnimClip {
-  const clip = bake({ name, description, duration: T, loop: true }, (t) => {
+  const poseAt = (t: number): BodyPose => {
     const ph = t / T;
     const c = Math.cos(2 * Math.PI * ph);
     const s = Math.sin(2 * Math.PI * ph);
@@ -284,7 +347,10 @@ function gait(
       fingers: 28 + o.flight * 30,
     };
     return p;
-  });
+  };
+  const planted = plantFeet(T, poseAt);
+  const clip = bake({ name, description, duration: T, loop: true }, planted);
+  clip.speed = planted.speed;
   return clip;
 }
 
@@ -297,7 +363,6 @@ function walk(): AnimClip {
     WALK,
     { lean: 3, armSwing: 15, elbow: 16, elbowSwing: 12, pelvisYaw: 4.5, flight: 0 },
   );
-  c.speed = Math.round(gaitSpeed(WALK, T, 0.04, 0.46) * 100) / 100;
   return c;
 }
 
@@ -310,7 +375,6 @@ function run(): AnimClip {
     RUN,
     { lean: 11, armSwing: 32, elbow: 78, elbowSwing: 18, pelvisYaw: 7, flight: 1 },
   );
-  c.speed = Math.round(gaitSpeed(RUN, T, 0.02, 0.34) * 100) / 100;
   return c;
 }
 
@@ -1322,6 +1386,7 @@ const CROUCH_GAIT: GaitCurves = {
 
 function crouchWalk(): AnimClip {
   const T = 1.6;
+  let planted: PlantedPose | null = null;
   const clip = bake(
     {
       name: 'crouch_walk',
@@ -1330,7 +1395,7 @@ function crouchWalk(): AnimClip {
       duration: T,
       loop: true,
     },
-    (t) => {
+    (planted = plantFeet(T, (t) => {
       const ph = t / T;
       const c = Math.cos(2 * Math.PI * ph);
       const s = Math.sin(2 * Math.PI * ph);
@@ -1351,9 +1416,9 @@ function crouchWalk(): AnimClip {
       p.armL = { ...ARM_REST, down: 36, fwd: 22 + 8 * swing(0), elbow: 38, fingers: 32, shrug: 3 };
       p.armR = { ...ARM_REST, down: 36, fwd: 22 + 8 * swing(0.5), elbow: 38, fingers: 32, shrug: 3 };
       return breathe(p, t, T, 1.2);
-    },
+    })),
   );
-  clip.speed = Math.round(gaitSpeed(CROUCH_GAIT, T, 0.04, 0.46) * 100) / 100;
+  clip.speed = planted!.speed;
   return clip;
 }
 

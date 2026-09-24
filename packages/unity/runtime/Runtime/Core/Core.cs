@@ -30,8 +30,20 @@ namespace Aige
     }
 
     /// <summary>
+    /// AIGE light intensity → Unity (URP) intensity. The importer and cutscene light tweens use the same scale.
+    /// </summary>
+    public static class AigeLights
+    {
+        public static float PointScale = 1.6f;
+        public static float DirectionalScale = 1f;
+
+        public static float Intensity(float aige, LightType type) =>
+            aige * (type == LightType.Directional ? DirectionalScale : PointScale);
+    }
+
+    /// <summary>
     /// AIGE data files exported under <c>Assets/Resources/aige/</c> with their AIGE paths:
-    /// 'cutscenes/cs1.cutscene.json', 'audio/voice/milch_wake_1.ogg', 'sfx/thunder', 'ambience/storm'.
+    /// 'cutscenes/cs1.cutscene.json', 'audio/voice/hero_wake_1.ogg', 'sfx/thunder', 'ambience/storm'.
     /// </summary>
     public static class AigeAssets
     {
@@ -75,7 +87,7 @@ namespace Aige
         /// <summary>Raised for every warning and error: (message, isError).</summary>
         public static event Action<string, bool>? Problem;
 
-        /// <example><code>Log.Info("Milch found the knife");</code></example>
+        /// <example><code>Log.Info("Hero found the knife");</code></example>
         public static void Info(string message)
         {
             Debug.Log("[aige] " + message);

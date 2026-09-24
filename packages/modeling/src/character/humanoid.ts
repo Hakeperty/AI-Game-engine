@@ -32,10 +32,10 @@ import {
 } from './head.ts';
 import { computeSkin, type WeightBone } from './skinning.ts';
 
-export type HumanoidPreset = 'milch' | 'murphy' | 'parent' | 'none';
+export type HumanoidPreset = 'young_man' | 'boy' | 'woman' | 'none';
 
 export interface HumanoidOptions {
-  /** Start from a story character; any other option overrides the preset. */
+  /** Start from a ready-made character; any other option overrides the preset. */
   preset?: HumanoidPreset;
   /** Height in meters (crown to floor). */
   height?: number;
@@ -98,10 +98,10 @@ const BASE: Resolved = {
   seed: 1,
 };
 
-/** The Sidle of Milch cast. */
+/** Ready-made characters; any other option overrides them. */
 export const HUMANOID_PRESETS: Record<Exclude<HumanoidPreset, 'none'>, Partial<Resolved>> = {
   // 18, slim, messy dark hair, worn grey hoodie, dark jeans, boots
-  milch: {
+  young_man: {
     height: 1.78,
     age: 'teen',
     sex: 'male',
@@ -122,7 +122,7 @@ export const HUMANOID_PRESETS: Record<Exclude<HumanoidPreset, 'none'>, Partial<R
     stubble: 0.18,
   },
   // about 10, t-shirt, shorts, sneakers
-  murphy: {
+  boy: {
     height: 1.4,
     age: 'child',
     sex: 'male',
@@ -142,8 +142,8 @@ export const HUMANOID_PRESETS: Record<Exclude<HumanoidPreset, 'none'>, Partial<R
     wear: 0.3,
     stubble: 0,
   },
-  // the brothers' parent: a normal adult (sweater, trousers)
-  parent: {
+  // an adult woman (sweater, trousers)
+  woman: {
     height: 1.7,
     age: 'adult',
     sex: 'female',
@@ -174,7 +174,7 @@ export function resolveHumanoidOptions(o: HumanoidOptions = {}): Resolved {
 
 const DETAIL = {
   low: { head: 0.0028, hand: 0.0032, limb: 0.006, cloth: 0.012, hair: 0.005, tri: 0.55 },
-  medium: { head: 0.0019, hand: 0.0022, limb: 0.0045, cloth: 0.0085, hair: 0.0034, tri: 1 },
+  medium: { head: 0.0015, hand: 0.0022, limb: 0.0045, cloth: 0.0085, hair: 0.0034, tri: 1 },
   high: { head: 0.0014, hand: 0.0016, limb: 0.0032, cloth: 0.0062, hair: 0.0025, tri: 1.8 },
 };
 
@@ -332,7 +332,12 @@ export function humanoid(options: HumanoidOptions = {}): Model {
       const t = smoothstep(-0.06, -0.02, hp[1]);
       c = [c[0] + (fc[0] * n - c[0]) * t, c[1] + (fc[1] * n - c[1]) * t, c[2] + (fc[2] * n - c[2]) * t];
       // the mouth line reads as an opening when the jaw drops
-      if (Math.abs(hp[1] - L.mouthY) < 0.0008 && hp[2] > L.lipZ - 0.01 && Math.abs(hp[0]) < 0.017)
+      // the mouth slit reads as the dark inside of the mouth when the jaw drops
+      if (
+        Math.abs(hp[1] - L.mouthY) < (hp[2] < L.lipZ - 0.002 ? 0.0022 : 0.0008) &&
+        hp[2] > L.lipZ - 0.014 &&
+        Math.abs(hp[0]) < 0.018
+      )
         c = [c[0] * 0.55, c[1] * 0.42, c[2] * 0.42];
     }
     return c;
@@ -502,18 +507,18 @@ const BOTTOMS = ['jeans', 'shorts', 'trousers'] as const;
 const SHOES = ['boots', 'sneakers', 'shoes', 'barefoot'] as const;
 
 /**
- * A model recipe for a humanoid whose parameter defaults are a preset's values (templates: human, milch,
- * murphy, parent). Every parameter maps 1:1 to HumanoidOptions.
+ * A model recipe for a humanoid whose parameter defaults are a preset's values (templates: human, young_man,
+ * boy, woman). Every parameter maps 1:1 to HumanoidOptions.
  */
 export function humanoidRecipe(preset: HumanoidPreset = 'none') {
   const d = resolveHumanoidOptions({ preset });
   const who =
-    preset === 'milch'
-      ? 'Milch (18, slim, messy dark hair, worn grey hoodie, dark jeans, boots)'
-      : preset === 'murphy'
-        ? 'Murphy (about 10, t-shirt, shorts, sneakers)'
-        : preset === 'parent'
-          ? "the brothers' parent (adult, sweater, trousers)"
+    preset === 'young_man'
+      ? 'Young man (18, slim, messy dark hair, worn grey hoodie, dark jeans, boots)'
+      : preset === 'boy'
+        ? 'Boy (about 10, t-shirt, shorts, sneakers)'
+        : preset === 'woman'
+          ? 'Woman (adult, sweater, trousers)'
           : 'a realistic human';
   return defineModel({
     name: preset === 'none' ? 'human' : preset,

@@ -13,3 +13,8 @@ temp/
 Thumbs.db
 test-results/
 playwright-report/
+
+# Games live in their own repositories. Clone a game into games/<name> to work on it with the engine
+# (its tsconfig and the MCP config reach the engine packages through ../../packages).
+games/*
+!games/README.md

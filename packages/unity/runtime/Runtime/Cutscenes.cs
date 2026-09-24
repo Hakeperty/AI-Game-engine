@@ -399,12 +399,13 @@ namespace Aige
             }
             if (_lightTweens.TryGetValue(light, out var old) && old != null) StopCoroutine(old);
             var flicker = light.GetComponent<LightFlicker>();
+            var intensity = AigeLights.Intensity(it.Intensity, light.type);
             if (instant || it.Duration <= 0f)
             {
-                SetLight(light, flicker, it.Intensity, it.Color ?? LightColor(light, flicker));
+                SetLight(light, flicker, intensity, it.Color ?? LightColor(light, flicker));
                 return;
             }
-            _lightTweens[light] = StartCoroutine(LightTween(light, flicker, it.Intensity, it.Color, it.Duration));
+            _lightTweens[light] = StartCoroutine(LightTween(light, flicker, intensity, it.Color, it.Duration));
         }
 
         static Color LightColor(Light l, LightFlicker? f) => f != null ? f.BaseColor : l.color;

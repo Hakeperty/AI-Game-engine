@@ -141,7 +141,7 @@ export const voiceDesign = defineCommand({
   kind: 'mutation',
   tier: 'core',
   description: `Design a character voice with Qwen3-TTS from a natural-language description (age, gender, timbre, accent, mood, pace). It records a reference sample, saved as voices/<name>.voice.json + voices/<name>.ref.wav, which every later voice_line clones so the character always sounds the same. Runs locally on the GPU; the first call downloads the model (a few minutes).
-Example: {"name":"milch","description":"An 18-year-old young man with a soft, slightly husky voice. His throat is dry and his voice is quiet and tired, with a hint of fear. Natural American English, unhurried."}`,
+Example: {"name":"hero","description":"An 18-year-old young man with a soft, slightly husky voice. His throat is dry and his voice is quiet and tired, with a hint of fear. Natural American English, unhurried."}`,
   input: z
     .object({
       name: z.string().regex(NAME_RE, 'Use letters, digits, - and _'),
@@ -199,8 +199,8 @@ Example: {"name":"milch","description":"An 18-year-old young man with a soft, sl
 
 const LineInput = z
   .object({
-    id: z.string().regex(NAME_RE, 'Use letters, digits, - and _').describe("Line id, e.g. 'milch_scream_1'"),
-    voice: z.string().describe("Voice name from voice_design ('milch')"),
+    id: z.string().regex(NAME_RE, 'Use letters, digits, - and _').describe("Line id, e.g. 'hero_scream_1'"),
+    voice: z.string().describe("Voice name from voice_design ('hero')"),
     text: z.string().min(1).describe('What is said (this is also the subtitle)'),
     instruct: z
       .string()
@@ -319,7 +319,7 @@ export const voiceLine = defineCommand({
   kind: 'mutation',
   tier: 'core',
   description: `Generate a spoken line in a character's voice (Qwen3-TTS, local GPU). The audio is checked with speech-to-text and regenerated if it doesn't match the text. It writes audio/voice/<id>.ogg plus audio/voice/<id>.json with the subtitle text and a lip-sync curve, ready for cutscene voice tracks, Interactable/Trigger 'voice', or Voice.play(id).
-Example: {"id":"milch_scream_murphy","voice":"milch","text":"Murphy! Murphy!","instruct":"screaming desperately, voice cracking","effect":"echo"}`,
+Example: {"id":"hero_call_sam","voice":"hero","text":"Sam! Sam!","instruct":"screaming desperately, voice cracking","effect":"echo"}`,
   input: LineInput,
   async run(ctx, input) {
     return makeLine(ctx as never, input);
@@ -332,7 +332,7 @@ export const voiceLines = defineCommand({
   kind: 'mutation',
   tier: 'extended',
   description:
-    'Generate several voice lines in one call (same options as voice_line for each). Example: {"lines":[{"id":"milch_wake_1","voice":"milch","text":"Where... where am I?","instruct":"groggy, dry throat"}]}',
+    'Generate several voice lines in one call (same options as voice_line for each). Example: {"lines":[{"id":"hero_wake_1","voice":"hero","text":"Where... where am I?","instruct":"groggy, dry throat"}]}',
   input: z.object({ lines: z.array(LineInput).min(1).max(40) }).strict(),
   async run(ctx, input) {
     const results = [];

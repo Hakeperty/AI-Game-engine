@@ -28,7 +28,7 @@ import type { HostServices } from './commands.ts';
 const host = (ctx: { services: unknown }) => (ctx.services as HostServices).host;
 const TEMPLATES = resolve(import.meta.dirname, '..', '..', 'modeling', 'templates');
 const NAME_RE = /^[a-z0-9][a-z0-9-_]*$/i;
-const PRESETS = ['milch', 'murphy', 'parent', 'none'] as const;
+const PRESETS = ['young_man', 'boy', 'woman', 'none'] as const;
 const PARAM_KEYS = Object.keys(resolveHumanoidOptions({})).filter((k) => k !== 'seed');
 
 const modelPathOf = (ref: string) => {
@@ -53,8 +53,8 @@ export const characterCreate = defineCommand({
   group: 'modeling',
   kind: 'mutation',
   tier: 'core',
-  description: `Create a realistic, skinned and animated human character model (models/<name>.model.ts) and return a preview image. Start from a story preset (milch: 18-year-old slim male in a worn grey hoodie; murphy: 10-year-old boy in t-shirt and shorts; parent: adult in sweater and trousers; none: generic adult) and override any parameter: ${PARAM_KEYS.join(', ')}. The GLB has the AIGE humanoid skeleton (hips, spine, chest, neck, head, jaw, shoulder/upperarm/forearm/hand/fingers/thumb _l/_r, thigh/shin/foot/toe _l/_r), skin weights, sockets (hand_r, hand_l, head, eyes, belt, back) and every built-in clip as an animation (see animation_list). Use it with {"type":"MeshRenderer","model":"models/<name>.model.ts"} plus an Animator. Building takes ~10 s.
-Example: {"name":"milch","preset":"milch"}`,
+  description: `Create a realistic, skinned and animated human character model (models/<name>.model.ts) and return a preview image. Start from a preset (young_man: 18-year-old slim male in a worn grey hoodie; boy: 10-year-old boy in t-shirt and shorts; woman: adult in sweater and trousers; none: generic adult) and override any parameter: ${PARAM_KEYS.join(', ')}. The GLB has the AIGE humanoid skeleton (hips, spine, chest, neck, head, jaw, shoulder/upperarm/forearm/hand/fingers/thumb _l/_r, thigh/shin/foot/toe _l/_r), skin weights, sockets (hand_r, hand_l, head, eyes, belt, back) and every built-in clip as an animation (see animation_list). Use it with {"type":"MeshRenderer","model":"models/<name>.model.ts"} plus an Animator. Building takes ~10 s.
+Example: {"name":"hero","preset":"young_man"}`,
   input: z
     .object({
       name: z.string().regex(NAME_RE, 'Use letters, digits, - and _'),
@@ -155,10 +155,10 @@ export const animationPreview = defineCommand({
   kind: 'action',
   tier: 'core',
   description:
-    'Render a contact sheet of a character playing a clip: `frames` poses sampled evenly over the clip, side by side and labeled with their time. Use it to check that an animation reads well on a model. Example: {"model":"models/milch.model.ts","clip":"sit_up_bed","frames":6}',
+    'Render a contact sheet of a character playing a clip: `frames` poses sampled evenly over the clip, side by side and labeled with their time. Use it to check that an animation reads well on a model. Example: {"model":"models/hero.model.ts","clip":"sit_up_bed","frames":6}',
   input: z
     .object({
-      model: z.string().min(1).describe("Character model ('models/milch.model.ts' or just 'milch')"),
+      model: z.string().min(1).describe("Character model ('models/hero.model.ts' or just 'hero')"),
       clip: z.string().min(1).describe('Built-in clip name or alias (see animation_list)'),
       frames: z.number().int().min(1).max(12).default(6),
       view: z.enum(['auto', 'front', 'side', 'three_quarter', 'high']).default('auto'),

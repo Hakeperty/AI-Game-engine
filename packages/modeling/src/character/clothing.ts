@@ -492,7 +492,7 @@ export function dressUp(
       legBottom = shoes === 'barefoot' ? 0 : shoeTop + (shoes === 'sneakers' ? 0.035 : 0.0) * s - 0.015 * s;
     }
     if (o.top === 'hoodie' || bottom === 'jeans') {
-      // a leather belt (mostly under the hoodie; Milch tucks the knife into it)
+      // a leather belt (mostly under the hoodie)
       const belt = cloth.all
         .round(0.0075 * s)
         .intersect(
