@@ -147,7 +147,11 @@ export function sceneToTscn(scene: SceneDoc, ctx: SceneExportContext): SceneExpo
       const tris = model?.triangles?.();
       if (tris?.length) {
         if (kind === 'mesh')
-          return { shape: w.sub('ConcavePolygonShape3D', { data: packedVec3(tris) }), offset };
+          // two-sided: triangle winding from glTF would otherwise let bodies fall through from above
+          return {
+            shape: w.sub('ConcavePolygonShape3D', { data: packedVec3(tris), backface_collision: true }),
+            offset,
+          };
         const seen = new Set<string>();
         const pts: number[] = [];
         for (let i = 0; i < tris.length; i += 3) {

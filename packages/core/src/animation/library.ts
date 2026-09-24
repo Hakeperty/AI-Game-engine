@@ -1760,6 +1760,329 @@ function turnHead(side: 1 | -1): AnimClip {
 // Registry
 // ---------------------------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------------------------
+// Combat (sword in the right hand, shield on the left arm): guard, two slashes, dodge roll, block, hit, death,
+// drinking a potion, resting at a shrine. Snappy timing for action games; the slashes fire a "hit" event at the
+// moment of contact, so damage lands on the right frame.
+// ---------------------------------------------------------------------------------------------
+const SWORD_R: ArmPose = {
+  ...ARM_REST,
+  down: 38,
+  fwd: 34,
+  elbow: 58,
+  twist: 14,
+  wrist: 8,
+  fingers: 90,
+  thumb: 50,
+};
+const SHIELD_L: ArmPose = {
+  ...ARM_REST,
+  down: 32,
+  fwd: 46,
+  across: 18,
+  elbow: 84,
+  twist: -24,
+  fingers: 62,
+  thumb: 30,
+};
+const GUARD: BodyPose = mergePose(STAND, {
+  pos: [0, -0.05, 0],
+  hips: [4, -12, 0],
+  spine: [4, 6, 0],
+  chest: [2, 6, 0],
+  neck: [2, 0, 0],
+  head: [-2, 2, 0],
+  armR: SWORD_R,
+  armL: SHIELD_L,
+  legL: legIK(0.15, 0.1, { twist: 10 }),
+  legR: legIK(-0.13, -0.1, { twist: -14 }),
+});
+
+function combatIdle(): AnimClip {
+  const T = 2.4;
+  return bake(
+    {
+      name: 'combat_idle',
+      description:
+        'Guard stance: knees bent, sword ready low in the right hand, shield up on the left arm. Loops.',
+      duration: T,
+      loop: true,
+    },
+    (t) => {
+      const p = breathe(clone(GUARD), t, T / 2, 1.1);
+      addTo(p, 'armR.fwd', 3 * Math.sin((2 * Math.PI * t) / T));
+      addTo(p, 'pos.1', -0.008 * Math.sin((4 * Math.PI * t) / T));
+      return p;
+    },
+  );
+}
+
+function slash(n: 1 | 2): AnimClip {
+  // 1: forehand, right to left; 2: backhand, left to right
+  const s = n === 1 ? 1 : -1;
+  const wind: Partial<BodyPose> = {
+    pos: [0, -0.06, -0.02],
+    hips: [4, -14 * s, 0],
+    spine: [2, -12 * s, 0],
+    chest: [0, -18 * s, 0],
+    head: [0, 8 * s, 0],
+    armR:
+      n === 1
+        ? { ...SWORD_R, down: 8, fwd: 6, across: -20, elbow: 96, twist: 40, wrist: -20 }
+        : { ...SWORD_R, down: 26, fwd: 40, across: 56, elbow: 104, twist: -30, wrist: 30 },
+  };
+  const strike: Partial<BodyPose> = {
+    pos: [0, -0.09, 0.07],
+    hips: [8, 16 * s, 0],
+    spine: [6, 14 * s, 0],
+    chest: [4, 22 * s, 0],
+    head: [2, -10 * s, 0],
+    armR:
+      n === 1
+        ? { ...SWORD_R, down: 42, fwd: 74, across: 44, elbow: 12, twist: -20, wrist: 10 }
+        : { ...SWORD_R, down: 40, fwd: 70, across: -30, elbow: 10, twist: 30, wrist: -10 },
+    legL: legIK(0.15, 0.2, { twist: 10 }),
+  };
+  const keys = [
+    { t: 0, p: GUARD, e: 'inOut' as const },
+    { t: 0.14, p: wind, e: 'in' as const },
+    { t: 0.26, p: strike, e: 'out' as const },
+    { t: 0.4, p: { ...strike, chest: [4, 26 * s, 0] as [number, number, number] }, e: 'soft' as const },
+    { t: 0.66, p: GUARD, e: 'inOut' as const },
+  ];
+  const f = keyed(GUARD, keys, { head: 0.04, armL: 0.05 });
+  return bake(
+    {
+      name: `slash_${n}`,
+      description: `${n === 1 ? 'Forehand' : 'Backhand'} sword slash: quick wind-up, a committed swing that steps in, follow-through, back to guard. Fires "hit" at 0.2 s. One-shot; continues into combat_idle.`,
+      duration: 0.66,
+      loop: false,
+      next: 'combat_idle',
+      events: [{ t: 0.2, name: 'hit' }],
+    },
+    (t) => f(t),
+  );
+}
+
+function dodgeRoll(): AnimClip {
+  // an in-place forward roll (the controller moves the body): tuck, roll over the shoulder, come up in guard
+  const tuck = (x: number, y: number): Partial<BodyPose> => ({
+    pos: [0, y, 0],
+    hips: [x, 0, 0],
+    spine: [40, 0, 0],
+    chest: [30, 0, 0],
+    neck: [30, 0, 0],
+    head: [20, 0, 0],
+    armR: { ...SWORD_R, down: 20, fwd: 80, elbow: 110 },
+    armL: { ...SHIELD_L, down: 20, fwd: 80, elbow: 110 },
+    legL: { flex: 110, knee: 130, ankle: 20, ikw: 0 },
+    legR: { flex: 120, knee: 135, ankle: 20, ikw: 0 },
+  });
+  const keys = [
+    { t: 0, p: GUARD, e: 'inOut' as const },
+    { t: 0.1, p: tuck(40, -0.42), e: 'in' as const },
+    { t: 0.24, p: tuck(130, -0.62), e: 'linear' as const },
+    { t: 0.38, p: tuck(230, -0.6), e: 'linear' as const },
+    { t: 0.5, p: tuck(330, -0.42), e: 'out' as const },
+    { t: 0.62, p: { ...GUARD, hips: [364, -12, 0] as [number, number, number] }, e: 'inOut' as const },
+  ];
+  const f = keyed(GUARD, keys);
+  return bake(
+    {
+      name: 'dodge_roll',
+      description:
+        'Forward dodge roll in place (the controller carries the body ~2.5 m): tucks, rolls over, comes up in guard. Invulnerable roughly 0.08-0.4 s. One-shot; continues into combat_idle.',
+      duration: 0.62,
+      loop: false,
+      next: 'combat_idle',
+    },
+    (t) => f(t),
+  );
+}
+
+const BLOCK: BodyPose = mergePose(GUARD, {
+  pos: [0, -0.1, -0.02],
+  spine: [8, 4, 0],
+  chest: [6, 4, 0],
+  head: [6, 0, 0],
+  armL: { ...SHIELD_L, down: 18, fwd: 76, across: 34, elbow: 96, twist: -30, wrist: 10 },
+  armR: { ...SWORD_R, down: 44, fwd: 22, elbow: 64 },
+});
+
+function block(): AnimClip {
+  const T = 1.6;
+  return bake(
+    {
+      name: 'block',
+      description: 'Shield raised in front, braced low, sword held back. Loops while blocking.',
+      duration: T,
+      loop: true,
+    },
+    (t) => breathe(clone(BLOCK), t, T / 2, 1.3),
+  );
+}
+
+function blockHit(): AnimClip {
+  const f = keyed(BLOCK, [
+    { t: 0, p: BLOCK, e: 'inOut' },
+    {
+      t: 0.07,
+      p: { pos: [0, -0.12, -0.08], spine: [-6, 4, 0], chest: [-8, 4, 0], head: [-10, 0, 0] },
+      e: 'out',
+    },
+    { t: 0.34, p: BLOCK, e: 'soft' },
+  ]);
+  return bake(
+    {
+      name: 'block_hit',
+      description:
+        'A blow lands on the raised shield: jolts back, braces again. One-shot; continues into block.',
+      duration: 0.34,
+      loop: false,
+      next: 'block',
+    },
+    (t) => f(t),
+  );
+}
+
+function hitReact(): AnimClip {
+  const f = keyed(GUARD, [
+    { t: 0, p: GUARD, e: 'inOut' },
+    {
+      t: 0.08,
+      p: {
+        pos: [0, -0.04, -0.1],
+        hips: [-6, 8, 4],
+        spine: [-12, 6, 4],
+        chest: [-14, 8, 6],
+        head: [-18, 12, 8],
+        armR: { ...SWORD_R, down: 20, fwd: 10, elbow: 30, across: -20 },
+        armL: { ...SHIELD_L, down: 20, fwd: 20, elbow: 40 },
+      },
+      e: 'out',
+    },
+    { t: 0.46, p: GUARD, e: 'soft' },
+  ]);
+  return bake(
+    {
+      name: 'hit_react',
+      description:
+        'Takes a hit: jolts back and sideways, head snaps, recovers to guard. One-shot; continues into combat_idle.',
+      duration: 0.46,
+      loop: false,
+      next: 'combat_idle',
+    },
+    (t) => f(t),
+  );
+}
+
+function death(): AnimClip {
+  const f = keyed(GUARD, [
+    { t: 0, p: GUARD, e: 'inOut' },
+    {
+      t: 0.25,
+      p: {
+        pos: [0, -0.06, -0.08],
+        spine: [-10, 10, 6],
+        chest: [-12, 10, 8],
+        head: [-16, 20, 10],
+        armR: { ...SWORD_R, down: 50, fwd: 0, elbow: 20 },
+      },
+      e: 'out',
+    },
+    {
+      t: 0.7,
+      p: {
+        pos: [0, -0.5, 0.05],
+        hips: [30, 10, 10],
+        spine: [20, 0, 10],
+        head: [20, 10, 20],
+        legL: { flex: 100, knee: 120, ikw: 0 },
+        legR: { flex: 70, knee: 110, ikw: 0 },
+        armL: { ...ARM_REST, down: 60, fwd: 40, elbow: 30 },
+      },
+      e: 'in',
+    },
+    {
+      t: 1.2,
+      p: {
+        pos: [0.1, -0.82, 0.25],
+        hips: [80, 20, 70],
+        spine: [6, 0, 6],
+        chest: [4, 0, 4],
+        neck: [0, 0, 0],
+        head: [10, 30, 10],
+        legL: { flex: 60, knee: 70, ikw: 0 },
+        legR: { flex: 40, knee: 50, ikw: 0 },
+        armL: { ...ARM_REST, down: 20, fwd: 60, elbow: 20 },
+        armR: { ...ARM_REST, down: 30, fwd: 20, elbow: 10 },
+      },
+      e: 'out',
+    },
+    { t: 1.6, p: { pos: [0.1, -0.84, 0.26], head: [14, 34, 12] }, e: 'soft' },
+  ]);
+  return bake(
+    {
+      name: 'death',
+      description: 'Staggers, knees buckle and collapses onto the side. One-shot; holds the last frame.',
+      duration: 1.6,
+      loop: false,
+    },
+    (t) => f(t),
+  );
+}
+
+function drink(): AnimClip {
+  const up: Partial<BodyPose> = {
+    head: [-22, 0, 0],
+    neck: [-10, 0, 0],
+    armL: { ...ARM_REST, ik: [0.02, 1.52, 0.14], ikw: 1, fingers: 80, thumb: 40, wrist: -30, ftwist: 30 },
+  };
+  const f = keyed(STAND, [
+    { t: 0, p: STAND, e: 'inOut' },
+    { t: 0.35, p: up, e: 'inOut' },
+    { t: 0.85, p: { ...up, head: [-30, 0, 0] }, e: 'soft' },
+    { t: 1.2, p: STAND, e: 'inOut' },
+  ]);
+  return bake(
+    {
+      name: 'drink',
+      description:
+        'Drinks a potion from the left hand, head tipped back. Fires "heal" at 0.8 s. One-shot; continues into idle.',
+      duration: 1.2,
+      loop: false,
+      next: 'idle',
+      events: [{ t: 0.8, name: 'heal' }],
+    },
+    (t) => breathe(f(t), t, 1.2, 1),
+  );
+}
+
+function restKneel(): AnimClip {
+  const T = 4;
+  const KNEEL: BodyPose = mergePose(STAND, {
+    pos: [0, -0.42, 0],
+    hips: [6, 0, 0],
+    spine: [10, 0, 0],
+    chest: [6, 0, 0],
+    neck: [14, 0, 0],
+    head: [12, 0, 0],
+    armL: { ...ARM_REST, down: 50, fwd: 30, elbow: 40, fingers: 40 },
+    armR: { ...ARM_REST, down: 40, fwd: 44, elbow: 70, fingers: 50 },
+    legL: { flex: 88, knee: 92, ankle: 4, ikw: 0 },
+    legR: { flex: 8, knee: 100, ankle: 50, toe: 40, ikw: 0 },
+  });
+  return bake(
+    {
+      name: 'rest_kneel',
+      description: 'Kneels on one knee to rest at a shrine, head bowed, breathing slowly. Loops.',
+      duration: T,
+      loop: true,
+    },
+    (t) => breathe(clone(KNEEL), t, T / 2, 1),
+  );
+}
+
 const BUILDERS: Record<string, () => AnimClip> = {
   idle,
   idle_nervous: idleNervous,
@@ -1790,6 +2113,16 @@ const BUILDERS: Record<string, () => AnimClip> = {
   rub_back: rubBack,
   cough,
   hide_in_belt: hideItem,
+  combat_idle: combatIdle,
+  slash_1: () => slash(1),
+  slash_2: () => slash(2),
+  dodge_roll: dodgeRoll,
+  block,
+  block_hit: blockHit,
+  hit_react: hitReact,
+  death,
+  drink,
+  rest_kneel: restKneel,
 };
 
 /** Alternative names accepted everywhere a built-in clip name is (story-script vocabulary). */
