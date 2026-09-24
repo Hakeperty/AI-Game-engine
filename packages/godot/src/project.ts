@@ -143,6 +143,33 @@ export function projectGodot(o: ProjectGodotOptions): string {
 }
 
 /** The game's C# project (written once, then left to the user). */
+/** The .sln Godot's .NET export looks for next to the csproj (res://<assembly>.sln). Its GUID comes from the name. */
+export function solution(assembly: string): string {
+  let h = 2166136261;
+  for (const ch of assembly) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const hex = `${h.toString(16).padStart(8, '0')}${'0'.repeat(24)}`.toUpperCase();
+  const guid = `{${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}}`;
+  const cfgs = ['Debug', 'ExportDebug', 'ExportRelease'];
+  return [
+    'Microsoft Visual Studio Solution File, Format Version 12.00',
+    '# Visual Studio 2012',
+    `Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "${assembly}", "${assembly}.csproj", "${guid}"`,
+    'EndProject',
+    'Global',
+    '\tGlobalSection(SolutionConfigurationPlatforms) = preSolution',
+    ...cfgs.map((c) => `\t\t${c}|Any CPU = ${c}|Any CPU`),
+    '\tEndGlobalSection',
+    '\tGlobalSection(ProjectConfigurationPlatforms) = postSolution',
+    ...cfgs.flatMap((c) => [
+      `\t\t${guid}.${c}|Any CPU.ActiveCfg = ${c}|Any CPU`,
+      `\t\t${guid}.${c}|Any CPU.Build.0 = ${c}|Any CPU`,
+    ]),
+    '\tEndGlobalSection',
+    'EndGlobal',
+    '',
+  ].join('\r\n');
+}
+
 export function csproj(assembly: string): string {
   return `<Project Sdk="Godot.NET.Sdk/${GODOT_VERSION}">
   <PropertyGroup>

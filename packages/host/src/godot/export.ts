@@ -12,6 +12,7 @@ import {
   projectGodot,
   RUNTIME_DIR,
   sceneToTscn,
+  solution,
 } from '@aige/godot';
 import { importGlb, type Model, toMeshData } from '@aige/modeling';
 import { AMBIENCE_KINDS, renderAmbienceLoop, STORY_SFX, synthStorySfx } from '@aige/runtime';
@@ -298,6 +299,7 @@ export async function exportGodot(
     projectGodot({ title, assembly, mainScene, width: 1920, height: 1080 }),
   );
   if (!(await fs.exists(`${assembly}.csproj`))) await fs.write(`${assembly}.csproj`, csproj(assembly));
+  if (!(await fs.exists(`${assembly}.sln`))) await fs.write(`${assembly}.sln`, solution(assembly));
   if (!(await fs.exists('export_presets.cfg'))) await fs.write('export_presets.cfg', exportPresets(assembly));
   // Folders Godot must not import: voice references, and a sibling Unity project (unity_export)
   for (const dir of ['voices', 'unity'])

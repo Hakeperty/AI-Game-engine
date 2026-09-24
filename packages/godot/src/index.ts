@@ -13,6 +13,7 @@ export {
   materialTres,
   type ProjectGodotOptions,
   projectGodot,
+  solution,
 } from './project.ts';
 export {
   BUILTIN_SCRIPTS,
