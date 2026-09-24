@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { AigeError, defineCommand, type ImageRef } from '@aige/core';
 import { z } from 'zod';
 import type { ProjectHost } from '../host.ts';
+import { godotCriticCmd } from './critic.ts';
 import { exportGodot } from './export.ts';
 import {
   captureShots,
@@ -275,4 +276,5 @@ export const godotCommands = [
   godotScreenshotCmd,
   csharpWriteCmd,
   godotOpenCmd,
+  godotCriticCmd,
 ];

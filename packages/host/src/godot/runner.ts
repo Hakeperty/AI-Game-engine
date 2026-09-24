@@ -115,6 +115,10 @@ export interface GodotTest {
   capturePrefix?: string;
   camera?: { position: number[]; target: number[]; fov?: number; at?: number };
   quitAfterCaptures?: boolean;
+  /** Story flags set before the scene starts. */
+  flags?: string[];
+  /** Cutscenes started at the given times. */
+  play?: { at: number; cutscene: string }[];
 }
 
 export interface GodotReport {

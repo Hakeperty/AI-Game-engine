@@ -51,6 +51,9 @@ public partial class AigeTest : Node
     readonly List<TeleportStep> _teleports = new();
     readonly List<string> _probeNames = new();
     readonly List<float> _captureAt = new();
+    readonly List<(float at, string path)> _plays = new();
+    readonly List<string> _startFlags = new();
+    int _nextPlay;
     Vector3 _camPos, _camTarget;
     float _camFov = 60f, _camAt = -1f;
     Camera3D? _camera;
@@ -104,6 +107,7 @@ public partial class AigeTest : Node
         Subscribe();
         Engine.TimeScale = _timeScale;
         Cutscenes.AutoSkip = _skipCutscenes;
+        foreach (var f in _startFlags) Story.SetFlag(f);
         if (_scenePath != "") GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, _scenePath);
         GD.Print($"[aige-test] {_testPath} → {_reportPath} ({_seconds} s{(_headless ? ", headless" : "")})");
     }
@@ -151,6 +155,12 @@ public partial class AigeTest : Node
         }
         foreach (var p in r.Arr("probes"))
             if (p.ValueKind == JsonValueKind.String) _probeNames.Add(p.GetString()!);
+        // "flags": story flags set before the scene starts (e.g. skip the intro); "play": [{at, cutscene}] starts cutscenes
+        foreach (var f in r.Arr("flags"))
+            if (f.ValueKind == JsonValueKind.String) _startFlags.Add(f.GetString()!);
+        foreach (var p in r.Arr("play"))
+            if (p.Str("cutscene") is { } cs) _plays.Add((p.Num("at", 0f), cs));
+        _plays.Sort((a, b) => a.at.CompareTo(b.at));
         foreach (var c in r.Arr("captureAt"))
             if (c.ValueKind == JsonValueKind.Number) _captureAt.Add((float)c.GetDouble());
         if (r.Get("camera") is { } cam)
@@ -219,6 +229,7 @@ public partial class AigeTest : Node
         _t += dt;
 
         while (_nextTeleport < _teleports.Count && _teleports[_nextTeleport].At <= _t) DoTeleport(_teleports[_nextTeleport++]);
+        while (_nextPlay < _plays.Count && _plays[_nextPlay].at <= _t) Cutscenes.Play(_plays[_nextPlay++].path);
         for (var i = _releases.Count - 1; i >= 0; i--)
         {
             if (_releases[i].at > _t) continue;
