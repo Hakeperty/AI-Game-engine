@@ -61,6 +61,9 @@ public sealed class CutsceneItemDoc
     public bool Loop;
     public float Fade = 0.25f;
     public float Speed = 1f;
+    // face
+    public string? Expression;
+    public float Weight = 1f;
     // voice
     public string? Line;
     public string? Actor;
@@ -216,6 +219,8 @@ public sealed class CutsceneDoc
             Loop = i.Bool("loop", false),
             Fade = i.Num("fade", 0.25f),
             Speed = i.Num("speed", 1f),
+            Expression = i.Str("expression"),
+            Weight = i.Num("weight", 1f),
             Line = i.Str("line"),
             Actor = i.Str("actor"),
             Subtitle = i.Bool("subtitle", true),

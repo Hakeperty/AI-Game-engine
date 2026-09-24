@@ -29,6 +29,12 @@ export interface PartSkin {
   weights: Float32Array;
 }
 
+/** A morph target (blend shape) of one part: position offsets per vertex of the part mesh (x, y, z). */
+export interface PartMorph {
+  name: string;
+  deltas: Float32Array;
+}
+
 /** Keyframed animation for glTF export: channels target joints by name, values are final local transforms. */
 export interface ModelAnimation {
   name: string;
@@ -64,6 +70,8 @@ export interface ModelPart {
   mesh: PolyMesh;
   /** Skinned models: weights per vertex of `mesh` (same vertex order). */
   skin?: PartSkin;
+  /** Morph targets (blend shapes such as ARKit face units), exported as glTF targets. */
+  morphs?: PartMorph[];
 }
 
 /**
@@ -84,11 +92,11 @@ export class Model {
   smoothAngle: number | null = null;
 
   /** Adds a part. Names must be unique; duplicates get a numeric suffix. */
-  add(mesh: PolyMesh, name?: string, skin?: PartSkin): this {
+  add(mesh: PolyMesh, name?: string, skin?: PartSkin, morphs?: PartMorph[]): this {
     let n = name ?? `part${this.parts.length + 1}`;
     let i = 2;
     while (this.parts.some((p) => p.name === n)) n = `${name ?? 'part'}${i++}`;
-    this.parts.push(skin ? { name: n, mesh, skin } : { name: n, mesh });
+    this.parts.push({ name: n, mesh, ...(skin ? { skin } : {}), ...(morphs?.length ? { morphs } : {}) });
     return this;
   }
 

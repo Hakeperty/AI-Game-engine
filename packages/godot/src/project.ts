@@ -257,6 +257,10 @@ export function materialTres(doc: MaterialDoc): string {
     heightmap_deep_parallax: doc.heightMap ? true : undefined,
     heightmap_min_layers: doc.heightMap ? 8 : undefined,
     heightmap_max_layers: doc.heightMap ? 32 : undefined,
+    // cloth sheen: Godot's rim lighting is its sheen approximation
+    rim_enabled: doc.sheen > 0 ? true : undefined,
+    rim: doc.sheen > 0 ? Math.round(doc.sheen * 0.3 * 1000) / 1000 : undefined,
+    rim_tint: doc.sheen > 0 ? 0.9 : undefined,
     ao_light_affect: orm ? 0.2 * doc.aoIntensity : undefined,
     uv1_scale: ru !== 1 || rv !== 1 ? vec3([ru, rv, 1]) : undefined,
   };

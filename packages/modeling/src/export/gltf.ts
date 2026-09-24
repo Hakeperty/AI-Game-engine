@@ -133,8 +133,20 @@ export async function exportGlb(
           );
         skinned = true;
       }
+      for (const m of p.morphs ?? [])
+        prim.addTarget(
+          doc
+            .createPrimitiveTarget(m.name)
+            .setAttribute(
+              'POSITION',
+              doc.createAccessor().setType('VEC3').setArray(m.positions).setBuffer(buffer),
+            ),
+        );
       mesh.addPrimitive(prim);
     }
+    const names = part.primitives[0]?.morphs?.map((m) => m.name);
+    // targetNames in mesh extras is how Godot, Blender and three.js name blend shapes
+    if (names?.length) mesh.setExtras({ targetNames: names }).setWeights(names.map(() => 0));
     const node = doc.createNode(part.name).setMesh(mesh);
     if (skinned && skin) node.setSkin(skin);
     root.addChild(node);

@@ -277,6 +277,21 @@ export const Animator = defineComponent({
     initial: z.string().default('idle').describe('Clip to play at start'),
     locomotion: z.boolean().default(true).describe('Auto idle/walk/run from movement speed'),
     speed: z.number().positive().default(1).describe('Playback speed multiplier'),
+    expression: z
+      .string()
+      .default('')
+      .describe(
+        'Facial expression at start for characters with facial blend shapes (worried, fear, pain, sad...); cutscene face tracks change it',
+      ),
+    blink: z.boolean().default(true).describe('Blink now and then (characters with facial blend shapes)'),
+    jawOpenDegrees: z
+      .number()
+      .min(0)
+      .max(40)
+      .default(16)
+      .describe(
+        'Jaw rotation at full lip-sync opening; realistic heads with a mouth blend shape want about 6',
+      ),
   }),
   example: { initial: 'lie_asleep', locomotion: true },
 });

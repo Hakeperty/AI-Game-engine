@@ -170,6 +170,7 @@ describe('project files', () => {
       flatShading: false,
       doubleSided: false,
       alphaCutoff: 0,
+      sheen: 0,
     });
     expect(tres).toMatch(/^\[gd_resource type="ORMMaterial3D"/);
     expect(tres).toContain('orm_texture = ExtResource(');

@@ -45,6 +45,7 @@ export {
   type ModelAnimation,
   type ModelPart,
   model,
+  type PartMorph,
   type PartSkin,
   type Skeleton,
   type Socket,
@@ -120,4 +121,5 @@ export {
   humanoidWeightBones,
   resolveHumanoidOptions,
 } from './character/humanoid.ts';
+export { humanoidFromMakeHuman, type MakeHumanOptions, makeHumanBone } from './character/makehuman.ts';
 export { computeSkin, type SkinOptions, type WeightBone } from './character/skinning.ts';

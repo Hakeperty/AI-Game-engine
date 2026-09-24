@@ -62,6 +62,12 @@ public partial class Animator : Node3D
     /// <summary>Jaw rotation in degrees at <see cref="Mouth"/> = 1.</summary>
     [Export] public float JawOpenDegrees { get; set; } = 16f;
 
+    /// <summary>Facial expression at start (see <see cref="FaceRig.Presets"/>: worried, fear, pain, sad...); empty = neutral.</summary>
+    [Export] public string Expression { get; set; } = "";
+
+    /// <summary>Blink now and then (characters with facial blend shapes).</summary>
+    [Export] public bool Blink { get; set; } = true;
+
     /// <summary>Speed (m/s) the walk clip was authored for.</summary>
     [Export] public float WalkClipSpeed { get; set; } = 1.4f;
 
@@ -76,6 +82,10 @@ public partial class Animator : Node3D
     int _jaw = -1;
     Quaternion _jawBase = Quaternion.Identity, _jawWritten = Quaternion.Identity;
     readonly List<(MeshInstance3D mesh, int index)> _mouthShapes = new();
+    FaceRig? _face;
+
+    /// <summary>The character's facial blend shapes (null before setup).</summary>
+    public FaceRig? Face => _face;
     readonly Dictionary<string, string> _names = new();
     string? _idle, _walk, _run, _crouchIdle, _crouchWalk;
     string? _override, _loco;
@@ -100,6 +110,9 @@ public partial class Animator : Node3D
     public Node3D Entity => GetParentOrNull<Node3D>() ?? this;
 
     /// <summary>The Animator of an entity (the entity itself, a child, or null).</summary>
+    /// <summary>Fades the face to a named expression (FaceRig.Presets) or unit; "a+b" combines them.</summary>
+    public void SetExpression(string expression, float weight = 1f, float fade = 0.4f) => _face?.Set(expression, weight, fade);
+
     public static Animator? Of(Node? entity)
     {
         if (entity == null) return null;
@@ -123,6 +136,8 @@ public partial class Animator : Node3D
                 }
         }
         FindMouthShapes(mesh ?? entity);
+        _face = new FaceRig(mesh ?? entity) { Blink = Blink };
+        if (!string.IsNullOrEmpty(Expression)) _face.Set(Expression, 1f, 0.01f);
 
         if (_player != null)
         {
@@ -258,8 +273,13 @@ public partial class Animator : Node3D
         MeasureSpeed(dt);
 
         _mouth = Mathf.Lerp(_mouth, Mathf.Clamp(Mouth, 0f, 1f), Easing.Damp(30f, delta));
-        foreach (var (mesh, index) in _mouthShapes)
-            if (IsInstanceValid(mesh)) mesh.SetBlendShapeValue(index, _mouth);
+        if (_face is { HasMouth: true }) _face.Update(dt, _mouth);
+        else
+        {
+            _face?.Update(dt, 0f);
+            foreach (var (mesh, index) in _mouthShapes)
+                if (IsInstanceValid(mesh)) mesh.SetBlendShapeValue(index, _mouth);
+        }
         if (_player == null) ApplyJaw();
 
         if (_player == null) return;

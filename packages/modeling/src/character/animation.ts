@@ -66,6 +66,7 @@ export function clipToModelAnimation(
       hipsPos[i * 3 + 2] = hipsJoint.position[2] + pose.hips[2] * k;
     }
   }
+  deriveFingers(rot, names, times, c.duration, frames, bones);
   const channels: ModelAnimation['channels'] = bones.map((b) => ({
     joint: b,
     path: 'rotation' as const,
@@ -108,4 +109,69 @@ export function builtinAnimations(
 /** Alias -> canonical built-in clip name (exported with skinned models so runtimes can resolve story names). */
 export function builtinClipAliases(): Record<string, string> {
   return { ...CLIP_ALIASES };
+}
+
+/**
+ * Skeletons with separate index/ring/pinky bones (MakeHuman characters) get them from the hand's curl: the
+ * index curls less and the pinky more than the middle finger (fingers/fingertips), and every finger flexes a
+ * little on its own, looping seamlessly, so hands never move as one block.
+ */
+function deriveFingers(
+  rot: Map<string, Float32Array>,
+  names: Set<string>,
+  times: Float32Array,
+  duration: number,
+  frames: number,
+  bones: string[],
+): void {
+  const FINGERS: [string, number, number][] = [
+    ['index', 0.8, 0.4],
+    ['ring', 1.1, 1.9],
+    ['pinky', 1.3, 3.3],
+  ];
+  for (const s of ['l', 'r']) {
+    const base = rot.get(`fingers_${s}`);
+    const tip = rot.get(`fingertips_${s}`);
+    if (!base || !tip || !names.has(`index_${s}`)) continue;
+    const srcBase = base.slice();
+    const srcTip = tip.slice();
+    const add = (name: string, from: Float32Array, k: number, phase: number, amp: number) => {
+      // the curl axis: from the most bent frame (the rest curl when the clip keeps the hand still)
+      let axis: [number, number, number] = [1, 0, 0];
+      let most = 0;
+      for (let i = 0; i <= frames; i++) {
+        const w = Math.min(1, Math.abs(from[i * 4 + 3]!));
+        if (1 - w > most) {
+          most = 1 - w;
+          const n = Math.hypot(from[i * 4]!, from[i * 4 + 1]!, from[i * 4 + 2]!) || 1;
+          axis = [from[i * 4]! / n, from[i * 4 + 1]! / n, from[i * 4 + 2]! / n];
+        }
+      }
+      const cycles = Math.max(1, Math.round(duration / (2.4 + phase * 0.6)));
+      const out = new Float32Array(from.length);
+      for (let i = 0; i <= frames; i++) {
+        const x = from[i * 4]!;
+        const y = from[i * 4 + 1]!;
+        const z = from[i * 4 + 2]!;
+        const w = Math.max(-1, Math.min(1, from[i * 4 + 3]!));
+        // signed angle about the curl axis
+        const along = x * axis[0] + y * axis[1] + z * axis[2];
+        const angle = 2 * Math.atan2(along, w);
+        const wobble =
+          ((amp * Math.PI) / 180) * Math.sin((2 * Math.PI * cycles * times[i]!) / duration + phase);
+        const half = (angle * k + wobble) / 2;
+        const sh = Math.sin(half);
+        out.set([axis[0] * sh, axis[1] * sh, axis[2] * sh, Math.cos(half)], i * 4);
+      }
+      rot.set(name, out);
+      if (!bones.includes(name)) bones.push(name);
+    };
+    for (const [f, k, phase] of FINGERS) {
+      if (names.has(`${f}_${s}`)) add(`${f}_${s}`, srcBase, k, phase, 3);
+      if (names.has(`${f}_tip_${s}`)) add(`${f}_tip_${s}`, srcTip, k, phase, 4);
+    }
+    // the middle finger flexes on its own too
+    add(`fingers_${s}`, srcBase, 1, 1.1, 2.5);
+    add(`fingertips_${s}`, srcTip, 1, 1.1, 3);
+  }
 }

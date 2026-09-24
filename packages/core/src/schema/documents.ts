@@ -136,6 +136,12 @@ export const MaterialDoc = z.object({
   vertexColors: z.boolean().default(false),
   flatShading: z.boolean().default(false),
   doubleSided: z.boolean().default(false),
+  sheen: z
+    .number()
+    .min(0)
+    .max(1)
+    .default(0)
+    .describe('Soft cloth sheen at grazing angles (0 = none; 0.3-0.6 for cotton, wool, denim, velvet)'),
   alphaCutoff: z
     .number()
     .min(0)
@@ -190,6 +196,22 @@ export const CutsceneTrack = z.discriminatedUnion('type', [
         loop: z.boolean().default(false),
         fade: z.number().min(0).default(0.25),
         speed: z.number().positive().default(1),
+      }),
+    ),
+  }),
+  z.object({
+    type: z.literal('face'),
+    actor: z.string(),
+    items: z.array(
+      z.object({
+        t: z.number().min(0),
+        expression: z
+          .string()
+          .describe(
+            'Named expression (neutral, worried, fear, terror, scream, pain, sad, crying, shock, relief, squint, dazed, asleep), a blend-shape unit, or "a+b"',
+          ),
+        weight: z.number().min(0).max(1.5).default(1),
+        fade: z.number().min(0).default(0.4),
       }),
     ),
   }),

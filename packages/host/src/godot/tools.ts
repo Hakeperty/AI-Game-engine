@@ -57,6 +57,16 @@ const TestInput = z.object({
   seconds: z.number().positive().max(600).default(20),
   timeScale: z.number().positive().max(8).default(1).describe('Run faster than real time (headless only)'),
   skipCutscenes: z.boolean().default(false),
+  flags: z
+    .array(z.string())
+    .default([])
+    .describe('Story flags set before the scene starts (e.g. one that skips the intro)'),
+  play: z
+    .array(z.object({ at: z.number().min(0), cutscene: z.string() }))
+    .default([])
+    .describe(
+      'Cutscenes to start at given times, e.g. [{"at":0.5,"cutscene":"res://cutscenes/cs3_kitchen.cutscene.json"}]',
+    ),
   teleport: z
     .array(
       z.object({ at: z.number().min(0), entity: z.string(), position: Vec3, yaw: z.number().optional() }),
@@ -99,6 +109,8 @@ async function playTest(host: ProjectHost, input: z.output<typeof TestInput>, qu
     seconds: input.seconds,
     timeScale: input.timeScale,
     skipCutscenes: input.skipCutscenes,
+    ...(input.flags?.length ? { flags: input.flags } : {}),
+    ...(input.play?.length ? { play: input.play } : {}),
     teleport: input.teleport,
     inputs: input.inputs,
     probes: input.probes,

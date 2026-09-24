@@ -5,6 +5,7 @@ import {
   type ColliderHint,
   Model,
   type ModelAnimation,
+  type PartMorph,
   type PartSkin,
   type Skeleton,
   type Socket,
@@ -24,6 +25,8 @@ export interface MeshPrimitive {
   joints?: Uint16Array<ArrayBuffer>;
   /** Skinned parts: 4 weights per vertex (sum 1). */
   weights?: Float32Array<ArrayBuffer>;
+  /** Morph targets: position offsets per output vertex. */
+  morphs?: { name: string; positions: Float32Array<ArrayBuffer> }[];
 }
 
 export interface MeshPartData {
@@ -60,6 +63,7 @@ export function toMeshData(input: Model | PolyMesh, opts: MeshDataOptions = {}):
       part.mesh,
       opts.smoothAngle ?? model.smoothAngle ?? 40,
       model.skeleton ? part.skin : undefined,
+      part.morphs,
     );
     for (const p of prims) {
       triangleCount += p.indices.length / 3;
@@ -80,7 +84,12 @@ export function toMeshData(input: Model | PolyMesh, opts: MeshDataOptions = {}):
   };
 }
 
-function meshToPrimitives(mesh: PolyMesh, smoothAngle: number, skin?: PartSkin): MeshPrimitive[] {
+function meshToPrimitives(
+  mesh: PolyMesh,
+  smoothAngle: number,
+  skin?: PartSkin,
+  morphs?: PartMorph[],
+): MeshPrimitive[] {
   const cosT = Math.cos((smoothAngle * Math.PI) / 180);
   const faceN: V3[] = mesh.f.map((_, i) => mesh.faceNormal(i));
   const faceA: number[] = mesh.f.map((_, i) => mesh.faceArea(i));
@@ -106,6 +115,7 @@ function meshToPrimitives(mesh: PolyMesh, smoothAngle: number, skin?: PartSkin):
     const cols: number[] = [];
     const jnt: number[] = [];
     const wts: number[] = [];
+    const mph: number[][] = (morphs ?? []).map(() => []);
     const idx: number[] = [];
     const cache = new Map<string, number>();
     const corner = (fi: number, k: number): number => {
@@ -142,6 +152,9 @@ function meshToPrimitives(mesh: PolyMesh, smoothAngle: number, skin?: PartSkin):
             wts.push(skin.weights[v * 4 + k] ?? 0);
           }
         }
+        morphs?.forEach((m, mi) => {
+          mph[mi]!.push(m.deltas[v * 3] ?? 0, m.deltas[v * 3 + 1] ?? 0, m.deltas[v * 3 + 2] ?? 0);
+        });
         cache.set(key, i);
       }
       return i;
@@ -158,6 +171,9 @@ function meshToPrimitives(mesh: PolyMesh, smoothAngle: number, skin?: PartSkin):
       uvs: hasUv ? new Float32Array(uvs) : null,
       colors: hasColors ? new Float32Array(cols) : null,
       indices: new Uint32Array(idx),
+      ...(morphs?.length
+        ? { morphs: morphs.map((m, mi) => ({ name: m.name, positions: new Float32Array(mph[mi]!) })) }
+        : {}),
       material,
       texture: material.texture ? proceduralTexture(material.texture) : null,
       ...(skin ? { joints: new Uint16Array(jnt), weights: new Float32Array(wts) } : {}),

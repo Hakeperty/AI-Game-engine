@@ -12,6 +12,7 @@ import {
   type Model,
   type ModelReport,
   type ParamDef,
+  readGlbSkeleton,
   type Socket,
   validateModel,
 } from '@aige/modeling';
@@ -162,7 +163,11 @@ export class AssetPipeline {
       }
     }
     const report: ModelReport = validateModel(model);
-    const glb = await exportGlb(model, { name: prep.path.split('/').pop()!.replace(/\..*$/, '') });
+    // skinned .glb files (characters) ship as they are: importGlb keeps the geometry only, not skins or clips
+    const glb =
+      prep.kind === 'glb' && (await readGlbSkeleton(prep.bytes))
+        ? prep.bytes
+        : await exportGlb(model, { name: prep.path.split('/').pop()!.replace(/\..*$/, '') });
     const b = model.bounds();
     const info: ModelInfo = {
       path: prep.path,

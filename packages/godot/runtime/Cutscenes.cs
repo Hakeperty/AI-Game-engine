@@ -407,6 +407,11 @@ public partial class Cutscenes : Node
                 if (anim == null) Log.WarnOnce($"cs-anim:{tr.Actor}", $"Cutscene: '{tr.Actor}' has no Animator.");
                 else anim.Play(it.Clip ?? "", it.Fade, it.Loop, it.Speed);
                 break;
+            case "face":
+                var face = Animator.Of(Ref(tr.Actor));
+                if (face == null) Log.WarnOnce($"cs-face:{tr.Actor}", $"Cutscene: '{tr.Actor}' has no Animator.");
+                else face.SetExpression(it.Expression ?? "neutral", it.Weight, it.Fade);
+                break;
             case "voice":
                 Voice.Play(it.Line ?? "", Ref(it.Actor), it.Subtitle);
                 break;
