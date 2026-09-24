@@ -21,6 +21,7 @@ This file is a snapshot of where AIGE and The Sidle of Milch stand, written so y
   - the dirt trail to the locked room;
   - clutter, drystone field walls and thorn trees outside.
   - The story textures are painted by `build/textures.ts`.
+- **Photos and paintings from local AI image generation:** `tools/tts/imagegen.py` runs FLUX.1-schnell 4-bit on the 5070 Ti (about 40 s to load, then about 5 s per image). It made the two family photos and the Sacred Heart print. `build/photos.py` then ages the photos (fade, border, scratches) and **tears the mother's face out** with a ragged paper edge. Output is in `textures/story/`.
 - **Textures:** scanned PBR materials now cover walls, chinking, floors, furniture, fabrics, carpet, painted wood, stone and grass.
   - The Godot export now uses **shared materials** (`godot/materials/*.tres`, assigned per model part) instead of copying textures into every GLB, which took the exe from 1.2 GB to 391 MB.
   - The runtime turns on vertex colors for models that rely on them (Godot ignores them otherwise) and adds subsurface scattering to character skin (`packages/godot/runtime/Core/VertexColors.cs`).

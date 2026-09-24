@@ -15,5 +15,5 @@
   "opacity": 1,
   "ormMap": "textures/polyhaven/cotton_jersey/cotton_jersey_arm_1k.jpg",
   "roughness": 1,
-  "vertexColors": false
+  "vertexColors": true
 }

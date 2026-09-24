@@ -15,5 +15,5 @@
   "opacity": 1,
   "ormMap": "textures/polyhaven/stretch_poplin/stretch_poplin_arm_1k.jpg",
   "roughness": 1,
-  "vertexColors": false
+  "vertexColors": true
 }

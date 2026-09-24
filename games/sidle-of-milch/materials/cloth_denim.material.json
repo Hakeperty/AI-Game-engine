@@ -15,5 +15,5 @@
   "opacity": 1,
   "ormMap": "textures/polyhaven/denim_fabric/denim_fabric_arm_2k.jpg",
   "roughness": 1,
-  "vertexColors": false
+  "vertexColors": true
 }

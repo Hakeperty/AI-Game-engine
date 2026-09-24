@@ -163,13 +163,13 @@ export function bodySdfs(an: Anatomy): BodySdfs {
             [sd * 0.058 * g, y.chest + 0.07 * s, D.chestD * 0.62],
           )
         : sdf.ellipsoid(
-            [0.078 * g, 0.058 * g, 0.036 * g * (0.8 + 0.4 * muscle)],
-            [sd * 0.066 * g, y.chest + 0.09 * s, D.chestD * 0.5],
+            [0.074 * g, 0.05 * g, 0.026 * g * (0.8 + 0.4 * muscle)],
+            [sd * 0.062 * g, y.chest + 0.085 * s, D.chestD * 0.5],
           ),
     ),
     // scapulae
     ...sym((sd) =>
-      sdf.ellipsoid([0.07 * g, 0.09 * s, 0.035 * g], [sd * 0.075 * g, y.chest + 0.08 * s, -D.chestD * 0.62]),
+      sdf.ellipsoid([0.07 * g, 0.09 * s, 0.024 * g], [sd * 0.065 * g, y.chest + 0.08 * s, -D.chestD * 0.7]),
     ),
     // abdomen and waist
     sdf.ellipsoid([D.waistW, 0.13 * s, D.waistD], [0, y.waist, 0.002 * s]),

@@ -734,17 +734,18 @@ irish(
   [1.32, 1.72, -2.2],
   [0, 90, 0],
   [see('The Sacred Heart. The lamp under it is still lit... who keeps it burning?')],
+  { picture: MAT('story_sacred_heart') },
 );
-irish('Story', 'Red_Lamp', 'red_lamp', [1.32, 1.38, -2.2], [0, 90, 0], [], undefined, { glow: 3 });
+irish('Story', 'Red_Lamp', 'red_lamp', [1.32, 1.36, -2.2], [0, 90, 0], [], undefined, { glow: 1.1 });
 add('Night', {
   name: 'Red_Lamp_Glow',
-  position: [1.45, 1.42, -2.2],
+  position: [1.5, 1.3, -2.2],
   components: [
     {
       type: 'Light',
       kind: 'point',
       color: '#ff2414',
-      intensity: 0.35,
+      intensity: 0.12,
       range: 1.8,
       castShadow: false,
       flicker: 0.15,
@@ -832,7 +833,17 @@ add('Story', {
   components: [
     { type: 'CharacterController', height: 1.78, radius: 0.28 },
     { type: 'Script', script: 'builtin:PlayerController', props: { walkSpeed: 1.5, runSpeed: 4.2 } },
-    { type: 'MeshRenderer', model: M('milch') },
+    {
+      type: 'MeshRenderer',
+      model: M('milch'),
+      // scanned fabrics on the garments (vertex colours add tint, wear and occlusion); skin_* parts get SSS
+      materials: {
+        hoodie: MAT('cloth_hoodie'),
+        jeans: MAT('cloth_denim'),
+        boots: MAT('cloth_leather'),
+        belt: MAT('cloth_leather'),
+      },
+    },
     { type: 'Animator', initial: 'idle', locomotion: true },
   ],
 });

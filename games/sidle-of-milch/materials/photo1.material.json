@@ -2,15 +2,16 @@
   "format": "aige.material",
   "version": 1,
   "aoIntensity": 1,
-  "color": "#b3a182",
+  "color": "#ffffff",
   "doubleSided": false,
   "emissive": "#000000",
   "emissiveIntensity": 1,
   "flatShading": false,
+  "map": "textures/story/photo1.png",
   "mapRepeat": [1, 1],
   "metalness": 0,
   "normalScale": 1,
   "opacity": 1,
-  "roughness": 0.6,
+  "roughness": 0.55,
   "vertexColors": false
 }

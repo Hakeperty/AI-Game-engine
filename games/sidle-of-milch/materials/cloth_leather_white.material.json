@@ -15,5 +15,5 @@
   "opacity": 1,
   "ormMap": "textures/polyhaven/leather_white/leather_white_arm_1k.jpg",
   "roughness": 1,
-  "vertexColors": false
+  "vertexColors": true
 }

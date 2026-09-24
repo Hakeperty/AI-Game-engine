@@ -143,7 +143,13 @@ describe('scene mapping', () => {
         'e2',
         'Table',
         [
-          { type: 'MeshRenderer', model: 'models/furniture.model.ts', castShadow: true, visible: true },
+          {
+            type: 'MeshRenderer',
+            model: 'models/furniture.model.ts',
+            materials: { top: 'materials/wood_table.material.json' },
+            castShadow: true,
+            visible: true,
+          },
           { type: 'Collider', shape: 'auto', offset: [0.5, 0, 0], isTrigger: false },
           {
             type: 'Interactable',
@@ -184,7 +190,11 @@ describe('scene mapping', () => {
     expect(table.parent).toBe('e1');
     expect(table.position).toEqual([-4, 0, -2.8]);
     close(table.rotation, toUnityRotation([0, 90, 0]));
-    expect(table.mesh).toMatchObject({ model: 'Assets/AigeData/models/table-1.gltf', castShadow: true });
+    expect(table.mesh).toMatchObject({
+      model: 'Assets/AigeData/models/table-1.gltf',
+      castShadow: true,
+      parts: { top: 'Assets/AigeData/materials/wood_table.json' },
+    });
     // bounds center (0, 0.4, 0) + offset (0.5, 0, 0), mirrored on X
     expect(table.colliders![0]).toMatchObject({ shape: 'box', center: [-0.5, 0.4, 0], size: [2, 0.8, 1] });
     expect(table.components).toEqual([

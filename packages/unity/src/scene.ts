@@ -56,8 +56,10 @@ export interface UnityEntity {
     model?: string;
     primitive?: string;
     color?: string;
-    /** Project path of an exported MaterialDoc JSON (primitives). */
+    /** Project path of an exported MaterialDoc JSON: the primitive's material, or every part of the model. */
     material?: string;
+    /** Per-part materials of a model (GLB node name → MaterialDoc JSON path), like MeshRenderer.materials. */
+    parts?: Record<string, string>;
     castShadow: boolean;
     receiveShadow: boolean;
     visible: boolean;
@@ -247,10 +249,19 @@ export function sceneToUnity(scene: SceneDoc, ctx: UnitySceneContext): UnityScen
         receiveShadow: mr.receiveShadow !== false,
         visible: mr.visible !== false,
       };
-      if (!model && typeof mr.material === 'string') {
+      if (typeof mr.material === 'string') {
         const m = ctx.material(mr.material);
         if (m) out.mesh.material = m;
         else warn(`material '${mr.material}' not found.`);
+      }
+      if (model && mr.materials && typeof mr.materials === 'object') {
+        const parts: Record<string, string> = {};
+        for (const [part, p] of Object.entries(mr.materials as Record<string, string>)) {
+          const m = ctx.material(p);
+          if (m) parts[part] = m;
+          else warn(`material '${p}' not found.`);
+        }
+        if (Object.keys(parts).length) out.mesh.parts = parts;
       }
     }
 

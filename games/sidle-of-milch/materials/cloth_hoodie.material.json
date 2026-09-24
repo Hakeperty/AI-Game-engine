@@ -15,5 +15,5 @@
   "opacity": 1,
   "ormMap": "textures/polyhaven/jogging_melange/jogging_melange_arm_2k.jpg",
   "roughness": 1,
-  "vertexColors": false
+  "vertexColors": true
 }
